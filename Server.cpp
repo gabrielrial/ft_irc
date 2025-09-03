@@ -51,19 +51,21 @@ void Server::srv_run()
 
 
 	std::cout << "cliente connected" << std::endl;
-
-	char buffer[1024];
-	int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
-	if (bytesReceived > 0)
+	char buffer[BUFFER_SIZE];
+	while (1)
 	{
-		buffer[bytesReceived] = '\0';
-		std::cout << "Cliente dijo: " << buffer << std::endl;
-
-		// Responder al cliente
-		std::string reply = "Hola, cliente!\n";
-		send(clientSocket, reply.c_str(), reply.size(), 0);
+		memset(buffer, '\0', BUFFER_SIZE);
+		int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+		if (bytesReceived > 0)
+		{
+			buffer[bytesReceived] = '\0';
+			std::cout << "Cliente dijo: " << buffer << std::endl;
+			
+			// Responder al cliente
+			std::string reply = "Hola, cliente!\n";
+			send(clientSocket, reply.c_str(), reply.size(), 0);
+		}	
 	}
-
 	// Cerrar la conexión con el cliente
 	close(clientSocket);
 }
