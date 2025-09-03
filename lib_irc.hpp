@@ -4,6 +4,8 @@
 //  PARAMETERS
 
 #define BUFFER_SIZE 1024
+#define HOST_NAME_SIZE 128
+#define PASSWORD    "irc_server"
 
 
 // CLASS INCLUDE
@@ -20,6 +22,7 @@
 #include <netdb.h>
 #include <string.h>
 #include <unistd.h>
+#include <string>
 
 
 // CONFIGS

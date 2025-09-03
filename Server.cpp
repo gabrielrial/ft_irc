@@ -41,13 +41,14 @@ void Server::srv_run()
 {
 	std::cout << "### srv_run(), only accepts one client" << std::endl;
 
-	int clientSocket;
+	int 		clientSocket;
 	sockaddr_in clientAddr;
 	socklen_t clientSize = sizeof(clientAddr);
 
 	clientSize = sizeof(clientAddr);
 	clientSocket = accept(this->_socket, (struct sockaddr *)&clientAddr, &clientSize);
 	close(this->_socket); // We can not close it in order to recive more connections.
+
 
 	std::cout << "cliente connected" << std::endl;
 
@@ -66,3 +67,4 @@ void Server::srv_run()
 	// Cerrar la conexión con el cliente
 	close(clientSocket);
 }
+

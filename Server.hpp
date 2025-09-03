@@ -3,6 +3,7 @@
 
 #include "lib_irc.hpp"
 #include <netinet/in.h>
+#include <string>
 
 class Server
 {
@@ -11,8 +12,8 @@ private:
 	sockaddr_in _hint;
 
 	bool set_bind();
-	
-	public:
+
+public:
 	Server();
 	~Server();
 

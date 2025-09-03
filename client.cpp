@@ -1,52 +1,51 @@
 #include <iostream>
 #include <string>
-#include <cstring>      // memset
+#include <cstring> // memset
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h> // sockaddr_in
-#include <arpa/inet.h>  // inet_pton
-#include <unistd.h>     // close()
+#include <arpa/inet.h>	// inet_pton
+#include <unistd.h>		// close()
 
 #define PORT 54000
 #define SERVER_IP "127.0.0.0"
 
-int main() {
-    // 1. Crear socket
-    int clientSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (clientSocket == -1) {
-        std::cerr << "No se pudo crear el socket\n";
-        return 1;
-    }
+int main()
+{
 
-    // 2. Llenar sockaddr_in con IP y puerto del servidor
-    sockaddr_in serverAddr;
-    memset(&serverAddr, 0, sizeof(serverAddr));
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(PORT);
-    inet_pton(AF_INET, SERVER_IP, &serverAddr.sin_addr);
+	int clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (clientSocket == -1)
+	{
+		std::cerr << "No se pudo crear el socket\n";
+		return 1;
+	}
 
-    // 3. Conectar al servidor
-    if (connect(clientSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == -1) {
-        std::cerr << "Error al conectar con el servidor\n";
-        close(clientSocket);
-        return 1;
-    }
+	sockaddr_in serverAddr;
+	memset(&serverAddr, 0, sizeof(serverAddr));
+	serverAddr.sin_family = AF_INET;
+	serverAddr.sin_port = htons(PORT);
+	inet_pton(AF_INET, SERVER_IP, &serverAddr.sin_addr);
 
-    std::cout << "Conectado al servidor!\n";
+	if (connect(clientSocket, (sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
+	{
+		std::cerr << "Error al conectar con el servidor\n";
+		close(clientSocket);
+		return 1;
+	}
 
-    // 4. Enviar un mensaje
-    std::string msg = "Hola servidor!";
-    send(clientSocket, msg.c_str(), msg.size(), 0);
+	std::cout << "Conectado al servidor!\n";
 
-    // 5. Recibir respuesta
-    char buffer[1024];
-    int bytesReceived = recv(clientSocket, buffer, sizeof(buffer)-1, 0);
-    if (bytesReceived > 0) {
-        buffer[bytesReceived] = '\0';
-        std::cout << "Servidor respondió: " << buffer << std::endl;
-    }
+	std::string msg = "Hola servidor!";
+	send(clientSocket, msg.c_str(), msg.size(), 0);
 
-    // 6. Cerrar el socket
-    close(clientSocket);
-    return 0;
+	char buffer[1024];
+	int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+	if (bytesReceived > 0)
+	{
+		buffer[bytesReceived] = '\0';
+		std::cout << "Servidor respondió: " << buffer << std::endl;
+	}
+
+	close(clientSocket);
+	return 0;
 }
