@@ -3,9 +3,14 @@
 int main(int argc, char **argv)
 {
     if (argc != 3)
-        return 0;
+    {
+        std::cerr << "three arguments" << std::endl;
+        return 1;
+    }
     
     Server srv;
+
+    srv.srv_run();
 
     (void)argv;
     

@@ -12,7 +12,7 @@ Server::~Server()
 {
 }
 /*
-	It creats a binds the socket to an IP:Port,
+	It creats and binds the socket to an IP:Port,
 	so that the server can listen on that address.
 */
 bool Server::set_bind()
@@ -38,28 +38,31 @@ bool Server::set_bind()
 }
 
 void Server::srv_run()
- {
+{
 	std::cout << "### srv_run(), only accepts one client" << std::endl;
-	
-	sockaddr_in	clientAddr;
+
+	int clientSocket;
+	sockaddr_in clientAddr;
 	socklen_t clientSize = sizeof(clientAddr);
 
-	char host[1025];
-	char srv[32];
+	clientSize = sizeof(clientAddr);
+	clientSocket = accept(this->_socket, (struct sockaddr *)&clientAddr, &clientSize);
+	close(this->_socket); // We can not close it in order to recive more connections.
 
-	int clientFd = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
-	if (clientFd == -1)
-		std::cerr << "Problem with client" << std::endl;
-	
-	close (this->_socket);
-	memset(host, 0, 1025);
-	memset(srv, 0, 32);
+	std::cout << "cliente connected" << std::endl;
 
-	int result = getnameinfo((sockaddr *)&clientFd, sizeof(clientFd), host, 1025, srv, 32, 0);
-	if (result)
+	char buffer[1024];
+	int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+	if (bytesReceived > 0)
 	{
-		std::cout << host << " connected on " << srv << std::endl
+		buffer[bytesReceived] = '\0';
+		std::cout << "Cliente dijo: " << buffer << std::endl;
+
+		// Responder al cliente
+		std::string reply = "Hola, cliente!\n";
+		send(clientSocket, reply.c_str(), reply.size(), 0);
 	}
 
-
+	// Cerrar la conexión con el cliente
+	close(clientSocket);
 }

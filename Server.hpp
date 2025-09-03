@@ -9,7 +9,6 @@ class Server
 private:
 	int _socket;
 	sockaddr_in _hint;
-	std::vector<int> _clients;
 
 	bool set_bind();
 	
