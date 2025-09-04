@@ -38,17 +38,14 @@ int main()
 
     while (true)
     {
-        // Leer mensaje del usuario
         std::cout << "Tú: ";
         std::getline(std::cin, msg);
 
-        if (msg == "/quit") // salir si el usuario escribe /quit
+        if (msg == "/quit")
             break;
 
-        // Enviar al servidor
         send(clientSocket, msg.c_str(), msg.size(), 0);
 
-        // Recibir respuesta
         int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
         if (bytesReceived <= 0)
         {
