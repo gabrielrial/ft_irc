@@ -11,7 +11,10 @@ private:
 	int _socket;
 	sockaddr_in _hint;
 
-	bool set_bind();
+	void init_socket();
+	void create_socket();
+	void bind_socket();
+	void start_listening();
 
 public:
 	Server();
