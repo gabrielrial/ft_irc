@@ -7,9 +7,12 @@
 #define HOST_NAME_SIZE 128
 #define PASSWORD "irc_server"
 
+
 // CLASS INCLUDE
 
+#include "Client.hpp"
 #include "Server.hpp"
+
 
 // LIBS INCLUDE
 
@@ -22,6 +25,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <string>
+#include <poll.h>
+#include <vector>
 
 // CONFIGS
 

@@ -5,6 +5,8 @@ Server::Server()
 	try
 	{
 		init_socket();
+		add_socket();
+		std::cout << "Server listening on " << IP << ":" << PORT << std::endl;
 	}
 	catch (const std::runtime_error &e)
 	{
@@ -36,8 +38,6 @@ void Server::init_socket()
 			close(_socket);
 		throw;
 	}
-
-	std::cout << "Server listening on " << IP << ":" << PORT << std::endl;
 }
 
 void Server::create_socket()
@@ -70,30 +70,91 @@ void Server::start_listening()
 
 void Server::srv_run()
 {
-	std::cout << "### srv_run(), only accepts one client" << std::endl;
-
-	int clientSocket;
-	sockaddr_in clientAddr;
-	socklen_t clientSize = sizeof(clientAddr);
-
-	clientSize = sizeof(clientAddr);
-	clientSocket = accept(this->_socket, (struct sockaddr *)&clientAddr, &clientSize);
-
-	std::cout << "<ClienteName> connected" << std::endl;
-	char buffer[BUFFER_SIZE];
 	while (1)
 	{
-		memset(buffer, '\0', BUFFER_SIZE);
-		int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
-		if (bytesReceived > 0)
+		int res = poll(_fds.data(), _fds.size(), -1);
+		if (res < 0)
 		{
-			buffer[bytesReceived] = '\0';
-			std::cout << "<ClienteName> says: " << buffer << std::endl;
+			std::cerr << "poll failed" << std::endl;
+			break;
+		}
+		if (_fds[0].revents & POLLIN)
+		{
+			sockaddr_in clientAddr;
+			socklen_t clientSize = sizeof(clientAddr);
+			int newClient = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
+			if (newClient != -1)
+			{
+				_clients.push_back(Client(newClient));
+				pollfd newfd;
+				newfd.fd = newClient;
+				newfd.events = POLLIN;
+				_fds.push_back(newfd);
+				a++;
+				std::cout << "<ClientName> has connected" << newClient << std::endl;
+			}
+		}
+		for (size_t i = 1; i < _fds.size(); i++)
+		{
+			if (_fds[i].fd != -1 && (_fds[i].revents & POLLIN))
+			{
+				char buffer[1024];
+				int bytes = recv(_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
+				if (bytes <= 0)
+				{
+					// cliente desconectó
+					std::cout << "Client disconnected: " << _fds[i].fd << std::endl;
+					close(_fds[i].fd);
+					_fds[i].fd = -1;
+				}
+				else
+				{
+					buffer[bytes] = '\0';
+					std::cout << "Client says: " << buffer << std::endl;
 
-			std::string reply = "Hi, <ClienteName>!\n";
-			send(clientSocket, reply.c_str(), reply.size(), 0);
+					// opcional: enviar respuesta
+					std::string reply = "Hi client!\n";
+					send(_fds[i].fd, reply.c_str(), reply.size(), 0);
+				}
+			}
 		}
 	}
 	close(this->_socket);
-	close(clientSocket);
+}
+
+void Server::acceptClient()
+{
+	sockaddr_in clientAddr;
+	socklen_t clientSize = sizeof(clientAddr);
+	int clientSocket = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
+
+	if (clientSocket != -1)
+	{
+		Client newClient(clientSocket); // creats a client with its socket
+		_clients.push_back(newClient);	// add it to the container
+		std::cout << "<ClientName> has connected" << clientSocket << std::endl;
+	}
+}
+
+void Server::add_socket()
+{
+	pollfd srv_fd;
+
+	srv_fd.fd = _socket;
+	srv_fd.events = POLLIN;
+	srv_fd.revents = 0;
+
+	_fds.push_back(srv_fd);
+}
+
+void Server::fillPollFd()
+{
+	for (size_t i = 0; i < _clients.size(); i++)
+	{
+		pollfd pfd;
+		pfd.fd = _clients[i].getSocket();
+		pfd.events = POLLIN;
+		pfd.revents = 0;
+		_fds.push_back(pfd);
+	}
 }
