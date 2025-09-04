@@ -8,7 +8,7 @@
 #include <unistd.h>     // close()
 
 #define PORT 54000
-#define SERVER_IP "127.0.0.1"
+#define SERVER_IP "127.0.0.2"
 
 int main()
 {
@@ -25,8 +25,7 @@ int main()
     serverAddr.sin_port = htons(PORT);
     inet_pton(AF_INET, SERVER_IP, &serverAddr.sin_addr);
 
-    if (connect(clientSocket, (sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
-    {
+    if (connect(clientSocket, (sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)    {
         std::cerr << "Error al conectar con el servidor\n";
         close(clientSocket);
         return 1;

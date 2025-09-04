@@ -47,18 +47,17 @@ void Server::srv_run()
 
 	clientSize = sizeof(clientAddr);
 	clientSocket = accept(this->_socket, (struct sockaddr *)&clientAddr, &clientSize);
-	close(this->_socket); // We can not close it in order to recive more connections.
-
-
+    
+    
 	std::cout << "cliente connected" << std::endl;
 	char buffer[BUFFER_SIZE];
 	while (1)
 	{
-		memset(buffer, '\0', BUFFER_SIZE);
+        memset(buffer, '\0', BUFFER_SIZE);
 		int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
 		if (bytesReceived > 0)
 		{
-			buffer[bytesReceived] = '\0';
+            buffer[bytesReceived] = '\0';
 			std::cout << "Cliente dijo: " << buffer << std::endl;
 			
 			// Responder al cliente
@@ -67,6 +66,7 @@ void Server::srv_run()
 		}	
 	}
 	// Cerrar la conexión con el cliente
+    close(this->_socket); // We can not close it in order to recive more connections.
 	close(clientSocket);
 }
 
