@@ -5,18 +5,22 @@
 #include <netinet/in.h>
 #include <string>
 #include <vector>
+#include <map>
 #include <poll.h>
 #include "Client.hpp"
+#include "Command.hpp"
 
 class Server
 {
 private:
 	int _socket;
 	sockaddr_in6 _hint;
-	//pollfd _serverfd;
 	std::vector<Client> _clients;
 	std::vector<pollfd> _fds;
+	std::map<std::string, std::string> _nicknames;  // nickname -> real name
+	std::map<std::string, std::vector<Client*> > _channels;  // channel -> clients
 
+	//bool set_bind(); //one conn
 	void init_socket();
 	void create_socket();
 	void bind_socket();
