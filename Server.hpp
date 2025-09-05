@@ -12,7 +12,7 @@ class Server
 {
 private:
 	int _socket;
-	sockaddr_in _hint;
+	sockaddr_in6 _hint;
 	//pollfd _serverfd;
 	std::vector<Client> _clients;
 	std::vector<pollfd> _fds;

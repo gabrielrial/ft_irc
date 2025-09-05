@@ -48,5 +48,25 @@
         "streambuf": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp"
-    }
+	},
+	"workbench.colorCustomizations": {
+		"activityBar.activeBackground": "#d508d7",
+		"activityBar.background": "#d508d7",
+		"activityBar.foreground": "#e7e7e7",
+		"activityBar.inactiveForeground": "#e7e7e799",
+		"activityBarBadge.background": "#b8b707",
+		"activityBarBadge.foreground": "#15202b",
+		"commandCenter.border": "#e7e7e799",
+		"sash.hoverBorder": "#d508d7",
+		"statusBar.background": "#a406a6",
+		"statusBar.foreground": "#e7e7e7",
+		"statusBarItem.hoverBackground": "#d508d7",
+		"statusBarItem.remoteBackground": "#a406a6",
+		"statusBarItem.remoteForeground": "#e7e7e7",
+		"titleBar.activeBackground": "#a406a6",
+		"titleBar.activeForeground": "#e7e7e7",
+		"titleBar.inactiveBackground": "#a406a699",
+		"titleBar.inactiveForeground": "#e7e7e799"
+	},
+	"peacock.color": "#a406a6"
 }

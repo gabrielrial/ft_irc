@@ -42,7 +42,7 @@ void Server::init_socket()
 
 void Server::create_socket()
 {
-	_socket = socket(AF_INET, SOCK_STREAM, 0);
+	_socket = socket(AF_INET6, SOCK_STREAM, 0);
 	if (_socket == -1)
 		throw std::runtime_error("Cannot create socket");
 
@@ -54,9 +54,9 @@ void Server::create_socket()
 void Server::bind_socket()
 {
 	memset(&_hint, 0, sizeof(_hint));
-	_hint.sin_family = AF_INET;				 // IPv4
-	_hint.sin_port = htons(PORT);			 // convert port to network byte order
-	inet_pton(AF_INET, IP, &_hint.sin_addr); // convert IP string to binary form
+	_hint.sin6_family = AF_INET6;				 // IPv4
+	_hint.sin6_port = htons(PORT);			 // convert port to network byte order
+	inet_pton(AF_INET6, IP, &_hint.sin6_addr); // convert IP string to binary form
 
 	if (bind(_socket, (struct sockaddr *)&_hint, sizeof(_hint)) == -1)
 		throw std::runtime_error("Bind failed");
@@ -73,6 +73,7 @@ void Server::srv_run()
 	while (1)
 	{
 		int res = poll(_fds.data(), _fds.size(), -1);
+		//int res = poll(_fds.data(), _fds.size(), 1000);
 		if (res < 0)
 		{
 			std::cerr << "poll failed" << std::endl;
@@ -90,7 +91,7 @@ void Server::srv_run()
 				newfd.fd = newClient;
 				newfd.events = POLLIN;
 				_fds.push_back(newfd);
-				a++;
+				//a++;
 				std::cout << "<ClientName> has connected" << newClient << std::endl;
 			}
 		}
