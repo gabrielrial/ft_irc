@@ -6,9 +6,11 @@
 #include <arpa/inet.h>
 #include <sys/select.h>
 #include <cstdio>
+#include <map>
 
 const int PORT = 6667;
 const int BUFFER_SIZE = 512;
+static std::map<int, std::string> clientNick;
 
 /**
  * Creates a TCP/IPv4 socket with reuse address option
@@ -80,6 +82,14 @@ void processLine(int fd, const std::string& line)
 {
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	//IRC command processing
+	if (line.rfind("NICK ", 0) == 0)
+		clientNick[fd] = line.substr(5);
+	if (line.rfind("USER ", 0) == 0)
+	{
+		std::string nick = clientNick[fd].empty() ? "*" : clientNick[fd];
+		std::string welcome = ":localhost 001 " + nick + " :Welcome to mini_server\r\n";
+		send(fd, welcome.c_str(), welcome.size(), 0);
+	}
 }
 
 /**
@@ -214,7 +224,6 @@ int main()
 	struct sockaddr_in address;
 	socklen_t addrlen = sizeof(address);
 
-	// 1. Create socket
 	server_fd = createSocket();
 	if (server_fd == -1)
 		return 1;
@@ -232,8 +241,7 @@ int main()
 	}
 
 	serverLoop(server_fd, &address, &addrlen);
-	
-	// 5. Cleanup
+
 	cleanup(server_fd);
 	return 0;
 }
