@@ -13,9 +13,7 @@ class Server
 private:
 	int _socket;
 	sockaddr_in _hint;
-	//pollfd _serverfd;
-	std::vector<Client> _clients;
-	std::vector<pollfd> _fds;
+	std::vector<int> clients;
 
 	void init_socket();
 	void create_socket();
@@ -23,9 +21,13 @@ private:
 	void start_listening();
 	void add_socket();
 
-	void fillPollFd();
+	int prepareFdSet(const std::vector<int>& clients, fd_set *readfds);
 
-	void acceptClient();
+	void acceptNewClient();
+
+	void processLine(int fd, const std::string& line);
+	void handleClientData(int fd, char* buffer, ssize_t bytes_read, std::string& lineBuffer);
+
 
 
 public:

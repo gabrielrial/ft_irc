@@ -70,68 +70,83 @@ void Server::start_listening()
 
 void Server::srv_run()
 {
-	while (1)
+	char buffer[BUFFER_SIZE];
+	std::string lineBuffer[FD_SETSIZE]; // one buffer per fd
+
+	while (true)
 	{
-		int res = poll(_fds.data(), _fds.size(), -1);
-		if (res < 0)
+		fd_set readfds;
+		int max_fd = prepareFdSet(clients, &readfds);
+
+		// Wait for activity
+		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
+		if (activity < 0)
 		{
-			std::cerr << "poll failed" << std::endl;
+			std::cout << "srv_run() 1" << std::endl;
 			break;
 		}
-		if (_fds[0].revents & POLLIN)
-		{
-			sockaddr_in clientAddr;
-			socklen_t clientSize = sizeof(clientAddr);
-			int newClient = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
-			if (newClient != -1)
-			{
-				_clients.push_back(Client(newClient));
-				pollfd newfd;
-				newfd.fd = newClient;
-				newfd.events = POLLIN;
-				_fds.push_back(newfd);
-				std::cout << "<ClientName> has connected" << newClient << std::endl;
-			}
-		}
-		for (size_t i = 1; i < _fds.size(); i++)
-		{
-			if (_fds[i].fd != -1 && (_fds[i].revents & POLLIN))
-			{
-				char buffer[1024];
-				int bytes = recv(_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
-				if (bytes <= 0)
-				{
-					// cliente desconectó
-					std::cout << "Client disconnected: " << _fds[i].fd << std::endl;
-					close(_fds[i].fd);
-					_fds[i].fd = -1;
-				}
-				else
-				{
-					buffer[bytes] = '\0';
-					std::cout << "Client says: " << buffer << std::endl;
 
-					// opcional: enviar respuesta
-					std::string reply = "Hi client!\n";
-					send(_fds[i].fd, reply.c_str(), reply.size(), 0);
+		if (FD_ISSET(_socket, &readfds))
+			acceptNewClient();
+		// Existing clients
+		for (std::vector<int>::iterator it = clients.begin(); it != clients.end();)
+		{
+			int fd = *it;
+			if (FD_ISSET(fd, &readfds))
+			{
+				ssize_t bytes_read = recv(fd, buffer, BUFFER_SIZE - 1, 0);
+				if (bytes_read <= 0)
+				{
+					std::cout << "Client (fd=" << fd << ") disconnected.\n";
+					close(fd);
+					it = clients.erase(it);
+					continue;
 				}
+				handleClientData(fd, buffer, bytes_read, lineBuffer[fd]);
 			}
+			++it;
 		}
 	}
-	close(this->_socket);
 }
 
-void Server::acceptClient()
+void Server::handleClientData(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer)
+{
+	buffer[bytes_read] = '\0';
+	lineBuffer.append(buffer);
+
+	size_t pos;
+	while ((pos = lineBuffer.find("\r\n")) != std::string::npos)
+	{
+		std::string line = lineBuffer.substr(0, pos);
+		lineBuffer.erase(0, pos + 2);
+		processLine(fd, line);
+	}
+}
+
+void Server::processLine(int fd, const std::string &line)
+{
+	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
+	// IRC command processing
+	if (line.rfind("NICK ", 0) == 0)
+		clientNick[fd] = line.substr(5);
+	if (line.rfind("USER ", 0) == 0)
+	{
+		std::string nick = clientNick[fd].empty() ? "*" : clientNick[fd];
+		std::string welcome = ":localhost 001 " + nick + " :Welcome to mini_server\r\n";
+		send(fd, welcome.c_str(), welcome.size(), 0);
+	}
+}
+
+void Server::acceptNewClient()
 {
 	sockaddr_in clientAddr;
 	socklen_t clientSize = sizeof(clientAddr);
-	int clientSocket = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
 
-	if (clientSocket != -1)
+	int new_fd = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
+	if (new_fd >= 0)
 	{
-		Client newClient(clientSocket); // creats a client with its socket
-		_clients.push_back(newClient);	// add it to the container
-		std::cout << "<ClientName> has connected" << clientSocket << std::endl;
+		clients.push_back(new_fd);
+		std::cout << "New client connected (fd=" << new_fd << ")\n";
 	}
 }
 
@@ -146,14 +161,19 @@ void Server::add_socket()
 	_fds.push_back(srv_fd);
 }
 
-void Server::fillPollFd()
+int Server::prepareFdSet(const std::vector<int> &clients, fd_set *readfds)
 {
-	for (size_t i = 0; i < _clients.size(); i++)
+	FD_ZERO(readfds);
+	FD_SET(_socket, readfds);
+	int max_fd = _socket;
+
+	for (std::vector<int>::const_iterator it = clients.begin(); it != clients.end(); ++it)
 	{
-		pollfd pfd;
-		pfd.fd = _clients[i].getSocket();
-		pfd.events = POLLIN;
-		pfd.revents = 0;
-		_fds.push_back(pfd);
+		int fd = *it;
+		FD_SET(fd, readfds);
+		if (fd > max_fd)
+			max_fd = fd;
 	}
+
+	return max_fd;
 }
