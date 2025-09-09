@@ -90,7 +90,6 @@ void Server::srv_run()
 				newfd.fd = newClient;
 				newfd.events = POLLIN;
 				_fds.push_back(newfd);
-				a++;
 				std::cout << "<ClientName> has connected" << newClient << std::endl;
 			}
 		}
