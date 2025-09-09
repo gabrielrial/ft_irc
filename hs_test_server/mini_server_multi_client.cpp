@@ -7,6 +7,13 @@
 #include <sys/select.h>
 #include <cstdio>
 #include <map>
+#include "../parser/parser.hpp"
+
+#define RES	"\033[0m"
+#define RED	"\033[31m"
+#define GRE	"\033[32m"
+#define BLU	"\033[34m"
+#define YEL	"\033[33m"
 
 const int PORT = 6667;
 const int BUFFER_SIZE = 512;
@@ -81,10 +88,32 @@ int startListening(int server_fd)
 void processLine(int fd, const std::string& line)
 {
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
-	//IRC command processing
-	if (line.rfind("NICK ", 0) == 0)
-		clientNick[fd] = line.substr(5);
-	if (line.rfind("USER ", 0) == 0)
+	// //IRC command processing
+	// if (line.rfind("NICK ", 0) == 0)
+	// 	clientNick[fd] = line.substr(5);
+	// if (line.rfind("USER ", 0) == 0)
+	// {
+	// 	std::string nick = clientNick[fd].empty() ? "*" : clientNick[fd];
+	// 	std::string welcome = ":localhost 001 " + nick + " :Welcome to mini_server\r\n";
+	// 	send(fd, welcome.c_str(), welcome.size(), 0);
+	// }
+
+	RawTextLine parsed(line);
+	std::cout << RED << "  Prefix: '" << parsed.getPrefix() << "'" << std::endl;
+	std::cout << GRE << "  Command: '" << parsed.getCommand() << "'" << std::endl;
+	std::cout << BLU << "  Params:";
+	const std::vector<std::string>& params = parsed.getParams();
+	for (std::vector<std::string>::const_iterator it = params.begin(); it != params.end(); ++it)
+		std::cout << " '" << *it << "'";
+	std::cout << std::endl;
+	std::cout << YEL << "  Trailing: '" << parsed.getTrailing() << "'" << std::endl;
+	std::cout << RES << std::endl;
+
+	// Handle commands using parsed components
+	std::string command = parsed.getCommand();
+	if (command == "NICK" && !params.empty())
+		clientNick[fd] = params[0];
+	else if (command == "USER" && !params.empty())
 	{
 		std::string nick = clientNick[fd].empty() ? "*" : clientNick[fd];
 		std::string welcome = ":localhost 001 " + nick + " :Welcome to mini_server\r\n";
