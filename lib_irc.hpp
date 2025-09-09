@@ -27,10 +27,11 @@
 #include <string>
 #include <poll.h>
 #include <vector>
+#include <map>
 
 // CONFIGS
 
-#define PORT 6667
-#define IP "127.0.0.1"
+#define PORT 12345
+#define IP "10.14.4.3"
 
 #endif

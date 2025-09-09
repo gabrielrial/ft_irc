@@ -5,7 +5,7 @@ Server::Server()
 	try
 	{
 		init_socket();
-		add_socket();
+		//	add_socket();
 		std::cout << "Server listening on " << IP << ":" << PORT << std::endl;
 	}
 	catch (const std::runtime_error &e)
@@ -125,15 +125,63 @@ void Server::handleClientData(int fd, char *buffer, ssize_t bytes_read, std::str
 
 void Server::processLine(int fd, const std::string &line)
 {
+	static std::map<int, std::string> clientNick; // nick por fd
+	std::string nickname;
+	std::string username;
+	std::string hostname;
+	std::string servername;
+	std::string realname;
+
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
-	// IRC command processing
+
+	std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
 	if (line.rfind("NICK ", 0) == 0)
-		clientNick[fd] = line.substr(5);
+	{
+		size_t end = line.find_first_of(" \r\n", 5);
+		nickname = line.substr(5, end - 5);
+		clientNick[fd] = nickname; // guardar nick por fd
+		std::cout << nickname << std::endl;
+	}
 	if (line.rfind("USER ", 0) == 0)
 	{
-		std::string nick = clientNick[fd].empty() ? "*" : clientNick[fd];
-		std::string welcome = ":localhost 001 " + nick + " :Welcome to mini_server\r\n";
+		size_t start = 5;
+		size_t end = line.find_first_of(" \r\n", start);
+		if (end == std::string::npos)
+			return;
+		username = line.substr(start, end - start);
+
+		start = end + 1;
+		end = line.find_first_of(" \r\n", start);
+		if (end == std::string::npos)
+			return;
+		hostname = line.substr(start, end - start);
+
+		start = end + 1;
+		end = line.find_first_of(" \r\n", start);
+		if (end == std::string::npos)
+			return;
+		servername = line.substr(start, end - start);
+
+		// Todo lo que sigue después de ':' es realname
+		size_t colon = line.find(':', start);
+		if (colon != std::string::npos)
+			realname = line.substr(colon + 1);
+
+		// Usar el nick guardado si existe, sino '*'
+		nickname = clientNick.count(fd) ? clientNick[fd] : "*";
+
+		// Enviar welcome 001
+		std::string welcome =
+			":localhost 001 " + nickname + " :Welcome to mini_server " + nickname + "\r\n";
+
 		send(fd, welcome.c_str(), welcome.size(), 0);
+
+		// Debug
+		std::cout << "Username: " << username << std::endl;
+		std::cout << "Hostname: " << hostname << std::endl;
+		std::cout << "Servername: " << servername << std::endl;
+		std::cout << "Realname: " << realname << std::endl;
+		std::cout << "===============================================" << std::endl;
 	}
 }
 
@@ -150,16 +198,16 @@ void Server::acceptNewClient()
 	}
 }
 
-void Server::add_socket()
-{
-	pollfd srv_fd;
-
-	srv_fd.fd = _socket;
-	srv_fd.events = POLLIN;
-	srv_fd.revents = 0;
-
-	_fds.push_back(srv_fd);
-}
+// void Server::add_socket()
+//{
+//	pollfd srv_fd;
+//
+//	srv_fd.fd = _socket;
+//	srv_fd.events = POLLIN;
+//	srv_fd.revents = 0;
+//
+//	_fds.push_back(srv_fd);
+// }
 
 int Server::prepareFdSet(const std::vector<int> &clients, fd_set *readfds)
 {

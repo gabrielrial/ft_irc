@@ -10,7 +10,6 @@ private:
     int _socket;
     std::string _name;
     std::string _hostname;
-    pollfd _pollClient;
 
 public:
     Client(int socket);
@@ -19,7 +18,7 @@ public:
     int getSocket() const;
     void setName(const std::string &name);
     std::string getName() const;
-    pollfd* getPollFD();
+    //pollfd* getPollFD();
 };
 
 #endif

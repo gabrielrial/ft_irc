@@ -5,11 +5,7 @@
 
 // Constructor
 Client::Client(int socket) : _socket(socket), _name(""), _hostname("") {
-    // Inicializar _pollClient
-    memset(&_pollClient, 0, sizeof(_pollClient));
-    _pollClient.fd = _socket;
-    _pollClient.events = POLLIN;  // solo nos interesa leer
-    _pollClient.revents = 0;
+
 }
 
 // Destructor
@@ -35,7 +31,3 @@ std::string Client::getName() const {
     return _name;
 }
 
-// Get pollfd pointer
-pollfd* Client::getPollFD() {
-    return &_pollClient;
-}

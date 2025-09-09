@@ -19,7 +19,7 @@ private:
 	void create_socket();
 	void bind_socket();
 	void start_listening();
-	void add_socket();
+	//void add_socket();
 
 	int prepareFdSet(const std::vector<int>& clients, fd_set *readfds);
 
