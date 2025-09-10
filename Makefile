@@ -4,9 +4,11 @@ CPP = c++
 
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
-SRC = main.cpp Server.cpp \
+SRC = main.cpp \
+		server/Server.cpp \
 		parser/parser.cpp \
- 		Client.cpp \
+ 		client/Client.cpp \
+		channel/Channel.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

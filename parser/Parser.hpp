@@ -11,6 +11,7 @@ private:
 	std::string _command;
 	std::vector<std::string> _params;
 	std::string _trailing;
+	
 
 public:
 	RawTextLine();

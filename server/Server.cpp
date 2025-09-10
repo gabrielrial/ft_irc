@@ -266,17 +266,6 @@ void Server::acceptNewClient()
 	}
 }
 
-// void Server::add_socket()
-//{
-//	pollfd srv_fd;
-//
-//	srv_fd.fd = _socket;
-//	srv_fd.events = POLLIN;
-//	srv_fd.revents = 0;
-//
-//	_fds.push_back(srv_fd);
-// }
-
 int Server::prepareFdSet(const std::vector<int> &clients, fd_set *readfds)
 {
 	FD_ZERO(readfds);
@@ -294,9 +283,9 @@ int Server::prepareFdSet(const std::vector<int> &clients, fd_set *readfds)
 	return max_fd;
 }
 
-bool Server::check_user(RawTextLine &line)
+bool Server::check_client(RawTextLine &line)
 {
-	for (int i = 0; i < clients.size; i++)
+	for (size_t i = 0; i < clients.size(); i++)
 	{
 		if (line.getParams() == clients[i].getNickname())
 			return true;
@@ -307,10 +296,11 @@ bool Server::check_user(RawTextLine &line)
 
 bool Server::check_channel(RawTextLine &line)
 {
-	for (int i = 0; i < channel.size; i++)
+	for (size_t i = 0; i < channels.size(); i++)
 	{
-		if (line.getParams() == channel[i].getName())
-			return true;
+		for (size_t a = 0; a < line.(); a++)
+			if (line.getParams()[] == channels[i].getName())
+				return true;
 	}
 	
 	return false;

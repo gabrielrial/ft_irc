@@ -1,7 +1,6 @@
-#ifndef CLIENT_HPP
-# define CLIENT_HPP
+#pragma once
 
-#include "lib_irc.hpp"
+#include "../lib_irc.hpp"
 #include <netinet/in.h>
 #include <string>
 #include <vector>
@@ -33,6 +32,3 @@ class Client
         void setUsername(const std::string &user);
 };
 
-//bool add_to_channel(Client *client, Channel channel);
-
-#endif
