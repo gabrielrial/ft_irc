@@ -47,10 +47,17 @@ void Server::srv_run()
 
 	clientSize = sizeof(clientAddr);
 	clientSocket = accept(this->_socket, (struct sockaddr *)&clientAddr, &clientSize);
-    
-    
+
 	std::cout << "<ClienteName> connected" << std::endl;
 	char buffer[BUFFER_SIZE];
+	char clientIP[INET_ADDRSTRLEN];
+	if (getpeername(clientSocket, (struct sockaddr*)&clientAddr, &clientSize) == 0)
+	{
+    	inet_ntop(AF_INET, &clientAddr.sin_addr, clientIP, sizeof(clientIP));
+    	int clientPort = ntohs(clientAddr.sin_port);
+
+  	  std::cout << "Client connected from " << clientIP << ":" << clientPort << std::endl;
+	}
 	while (1)
 	{
         memset(buffer, '\0', BUFFER_SIZE);

@@ -5,10 +5,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h> // sockaddr_in
 #include <arpa/inet.h>  // inet_pton
-#include <unistd.h>     // close()
+#include <unistd.h>     // close() && gethostname()
 
 #define PORT 54000
-#define SERVER_IP "127.0.0.2"
+#define SERVER_IP "127.0.0.1"
 
 int main()
 {
@@ -56,7 +56,6 @@ int main()
         buffer[bytesReceived] = '\0';
         std::cout << "Servidor: " << buffer << std::endl;
     }
-
     close(clientSocket);
     return 0;
 }
