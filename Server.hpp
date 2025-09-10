@@ -15,14 +15,13 @@ class Server
 private:
 	int _socket;
 	sockaddr_in _hint;
-	std::vector<int> clients;
+	std::vector<Client> clients;
+	std::vector<Channel> channels;
 
-	//bool set_bind(); //one conn
 	void init_socket();
 	void create_socket();
 	void bind_socket();
 	void start_listening();
-	//void add_socket();
 
 	int prepareFdSet(const std::vector<int>& clients, fd_set *readfds);
 
@@ -30,6 +29,9 @@ private:
 
 	void processLine(int fd, const std::string& line);
 	void handleClientData(int fd, char* buffer, ssize_t bytes_read, std::string& lineBuffer);
+
+	std::string check_user();
+	std::string check_chanel();
 
 
 

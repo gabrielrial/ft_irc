@@ -293,3 +293,25 @@ int Server::prepareFdSet(const std::vector<int> &clients, fd_set *readfds)
 
 	return max_fd;
 }
+
+bool Server::check_user(RawTextLine &line)
+{
+	for (int i = 0; i < clients.size; i++)
+	{
+		if (line.getParams() == clients[i].getNickname())
+			return true;
+	}
+
+	return false;
+}
+
+bool Server::check_channel(RawTextLine &line)
+{
+	for (int i = 0; i < channel.size; i++)
+	{
+		if (line.getParams() == channel[i].getName())
+			return true;
+	}
+	
+	return false;
+}
