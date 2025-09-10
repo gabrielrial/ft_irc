@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(int fd, sockaddr_in &addr) : _client_fd(fd), _channel_amount(0),
+Client::Client(int fd) : _client_fd(fd), _channel_amount(0),
         _nickname("*"), _username(""), _realname(""), channels(0) {}
 
 Client::~Client()

@@ -21,7 +21,7 @@ class Client
  //     hostname
 
     public:
-        Client(int socket_fd, sockaddr_in &addr);
+        Client(int client_fd);
         ~Client();
         int get_channel_amt();
         int getFd() const;
