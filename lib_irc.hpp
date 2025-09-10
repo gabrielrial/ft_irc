@@ -10,6 +10,7 @@
 
 // CLASS INCLUDE
 
+#include "Client.hpp"
 #include "Server.hpp"
 #include "parser/Parser.hpp"
 
