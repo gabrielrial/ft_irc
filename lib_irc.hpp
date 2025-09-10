@@ -17,7 +17,7 @@
 
 // LIBS INCLUDE
 
-#include "cmd_list.hpp"
+//#include "cmd_list.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
