@@ -7,7 +7,8 @@
 #include <sys/select.h>
 #include <cstdio>
 #include <map>
-#include "../parser/parser.hpp"
+#include "../parser/Parser.hpp"
+#include "../channel/ChannelManager.hpp"
 
 #define RES	"\033[0m"
 #define RED	"\033[31m"
@@ -18,6 +19,7 @@
 const int PORT = 6667;
 const int BUFFER_SIZE = 512;
 static std::map<int, std::string> clientNick;
+static ChannelManager channelManager;
 
 /**
  * Creates a TCP/IPv4 socket with reuse address option
@@ -118,6 +120,58 @@ void processLine(int fd, const std::string& line)
 		std::string nick = clientNick[fd].empty() ? "*" : clientNick[fd];
 		std::string welcome = ":localhost 001 " + nick + " :Welcome to mini_server\r\n";
 		send(fd, welcome.c_str(), welcome.size(), 0);
+	}
+	else if (command == "JOIN" && !params.empty())
+	{
+		std::string channelName = params[0];
+		// Ensure channel name starts with #
+		if (channelName[0] != '#')
+			channelName = "#" + channelName;
+
+		Channel* channel = channelManager.getChannel(channelName);
+		if (!channel)
+		{
+			// Create new channel if it doesn't exist
+			channel = channelManager.createChannel(channelName);
+			// Make the first user an operator
+			channel->addUser(fd);
+			channel->addOperator(fd);
+		}
+		else
+		{
+			// Add user to existing channel
+			channel->addUser(fd);
+		}
+
+		// Send JOIN confirmation to the channel
+		std::string nick = clientNick[fd].empty() ? "*" : clientNick[fd];
+		std::string joinMsg = ":" + nick + " JOIN " + channelName + "\r\n";
+		channel->broadcast(joinMsg);
+		send(fd, joinMsg.c_str(), joinMsg.length(), 0);  // Send to the joining user too
+
+		// Send channel topic if it exists
+		if (!channel->getTopic().empty())
+		{
+			std::string topicMsg = ":localhost 332 " + nick + " " + channelName + " :" + channel->getTopic() + "\r\n";
+			send(fd, topicMsg.c_str(), topicMsg.length(), 0);
+		}
+
+		// Send names list
+		std::string namesMsg = ":localhost 353 " + nick + " = " + channelName + " :";
+		const std::vector<int>& users = channel->getUsers();
+		for (std::vector<int>::const_iterator it = users.begin(); it != users.end(); ++it)
+		{
+			std::string userNick = clientNick[*it].empty() ? "*" : clientNick[*it];
+			if (channel->isOperator(*it))
+				namesMsg += "@";
+			namesMsg += userNick + " ";
+		}
+		namesMsg += "\r\n";
+		send(fd, namesMsg.c_str(), namesMsg.length(), 0);
+
+		// Send end of names list
+		std::string endNamesMsg = ":localhost 366 " + nick + " " + channelName + " :End of /NAMES list.\r\n";
+		send(fd, endNamesMsg.c_str(), endNamesMsg.length(), 0);
 	}
 }
 
@@ -226,6 +280,8 @@ void serverLoop(int server_fd, struct sockaddr_in* address, socklen_t* addrlen)
 				if (bytes_read <= 0)
 				{
 					std::cout << "Client (fd=" << fd << ") disconnected.\n";
+					// Remove user from all channels
+					channelManager.removeUserFromAllChannels(fd);
 					close(fd);
 					it = clients.erase(it);
 					continue;
