@@ -17,6 +17,8 @@
 
 // LIBS INCLUDE
 
+#include "cmd_list.hpp"
+
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
