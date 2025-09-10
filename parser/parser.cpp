@@ -4,14 +4,16 @@ RawTextLine::RawTextLine() :
 	_prefix(""),
 	_command(""),
 	_params(),
-	_trailing("")
+	_trailing(""),
+	_separ_params()
 {}
 
 RawTextLine::RawTextLine(const std::string& raw) :
 	_prefix(""),
 	_command(""),
 	_params(),
-	_trailing("")
+	_trailing(""),
+	_separ_params()
 {
 	parse(raw);
 }
@@ -32,6 +34,7 @@ RawTextLine &RawTextLine::operator=(const RawTextLine &copy)
 		this->_command = copy._command;
 		this->_params = copy._params;
 		this->_trailing = copy._trailing;
+		this->_separ_params = copy._separ_params;
 	}
 	return (*this);
 }
@@ -54,6 +57,11 @@ std::vector<std::string> const	&RawTextLine::getParams() const
 std::string const	&RawTextLine::getTrailing() const
 {
 	return (this->_trailing);
+}
+
+std::vector<std::string> const	&RawTextLine::getSepParams() const
+{
+	return (this->_separ_params);
 }
 
 bool	RawTextLine::parse(const std::string& raw)
@@ -99,5 +107,34 @@ bool	RawTextLine::parse(const std::string& raw)
 		_params.push_back(raw.substr(pos, space - pos));
 		pos = space + 1;
 	}
+
+	_separ_params.clear();
+	for (std::vector<std::string>::const_iterator it = _params.begin(); it != _params.end(); ++it)
+	{
+		size_t start = 0;
+		size_t end = 0;
+		while ((end = it->find(',', start)) != std::string::npos)
+		{
+			_separ_params.push_back(it->substr(start, end - start));
+			start = end + 1;
+		}
+		_separ_params.push_back(it->substr(start));
+	}
 	return true;
 }
+
+// void RawTextLine::separateParams()
+// {
+// 	_separ_params.clear();
+// 	for (std::vector<std::string>::const_iterator it = _params.begin(); it != _params.end(); ++it)
+// 	{
+// 		size_t start = 0;
+// 		size_t end = 0;
+// 		while ((end = it->find(',', start)) != std::string::npos)
+// 		{
+// 			_separ_params.push_back(it->substr(start, end - start));
+// 			start = end + 1;
+// 		}
+// 		_separ_params.push_back(it->substr(start));
+// 	}
+// }
