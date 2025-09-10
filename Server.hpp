@@ -7,29 +7,28 @@
 #include <vector>
 #include <map>
 #include <poll.h>
-#include "Client.hpp"
-#include "Command.hpp"
 
 class Server
 {
 private:
 	int _socket;
-	sockaddr_in6 _hint;
-	std::vector<Client> _clients;
-	std::vector<pollfd> _fds;
-	std::map<std::string, std::string> _nicknames;  // nickname -> real name
-	std::map<std::string, std::vector<Client*> > _channels;  // channel -> clients
+	sockaddr_in _hint;
+	std::vector<int> clients;
 
 	//bool set_bind(); //one conn
 	void init_socket();
 	void create_socket();
 	void bind_socket();
 	void start_listening();
-	void add_socket();
+	//void add_socket();
 
-	void fillPollFd();
+	int prepareFdSet(const std::vector<int>& clients, fd_set *readfds);
 
-	void acceptClient();
+	void acceptNewClient();
+
+	void processLine(int fd, const std::string& line);
+	void handleClientData(int fd, char* buffer, ssize_t bytes_read, std::string& lineBuffer);
+
 
 
 public:

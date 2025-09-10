@@ -4,7 +4,9 @@ CPP = c++
 
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
-SRC = main.cpp Server.cpp Client.cpp
+SRC = main.cpp Server.cpp \
+		parser/parser.cpp
+
 OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
