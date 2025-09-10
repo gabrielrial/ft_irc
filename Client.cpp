@@ -1,29 +1,18 @@
 #include "Client.hpp"
 
-Client::Client(int fd, sockaddr_in &addr) : _socket_fd(fd), _channel_amount(0),
-        _server_addr(addr), _nickname("*"), _username(""), channels(0)
-{
-    char ip[INET_ADDRSTRLEN]; // standard IPv4 len
-    inet_ntop(AF_INET, &_server_addr.sin_addr, ip, sizeof(ip)); // converts binary IP address to readable, stored in ip
-    _ip = std::string(ip);
-    _port = ntohs(addr.sin_port);
-}
+Client::Client(int fd, sockaddr_in &addr) : _client_fd(fd), _channel_amount(0),
+        _nickname("*"), _username(""), _realname(""), channels(0) {}
 
 Client::~Client()
 {
-    if (_socket_fd > 0)
-        close(_socket_fd);
+    if (_client_fd > 0)
+        close(_client_fd);
     return ;
 }
 //              getters
 int Client::getFd() const
 {
-    return _socket_fd;
-}
-
-int Client::getPort() const
-{
-    return _port;
+    return _client_fd;
 }
 
 std::string Client::getIP() const
@@ -39,6 +28,11 @@ std::string Client::getNickname() const
 std::string Client::getUsername() const
 {
     return _username;
+}
+
+std::string Client::getRealname() const
+{
+    return _realname;
 }
 
 int Client::get_channel_amt()

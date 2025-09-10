@@ -11,15 +11,13 @@ class Channel;
 class Client
 {
     private:
-        int _socket_fd;
-        int _port;
-        int _channel_amount; // needed? - limit to 10
-        struct sockaddr_in _server_addr;
+        int _client_fd;
+        int _channel_amount;
         std::string _ip;
         std::string _nickname;
         std::string _username;
+        std::string _realname;
         std::vector<Channel*> channels;
- //?       std::string realname; // add in
  //     hostname
 
     public:
@@ -27,10 +25,10 @@ class Client
         ~Client();
         int get_channel_amt();
         int getFd() const;
-        int getPort() const;
         std::string getIP() const;
         std::string getNickname() const;
         std::string getUsername() const;
+        std::string getRealname() const;
         void setNickname(const std::string &nick);
         void setUsername(const std::string &user);
 };

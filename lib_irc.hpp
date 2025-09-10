@@ -7,9 +7,12 @@
 #define HOST_NAME_SIZE 128
 #define PASSWORD "irc_server"
 
+
 // CLASS INCLUDE
 
 #include "Server.hpp"
+#include "parser/Parser.hpp"
+
 
 // LIBS INCLUDE
 
@@ -22,10 +25,13 @@
 #include <string.h>
 #include <unistd.h>
 #include <string>
+#include <poll.h>
+#include <vector>
+#include <map>
 
 // CONFIGS
 
-#define PORT 54000
-#define IP "127.0.0.1"
+#define PORT 12345
+#define IP "127.0.0.5"
 
 #endif
