@@ -4,7 +4,7 @@
 #include "lib_irc.hpp"
 #include <netinet/in.h>
 #include <string>
-//#include "Channel.hpp"
+#include <vector>
 
 class Channel;
 
