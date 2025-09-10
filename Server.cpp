@@ -136,7 +136,6 @@ void Server::srv_run()
 		fd_set readfds;
 		int max_fd = prepareFdSet(clients, &readfds);
 
-		// Wait for activity
 		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
 		if (activity < 0)
 		{
@@ -144,8 +143,10 @@ void Server::srv_run()
 			break;
 		}
 
+		// New Clients
 		if (FD_ISSET(_socket, &readfds))
 			acceptNewClient();
+		
 		// Existing clients
 		for (std::vector<int>::iterator it = clients.begin(); it != clients.end();)
 		{
