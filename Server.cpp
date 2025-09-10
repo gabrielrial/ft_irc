@@ -206,6 +206,7 @@ void Server::processLine(int fd, const std::string &line)
 	const std::vector<std::string>& sep_params = parsed.getSepParams();
 	for (std::vector<std::string>::const_iterator it = sep_params.begin(); it != sep_params.end(); ++it)
 		std::cout << " '" << *it << "'";
+	std::cout << std::endl;
 	std::cout << RES << std::endl;
 	//std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
 	if (line.rfind("NICK ", 0) == 0)
