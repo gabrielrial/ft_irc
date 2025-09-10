@@ -1,5 +1,4 @@
-#ifndef LIB_IRC_HPP
-#define LIB_IRC_HPP
+#pragma once
 
 //  PARAMETERS
 
@@ -17,7 +16,7 @@
 
 // LIBS INCLUDE
 
-#include "cmd_list.hpp"
+//#include "cmd_list.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
@@ -36,5 +35,3 @@
 
 #define PORT 12345
 #define IP "127.0.0.5"
-
-#endif

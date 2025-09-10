@@ -1,5 +1,4 @@
-#ifndef CMD_LIST_HPP
-#define CMD_LIST_HPP
+#pragma once
 
 #include "../lib_irc.hpp"
 
@@ -54,5 +53,3 @@ void cmdNames(RawTextLine &line, Client &client);
 void cmdWho(RawTextLine &line, Client &client);
 void cmdWhois(RawTextLine &line, Client &client);
 void cmdWhowas(RawTextLine &line, Client &client);
-
-#endif

@@ -12,7 +12,7 @@ private:
 	std::string			_topic;
 	std::vector<Client>	_users;		// Store client file descriptors
 	std::vector<Client>	_operators;	// Store operator client file descriptors
-	std::map<Client, bool>	_userModes;	// Store user modes (e.g., voice status)
+	//std::map<Client, bool>	_userModes;	// Store user modes (e.g., voice status)
 
 public:
 	Channel(const std::string& name);

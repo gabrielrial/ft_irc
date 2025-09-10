@@ -191,7 +191,9 @@ void Server::processLine(int fd, const std::string &line)
 	std::string servername;
 	std::string realname;
 
+	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
+	//parsed.separateParams();
 	std::cout << RED << "  Prefix: '" << parsed.getPrefix() << "'" << std::endl;
 	std::cout << GRE << "  Command: '" << parsed.getCommand() << "'" << std::endl;
 	std::cout << BLU << "  Params:";
@@ -200,9 +202,12 @@ void Server::processLine(int fd, const std::string &line)
 		std::cout << " '" << *it << "'";
 	std::cout << std::endl;
 	std::cout << YEL << "  Trailing: '" << parsed.getTrailing() << "'" << std::endl;
+	std::cout << BLU << "  Separated Params:";
+	const std::vector<std::string>& sep_params = parsed.getSepParams();
+	for (std::vector<std::string>::const_iterator it = sep_params.begin(); it != sep_params.end(); ++it)
+		std::cout << " '" << *it << "'";
 	std::cout << RES << std::endl;
-	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
-	std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
+	//std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
 	if (line.rfind("NICK ", 0) == 0)
 	{
 		size_t end = line.find_first_of(" \r\n", 5);
