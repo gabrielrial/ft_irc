@@ -32,12 +32,13 @@ private:
 	void processLine(int fd, const std::string &line);
 	void handleClientData(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer);
 
-	bool check_client(RawTextLine &line);
-	bool check_channel(RawTextLine &line);
-
-public:
-	Server();
-	~Server();
+	
+	public:
+		Server();
+		~Server();
+	
+		void check_client(RawTextLine &line, std::vector<Client*> &client_list);
+		bool check_channel(RawTextLine &line);
 
 	void srv_run();
 };

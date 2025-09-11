@@ -13,6 +13,7 @@
 #include "parser/Parser.hpp"
 #include "server/Server.hpp"
 #include "client/Client.hpp"
+#include "cmds/cmds_list.hpp"
 
 
 // LIBS INCLUDE
@@ -38,3 +39,4 @@
 
 #define PORT 12345
 #define IP "10.14.1.6"
+#define SERVER_NAME "mini_irc"
