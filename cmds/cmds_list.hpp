@@ -1,6 +1,12 @@
 #ifndef CMD_LIST_HPP
 #define CMD_LIST_HPP
 
+#include "../lib_irc.hpp"
+
+#define MAX_CMDS 14
+
+bool run_cmds(RawTextLine &line, Client &client);
+
 /* CONNECTION / REGISTRATION **********************************************/
 /*
 /* NICK <nickname> → sets your nickname.
@@ -9,12 +15,10 @@
 /* QUIT [<message>] → disconnects from the server with an optional message.
 /* */
 
-#define NICK
-#define USER
-#define PASS
-#define QUIT
-
-/**************************************************************************/
+void cmdNick(RawTextLine &line, Client &client);
+void cmdUser(RawTextLine &line, Client &client);
+void cmdPass(RawTextLine &line, Client &client);
+void cmdQuit(RawTextLine &line, Client &client);
 
 /* MESSAGING **************************************************************/
 /*
@@ -22,10 +26,8 @@
 /* NOTICE	<target> <message> → like PRIVMSG but usually for automated messages (cannot trigger auto-replies).
 /* */
 
-#define PRIVMSG
-#define NOTICE
-
-/**************************************************************************/
+void cmdPrivmsg(RawTextLine &line, Client &client);
+void cmdNotice(RawTextLine &line, Client &client);
 
 /* CHANNEL ****************************************************************/
 /*
@@ -36,13 +38,11 @@
 /* NAMES [<channel>] → shows who is currently in the channel.
 /* */
 
-#define JOIN
-#define PART
-#define LIST
-#define TOPIC
-#define NAMES
-
-/**************************************************************************/
+void cmdJoin(RawTextLine &line, Client &client);
+void cmdPart(RawTextLine &line, Client &client);
+void cmdList(RawTextLine &line, Client &client);
+void cmdTopic(RawTextLine &line, Client &client);
+void cmdNames(RawTextLine &line, Client &client);
 
 /* USER INFO **************************************************************/
 /*
@@ -51,10 +51,8 @@
 /* WHOWAS <nick> → info about a disconnected nickname.
 /* */
 
-#define WHO
-#define WHOIS
-#define WHOWAS
-
-/**************************************************************************/
+void cmdWho(RawTextLine &line, Client &client);
+void cmdWhois(RawTextLine &line, Client &client);
+void cmdWhowas(RawTextLine &line, Client &client);
 
 #endif

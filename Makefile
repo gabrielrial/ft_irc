@@ -1,4 +1,4 @@
-NAME = ircserver
+NAME = ircserv
 
 CPP = c++
 
