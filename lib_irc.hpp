@@ -36,5 +36,5 @@
 
 // CONFIGS
 
-#define PORT 12345
-#define IP "10.14.1.6"
+#define PORT 6667
+#define IP "127.0.0.1"
