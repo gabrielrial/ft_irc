@@ -1,10 +1,10 @@
 #include "Server.hpp"
 
-#define RES	"\033[0m"
-#define RED	"\033[31m"
-#define GRE	"\033[32m"
-#define BLU	"\033[34m"
-#define YEL	"\033[33m"
+#define RES "\033[0m"
+#define RED "\033[31m"
+#define GRE "\033[32m"
+#define BLU "\033[34m"
+#define YEL "\033[33m"
 
 Server::Server()
 {
@@ -23,6 +23,7 @@ Server::Server()
 
 Server::~Server()
 {
+
 }
 
 /*
@@ -48,10 +49,10 @@ void Server::init_socket()
 
 /**
  * @brief Creates and configures a TCP socket for IPv6 communication
- * 
+ *
  * This method creates a new IPv6 TCP socket and sets the SO_REUSEADDR option
  * to allow reuse of local addresses. The socket is stored in the _socket member variable.
- * 
+ *
  * @throws std::runtime_error If socket creation fails
  * @throws std::runtime_error If setting socket options fails
  */
@@ -68,14 +69,14 @@ void Server::create_socket()
 
 /**
  * @brief Binds the server socket to a specific IPv6 address and port.
- * 
+ *
  * This function configures the socket address structure with IPv6 family,
  * converts the port to network byte order, and converts the IP address
  * from string format to binary form. Then binds the socket to the
  * specified address and port.
- * 
+ *
  * @throws std::runtime_error if the bind operation fails
- * 
+ *
  * @note Uses predefined PORT and IP constants/macros
  * @note The _hint structure is zeroed out before configuration
  */
@@ -92,13 +93,13 @@ void Server::bind_socket()
 
 /**
  * @brief Starts listening for incoming connections on the server socket
- * 
+ *
  * This method puts the server socket into listening mode, allowing it to accept
  * incoming client connections. The socket must be bound to an address before
  * calling this function.
- * 
+ *
  * @throws std::runtime_error if the listen() system call fails
- * 
+ *
  * @note Uses SOMAXCONN as the maximum number of pending connections in the queue
  */
 void Server::start_listening()
@@ -109,7 +110,7 @@ void Server::start_listening()
 
 /**
  * @brief Main server loop that handles client connections and communication
- * 
+ *
  * This function runs the server's main event loop using poll() to monitor file descriptors.
  * It continuously:
  * - Waits for events on the server socket and client sockets
@@ -117,15 +118,16 @@ void Server::start_listening()
  * - Reads incoming messages from connected clients
  * - Sends acknowledgment responses to clients
  * - Handles client disconnections by cleaning up resources
- * 
+ *
  * The function maintains a vector of pollfd structures (_fds) where index 0 is the server
  * socket and subsequent indices are client sockets. It also maintains a parallel vector
  * of Client objects (_clients) to track client state.
- * 
+ *
  * @note This function runs indefinitely until a poll() error occurs
  * @note The server socket is closed when the function exits
  * @warning This function blocks indefinitely waiting for socket events
  */
+
 void Server::srv_run()
 {
 	char buffer[BUFFER_SIZE];
@@ -134,36 +136,34 @@ void Server::srv_run()
 	while (true)
 	{
 		fd_set readfds;
-		int max_fd = prepareFdSet(clients, &readfds);
+		int max_fd = prepareFdSet(&readfds);
 
 		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
 		if (activity < 0)
 		{
 			std::cout << "srv_run() 1" << std::endl;
-			break;
 		}
-
 		// New Clients
 		if (FD_ISSET(_socket, &readfds))
 			acceptNewClient();
-		
+
 		// Existing clients
-		for (std::vector<int>::iterator it = clients.begin(); it != clients.end();)
+		for (size_t i = 0; i < clients.size(); )
 		{
-			int fd = *it;
+			int fd = clients[i].getFd();
+			std::cout << clients[i].getFd() << std::endl;
 			if (FD_ISSET(fd, &readfds))
 			{
 				ssize_t bytes_read = recv(fd, buffer, BUFFER_SIZE - 1, 0);
-				if (bytes_read <= 0)
+				if (bytes_read < 0)
 				{
 					std::cout << "Client (fd=" << fd << ") disconnected.\n";
-					close(fd);
-					it = clients.erase(it);
+					clients.erase(clients.begin() + i);
 					continue;
 				}
 				handleClientData(fd, buffer, bytes_read, lineBuffer[fd]);
 			}
-			++it;
+			++i;
 		}
 	}
 }
@@ -184,13 +184,9 @@ void Server::handleClientData(int fd, char *buffer, ssize_t bytes_read, std::str
 
 void Server::processLine(int fd, const std::string &line)
 {
-	static std::map<int, std::string> clientNick; // nick por fd
-	std::string nickname;
-	std::string username;
-	std::string hostname;
-	std::string servername;
-	std::string realname;
-
+	Client *client = findClient(fd);
+	
+	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
 	std::cout << RED << "  Prefix: '" << parsed.getPrefix() << "'" << std::endl;
 	std::cout << GRE << "  Command: '" << parsed.getCommand() << "'" << std::endl;
@@ -200,19 +196,13 @@ void Server::processLine(int fd, const std::string &line)
 		std::cout << " '" << *it << "'";
 	std::cout << std::endl;
 	std::cout << YEL << "  Trailing: '" << parsed.getTrailing() << "'" << std::endl;
-	std::cout << BLU << "  Separated Params:";
-	const std::vector<std::string>& sep_params = parsed.getSepParams();
-	for (std::vector<std::string>::const_iterator it = sep_params.begin(); it != sep_params.end(); ++it)
-		std::cout << " '" << *it << "'";
-	std::cout << std::endl;
 	std::cout << RES << std::endl;
-	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
 	if (line.rfind("NICK ", 0) == 0)
 	{
 		size_t end = line.find_first_of(" \r\n", 5);
-		nickname = line.substr(5, end - 5);
-		clientNick[fd] = nickname; // guardar nick por fd
+		std::string nickname = line.substr(5, end - 5);
+		client->setNickname(nickname);
 		std::cout << nickname << std::endl;
 	}
 	if (line.rfind("USER ", 0) == 0)
@@ -221,70 +211,81 @@ void Server::processLine(int fd, const std::string &line)
 		size_t end = line.find_first_of(" \r\n", start);
 		if (end == std::string::npos)
 			return;
-		username = line.substr(start, end - start);
+		std::string username = line.substr(start, end - start);
 
 		start = end + 1;
 		end = line.find_first_of(" \r\n", start);
 		if (end == std::string::npos)
 			return;
-		hostname = line.substr(start, end - start);
+		std::string hostname = line.substr(start, end - start);
 
 		start = end + 1;
 		end = line.find_first_of(" \r\n", start);
 		if (end == std::string::npos)
 			return;
-		servername = line.substr(start, end - start);
+		std::string servername = line.substr(start, end - start);
 
 		// Todo lo que sigue después de ':' es realname
 		size_t colon = line.find(':', start);
+		std::string realname;
 		if (colon != std::string::npos)
 			realname = line.substr(colon + 1);
 
+		client->setUsername(username);
 		// Usar el nick guardado si existe, sino '*'
-		nickname = clientNick.count(fd) ? clientNick[fd] : "*";
+		//	nickname = clientNick.count(fd) ? clientNick[fd] : "*";
 
-		// Enviar welcome 001
 		std::string welcome =
-			":localhost 001 " + nickname + " :Welcome to mini_server " + nickname + "\r\n";
+			":localhost 001 " + client->getNickname() + " :Welcome to mini_server " + client->getNickname() + "\r\n";
 
 		send(fd, welcome.c_str(), welcome.size(), 0);
 
 		// Debug
-		std::cout << "Username: " << username << std::endl;
-		std::cout << "Hostname: " << hostname << std::endl;
-		std::cout << "Servername: " << servername << std::endl;
-		std::cout << "Realname: " << realname << std::endl;
+		std::cout << "Username: " << client->getUsername() << std::endl;
+		// std::cout << "Hostname: " << client.g << std::endl;
+		//	std::cout << "Servername: " << client->getUsername << std::endl;
+		std::cout << "Realname: " << client->getRealname() << std::endl;
 		std::cout << "===============================================" << std::endl;
 	}
 }
 
 void Server::acceptNewClient()
 {
-	sockaddr_in clientAddr;
-	socklen_t clientSize = sizeof(clientAddr);
+    sockaddr_in clientAddr;
+    socklen_t clientSize = sizeof(clientAddr);
 
-	int new_fd = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
-	if (new_fd >= 0)
-	{
-		clients.push_back(new_fd);
-		std::cout << "New client connected (fd=" << new_fd << ")\n";
-	}
+    int new_fd = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
+    if (new_fd >= 0)
+    {
+        Client newClient(new_fd, clientAddr);
+        clients.push_back(newClient);  // sin punteros
+        std::cout << "New client connected (fd=" << new_fd << ")\n";
+    }
 }
 
-int Server::prepareFdSet(const std::vector<int> &clients, fd_set *readfds)
+Client *Server::findClient(int fd)
+{
+	for (size_t i = 0; i < clients.size(); i++)
+	{
+		if (fd == clients[i].getFd())
+			return &clients[i];
+	}
+	return NULL;
+}
+
+int Server::prepareFdSet(fd_set *readfds)
 {
 	FD_ZERO(readfds);
 	FD_SET(_socket, readfds);
 	int max_fd = _socket;
 
-	for (std::vector<int>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+	for (size_t i = 0; i < clients.size(); i++)
 	{
-		int fd = *it;
+		int fd = clients[i].getFd();
 		FD_SET(fd, readfds);
 		if (fd > max_fd)
 			max_fd = fd;
 	}
-
 	return max_fd;
 }
 

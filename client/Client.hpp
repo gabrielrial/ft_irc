@@ -10,17 +10,18 @@ class Channel;
 class Client
 {
     private:
-        int _client_fd;
-        int _channel_amount;
+        int         _client_fd;
+        int         _channel_amount;
         std::string _ip;
         std::string _nickname;
         std::string _username;
         std::string _realname;
+  //      bool        _registered;
         std::vector<Channel*> channels;
- //     hostname
+ //     hostname?
 
     public:
-        Client(int client_fd);
+        Client(int client_fd, sockaddr_in &addr);
         ~Client();
         int get_channel_amt();
         int getFd() const;
@@ -30,5 +31,6 @@ class Client
         std::string getRealname() const;
         void setNickname(const std::string &nick);
         void setUsername(const std::string &user);
+        void setRealname(const std::string &real);
 };
 

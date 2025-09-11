@@ -21,14 +21,14 @@ public:
 	~Channel();
 
 	// Basic channel operations
-	bool		addUser(int client_fd);
-	bool		removeUser(int client_fd);
-	bool		hasUser(int client_fd) const;
+	//bool		addUser(int client_fd);
+	//bool		removeUser(int client_fd);
+	//bool		hasUser(int client_fd) const;
 	
 	// Operator management
-	bool		addOperator(int client_fd);
-	bool		removeOperator(int client_fd);
-	bool		isOperator(int client_fd) const;
+	//bool		addOperator(int client_fd);
+	//bool		removeOperator(int client_fd);
+	//bool		isOperator(int client_fd) const;
 
 	// Getters
 	const std::string&		  getName() const;

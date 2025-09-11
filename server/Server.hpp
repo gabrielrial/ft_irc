@@ -23,9 +23,11 @@ private:
 	void bind_socket();
 	void start_listening();
 
-	int prepareFdSet(const std::vector<int> &clients, fd_set *readfds);
+	int prepareFdSet(fd_set *readfds);
 
 	void acceptNewClient();
+
+	Client* findClient(int fd);
 
 	void processLine(int fd, const std::string &line);
 	void handleClientData(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer);
