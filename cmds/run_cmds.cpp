@@ -26,13 +26,13 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
         }
     }
 }
-void cmdNick(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;}
+
 void cmdUser(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;}
-void cmdPass(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;}
+
 void cmdQuit(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;}
 void cmdNotice(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;};
 void cmdJoin(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
-void cmdPart(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
+
 void cmdList(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 void cmdTopic(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 void cmdNames(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
