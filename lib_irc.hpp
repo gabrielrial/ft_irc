@@ -9,9 +9,10 @@
 
 // CLASS INCLUDE
 
-#include "Client.hpp"
-#include "Server.hpp"
+#include "channel/Channel.hpp"
 #include "parser/Parser.hpp"
+#include "server/Server.hpp"
+#include "client/Client.hpp"
 
 
 // LIBS INCLUDE
@@ -30,8 +31,10 @@
 #include <poll.h>
 #include <vector>
 #include <map>
+#include <stdio.h>
+#include <errno.h>
 
 // CONFIGS
 
 #define PORT 12345
-#define IP "127.0.0.5"
+#define IP "10.14.1.6"

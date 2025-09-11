@@ -40,7 +40,7 @@ bool run_cmd(RawTextLine &line, Client &client)
 	{
 		if (line.getCommand() == cmds[i])
 		{
-			(this->*funcs[i])();
+			(this->*funcs[i])(client, line);
 			return;
 		}
 	}
