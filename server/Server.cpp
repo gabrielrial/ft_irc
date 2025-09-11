@@ -292,10 +292,10 @@ bool Server::check_client(RawTextLine &line)
 {
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		if (line.getParams() == clients[i].getNickname())
-			return true;
+		for (size_t a = 0; a < line.getSepParams().size(); a++)
+			if (line.getSepParams()[a] == clients[i].getNickname())
+				return true;
 	}
-
 	return false;
 }
 
@@ -303,10 +303,9 @@ bool Server::check_channel(RawTextLine &line)
 {
 	for (size_t i = 0; i < channels.size(); i++)
 	{
-		for (size_t a = 0; a < line.(); a++)
-			if (line.getParams()[] == channels[i].getName())
+		for (size_t a = 0; a < line.getSepParams().size(); a++)
+			if (line.getSepParams()[a] == channels[i].getName())
 				return true;
 	}
-	
 	return false;
 }
