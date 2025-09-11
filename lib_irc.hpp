@@ -13,6 +13,7 @@
 #include "parser/Parser.hpp"
 #include "server/Server.hpp"
 #include "client/Client.hpp"
+#include "cmds/cmds_list.hpp"
 
 
 // LIBS INCLUDE

@@ -151,7 +151,6 @@ void Server::srv_run()
 		for (size_t i = 0; i < clients.size(); )
 		{
 			int fd = clients[i].getFd();
-			std::cout << clients[i].getFd() << std::endl;
 			if (FD_ISSET(fd, &readfds))
 			{
 				ssize_t bytes_read = recv(fd, buffer, BUFFER_SIZE - 1, 0);
@@ -247,6 +246,7 @@ void Server::processLine(int fd, const std::string &line)
 		std::cout << "Realname: " << client->getRealname() << std::endl;
 		std::cout << "===============================================" << std::endl;
 	}
+	run_cmds(*this, parsed, *client);
 }
 
 void Server::acceptNewClient()
@@ -289,15 +289,16 @@ int Server::prepareFdSet(fd_set *readfds)
 	return max_fd;
 }
 
-bool Server::check_client(RawTextLine &line)
+void Server::check_client(RawTextLine &line, std::vector<Client*> &client_list)
 {
-	for (size_t i = 0; i < clients.size(); i++)
-	{
-		for (size_t a = 0; a < line.getSepParams().size(); a++)
-			if (line.getSepParams()[a] == clients[i].getNickname())
-				return true;
-	}
-	return false;
+    for (size_t i = 0; i < clients.size(); i++)
+    {
+        for (size_t a = 0; a < line.getSepParams().size(); a++)
+        {
+            if (line.getSepParams()[a] == clients[i].getNickname())
+                client_list.push_back(&clients[i]); // guardamos puntero al cliente
+        }
+    }
 }
 
 bool Server::check_channel(RawTextLine &line)
