@@ -1,10 +1,13 @@
 #pragma once
 
+#include "../lib_irc.hpp"
+
 #include <string>
 #include <vector>
 #include <map>
 #include <algorithm>
 #include <sys/socket.h>
+class Client;
 
 class Channel {
 private:
@@ -12,21 +15,20 @@ private:
 	std::string			_topic;
 	std::vector<Client>	_users;		// Store client file descriptors
 	std::vector<Client>	_operators;	// Store operator client file descriptors
-	std::map<Client, bool>	_userModes;	// Store user modes (e.g., voice status)
 
 public:
 	Channel(const std::string& name);
 	~Channel();
 
 	// Basic channel operations
-	bool		addUser(int client_fd);
-	bool		removeUser(int client_fd);
-	bool		hasUser(int client_fd) const;
+	//bool		addUser(int client_fd);
+	//bool		removeUser(int client_fd);
+	//bool		hasUser(int client_fd) const;
 	
 	// Operator management
-	bool		addOperator(int client_fd);
-	bool		removeOperator(int client_fd);
-	bool		isOperator(int client_fd) const;
+	//bool		addOperator(int client_fd);
+	//bool		removeOperator(int client_fd);
+	//bool		isOperator(int client_fd) const;
 
 	// Getters
 	const std::string&		  getName() const;

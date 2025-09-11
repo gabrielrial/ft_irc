@@ -1,5 +1,4 @@
-#ifndef LIB_IRC_HPP
-#define LIB_IRC_HPP
+#pragma once
 
 //  PARAMETERS
 
@@ -10,12 +9,16 @@
 
 // CLASS INCLUDE
 
-#include "Client.hpp"
-#include "Server.hpp"
+#include "channel/Channel.hpp"
 #include "parser/Parser.hpp"
+#include "server/Server.hpp"
+#include "client/Client.hpp"
+#include "cmds/cmds_list.hpp"
 
 
 // LIBS INCLUDE
+
+//#include "cmd_list.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
@@ -35,6 +38,5 @@
 // CONFIGS
 
 #define PORT 12345
-#define IP "127.0.0.5"
-
-#endif
+#define IP "10.14.1.6"
+#define SERVER_NAME "mini_irc"

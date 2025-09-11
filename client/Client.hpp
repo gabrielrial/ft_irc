@@ -1,7 +1,6 @@
-#ifndef CLIENT_HPP
-# define CLIENT_HPP
+#pragma once
 
-#include "lib_irc.hpp"
+#include "../lib_irc.hpp"
 #include <netinet/in.h>
 #include <string>
 #include <vector>
@@ -43,4 +42,7 @@ class Client
         int get_channel_amt();
 };
 
+<<<<<<< HEAD:Client.hpp
 #endif
+=======
+>>>>>>> main:client/Client.hpp

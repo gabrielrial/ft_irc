@@ -1,12 +1,15 @@
-NAME = ircserver
+NAME = ircserv
 
 CPP = c++
 
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
-SRC = main.cpp Server.cpp \
+SRC = main.cpp \
+		server/Server.cpp \
 		parser/parser.cpp \
- 		Client.cpp \
+ 		client/Client.cpp \
+		channel/Channel.cpp \
+		cmds/run_cmds.cpp cmds/cmdPrivmsg.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

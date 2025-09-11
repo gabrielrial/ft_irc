@@ -1,10 +1,10 @@
 #include "Server.hpp"
 
-#define RES	"\033[0m"
-#define RED	"\033[31m"
-#define GRE	"\033[32m"
-#define BLU	"\033[34m"
-#define YEL	"\033[33m"
+#define RES "\033[0m"
+#define RED "\033[31m"
+#define GRE "\033[32m"
+#define BLU "\033[34m"
+#define YEL "\033[33m"
 
 Server::Server()
 {
@@ -23,9 +23,7 @@ Server::Server()
 
 Server::~Server()
 {
-	for (size_t i = 0; i < clients.size(); ++i)
-		delete clients[i];
-	clients.clear();
+
 }
 
 /*
@@ -51,10 +49,10 @@ void Server::init_socket()
 
 /**
  * @brief Creates and configures a TCP socket for IPv6 communication
- * 
+ *
  * This method creates a new IPv6 TCP socket and sets the SO_REUSEADDR option
  * to allow reuse of local addresses. The socket is stored in the _socket member variable.
- * 
+ *
  * @throws std::runtime_error If socket creation fails
  * @throws std::runtime_error If setting socket options fails
  */
@@ -71,14 +69,14 @@ void Server::create_socket()
 
 /**
  * @brief Binds the server socket to a specific IPv6 address and port.
- * 
+ *
  * This function configures the socket address structure with IPv6 family,
  * converts the port to network byte order, and converts the IP address
  * from string format to binary form. Then binds the socket to the
  * specified address and port.
- * 
+ *
  * @throws std::runtime_error if the bind operation fails
- * 
+ *
  * @note Uses predefined PORT and IP constants/macros
  * @note The _hint structure is zeroed out before configuration
  */
@@ -95,13 +93,13 @@ void Server::bind_socket()
 
 /**
  * @brief Starts listening for incoming connections on the server socket
- * 
+ *
  * This method puts the server socket into listening mode, allowing it to accept
  * incoming client connections. The socket must be bound to an address before
  * calling this function.
- * 
+ *
  * @throws std::runtime_error if the listen() system call fails
- * 
+ *
  * @note Uses SOMAXCONN as the maximum number of pending connections in the queue
  */
 void Server::start_listening()
@@ -112,7 +110,7 @@ void Server::start_listening()
 
 /**
  * @brief Main server loop that handles client connections and communication
- * 
+ *
  * This function runs the server's main event loop using poll() to monitor file descriptors.
  * It continuously:
  * - Waits for events on the server socket and client sockets
@@ -120,11 +118,11 @@ void Server::start_listening()
  * - Reads incoming messages from connected clients
  * - Sends acknowledgment responses to clients
  * - Handles client disconnections by cleaning up resources
- * 
+ *
  * The function maintains a vector of pollfd structures (_fds) where index 0 is the server
  * socket and subsequent indices are client sockets. It also maintains a parallel vector
  * of Client objects (_clients) to track client state.
- * 
+ *
  * @note This function runs indefinitely until a poll() error occurs
  * @note The server socket is closed when the function exits
  * @warning This function blocks indefinitely waiting for socket events
@@ -138,45 +136,33 @@ void Server::srv_run()
 	while (true)
 	{
 		fd_set readfds;
-		int max_fd = prepareFdSet(clients, &readfds);
+		int max_fd = prepareFdSet(&readfds);
 
 		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
 		if (activity < 0)
 		{
-			if (errno == EINTR) {
-				continue; // just retry if interrupted
-			}
-			perror("select failed");
-			break;
+			std::cout << "srv_run() 1" << std::endl;
 		}
-
 		// New Clients
 		if (FD_ISSET(_socket, &readfds))
 			acceptNewClient();
-		
+
 		// Existing clients
-		for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end();)
+		for (size_t i = 0; i < clients.size(); )
 		{
-			int fd = (*it)->getFd();
-			if (fd < 0)
-			{
-				delete *it;
-				it = clients.erase(it);
-				continue;
-			}
+			int fd = clients[i].getFd();
 			if (FD_ISSET(fd, &readfds))
 			{
 				ssize_t bytes_read = recv(fd, buffer, BUFFER_SIZE - 1, 0);
-				if (bytes_read <= 0)
+				if (bytes_read < 0)
 				{
 					std::cout << "Client (fd=" << fd << ") disconnected.\n";
-					delete *it;
-					it = clients.erase(it);
+					clients.erase(clients.begin() + i);
 					continue;
 				}
 				handleClientData(fd, buffer, bytes_read, lineBuffer[fd]);
 			}
-			++it;
+			++i;
 		}
 	}
 }
@@ -197,20 +183,20 @@ void Server::handleClientData(int fd, char *buffer, ssize_t bytes_read, std::str
 
 void Server::processLine(int fd, const std::string &line)
 {
-	Client*	client = findClient(fd);
-
+	Client *client = findClient(fd);
+	
+	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
-	// std::cout << RED << "  Prefix: '" << parsed.getPrefix() << "'" << std::endl;
-	// std::cout << GRE << "  Command: '" << parsed.getCommand() << "'" << std::endl;
-	// std::cout << BLU << "  Params:";
-	// const std::vector<std::string>& params = parsed.getParams();
-	// for (std::vector<std::string>::const_iterator it = params.begin(); it != params.end(); ++it)
-	// 	std::cout << " '" << *it << "'";
-	// std::cout << std::endl;
-	// std::cout << YEL << "  Trailing: '" << parsed.getTrailing() << "'" << std::endl;
-	// std::cout << RES << std::endl;
-	// std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
-	// std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
+	std::cout << RED << "  Prefix: '" << parsed.getPrefix() << "'" << std::endl;
+	std::cout << GRE << "  Command: '" << parsed.getCommand() << "'" << std::endl;
+	std::cout << BLU << "  Params:";
+	const std::vector<std::string>& params = parsed.getParams();
+	for (std::vector<std::string>::const_iterator it = params.begin(); it != params.end(); ++it)
+		std::cout << " '" << *it << "'";
+	std::cout << std::endl;
+	std::cout << YEL << "  Trailing: '" << parsed.getTrailing() << "'" << std::endl;
+	std::cout << RES << std::endl;
+	std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
 	if (line.rfind("NICK ", 0) == 0)
 	{
 		size_t end = line.find_first_of(" \r\n", 5);
@@ -241,12 +227,13 @@ void Server::processLine(int fd, const std::string &line)
 		std::cout << "Realname: " << client->getRealname() << std::endl;
 		std::cout << "===============================================" << std::endl;
 	}
+	run_cmds(*this, parsed, *client);
 }
 
 void Server::acceptNewClient() //  rename
 {
-	sockaddr_in clientAddr;
-	socklen_t clientSize = sizeof(clientAddr);
+    sockaddr_in clientAddr;
+    socklen_t clientSize = sizeof(clientAddr);
 
 	int new_fd = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
 	if (new_fd < 0)
@@ -271,12 +258,12 @@ void Server::acceptNewClient() //  rename
 	std::cout << "New client connected (fd=" << new_fd << ")\n";
 }
 
-Client*	Server::findClient(int fd)
+Client *Server::findClient(int fd)
 {
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		if (fd == clients[i]->getFd())
-			return (clients[i]);
+		if (fd == clients[i].getFd())
+			return &clients[i];
 	}
 	return NULL;
 }
@@ -297,21 +284,41 @@ void	Server::welcome(Client client)
 //	_fds.push_back(srv_fd);
 // }
 
-int Server::prepareFdSet(const std::vector<Client*> &clients, fd_set *readfds)
+int Server::prepareFdSet(fd_set *readfds)
 {
 	FD_ZERO(readfds);
 	FD_SET(_socket, readfds);
-	int max_fd = -1;
-    if (_socket >= 0) {
-        FD_SET(_socket, readfds);
-        max_fd = _socket;
-    }
-	for (std::vector<Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+	int max_fd = _socket;
+
+	for (size_t i = 0; i < clients.size(); i++)
 	{
-		int fd = (*it)->getFd();
+		int fd = clients[i].getFd();
 		FD_SET(fd, readfds);
 		if (fd > max_fd)
 			max_fd = fd;
 	}
 	return max_fd;
+}
+
+void Server::check_client(RawTextLine &line, std::vector<Client*> &client_list)
+{
+    for (size_t i = 0; i < clients.size(); i++)
+    {
+        for (size_t a = 0; a < line.getSepParams().size(); a++)
+        {
+            if (line.getSepParams()[a] == clients[i].getNickname())
+                client_list.push_back(&clients[i]); // guardamos puntero al cliente
+        }
+    }
+}
+
+bool Server::check_channel(RawTextLine &line)
+{
+	for (size_t i = 0; i < channels.size(); i++)
+	{
+		for (size_t a = 0; a < line.getSepParams().size(); a++)
+			if (line.getSepParams()[a] == channels[i].getName())
+				return true;
+	}
+	return false;
 }
