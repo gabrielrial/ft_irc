@@ -12,9 +12,9 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
     };
 
     CmdFunc funcs[MAX_CMDS] = {
-        cmdNick, cmdUser, cmdPass, cmdQuit, cmdPrivmsg, cmdNotice,
-        cmdJoin, cmdPart, cmdList, cmdTopic, cmdNames, cmdWho,
-        cmdWhois, cmdWhowas
+        cmd_nick, cmd_user, cmd_pass, cmd_quit, cmd_privmsg, cmd_notice,
+        cmd_join, cmd_part, cmd_list, cmd_topic, cmd_names, cmd_who,
+        cmd_whois, cmd_whowas
     };
 
 
@@ -27,15 +27,14 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
     }
 }
 
-void cmdUser(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;}
+void cmd_user(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;}
 
-void cmdQuit(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;}
-void cmdNotice(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;};
-void cmdJoin(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
+void cmd_quit(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;}
+void cmd_notice(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;};
+void cmd_join(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 
-void cmdList(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
-void cmdTopic(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
-void cmdNames(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
-void cmdWho(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
-void cmdWhois(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
-void cmdWhowas(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
+void cmd_topic(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
+void cmd_names(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
+void cmd_who(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
+void cmd_whois(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
+void cmd_whowas(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};

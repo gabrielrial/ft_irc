@@ -1,6 +1,6 @@
 #include "../../lib_irc.hpp"
 
-void cmdPass(Server &server, RawTextLine &line, Client &client)
+void cmd_pass(Server &server, RawTextLine &line, Client &client)
 {
 	(void)server;
 	(void)line;

@@ -44,7 +44,7 @@ void cmd_notice(Server &server, RawTextLine &line, Client &client);
 void cmd_join(Server &server, RawTextLine &line, Client &client);
 void cmd_part(Server &server, RawTextLine &line, Client &client);
 void cmd_list(Server &server, RawTextLine &line, Client &client);
-void cmd_tpic(Server &server, RawTextLine &line, Client &client);
+void cmd_topic(Server &server, RawTextLine &line, Client &client);
 void cmd_names(Server &server, RawTextLine &line, Client &client);
 
 /* USER INFO

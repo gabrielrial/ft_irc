@@ -1,6 +1,6 @@
 #include "../../lib_irc.hpp"
 
-void cmdPrivmsg(Server &server, RawTextLine &line, Client &client)
+void cmd_privmsg(Server &server, RawTextLine &line, Client &client)
 {
 	std::vector<Client *> client_list;
 	server.check_client(line, client_list);

@@ -1,6 +1,6 @@
 #include "../../lib_irc.hpp"
 
-void cmdNick(Server &server, RawTextLine &line, Client &client)
+void cmd_nick(Server &server, RawTextLine &line, Client &client)
 {
 	(void)server;
 	(void)line;
