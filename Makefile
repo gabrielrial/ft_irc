@@ -6,7 +6,7 @@ CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
 SRC = main.cpp \
 		server/Server.cpp \
-		parser/parser.cpp \
+		parser/Parser.cpp \
  		client/Client.cpp \
 		channel/Channel.cpp
 
