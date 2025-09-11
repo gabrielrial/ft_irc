@@ -30,9 +30,9 @@ class Server
 
 		void acceptNewClient();
 		Client* findClient(int fd);
-		void processLine(int fd, const std::string& line);
-		void handleClientData(int fd, char* buffer, ssize_t bytes_read, std::string& lineBuffer);
-
+		void	welcome(Client client);
+		void	processLine(int fd, const std::string& line);
+		void	handleClientData(int fd, char* buffer, ssize_t bytes_read, std::string& lineBuffer);
 
 	public:
 		Server();

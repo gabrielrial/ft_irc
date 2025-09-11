@@ -93,11 +93,5 @@ bool    Client::isRegistered()
         return true;
     return false;
 }
-// bool add_to_channel(Client *client, Channel channel)
-// {
-//     // if channel exists, and client has requirements for entering channel met
-//     // add them to channel and
-//     // channel_amount++;
-// }
 
 

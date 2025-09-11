@@ -230,11 +230,8 @@ void Server::processLine(int fd, const std::string &line)
 		std::string realname;
 		if (colon != std::string::npos)
 			realname = line.substr(colon + 1);
-
-		std::string welcome =
-			":localhost 001 " + client->getNickname() + " :Welcome to mini_server " + client->getNickname() + "\r\n";
-
-		send(fd, welcome.c_str(), welcome.size(), 0);
+		if (client->isRegistered())
+			welcome(*client);
 
 		// Debug
 		std::cout << "Nickname: " << client->getNickname() << std::endl;
@@ -282,6 +279,12 @@ Client*	Server::findClient(int fd)
 			return (clients[i]);
 	}
 	return NULL;
+}
+
+void	Server::welcome(Client client)
+{
+	std::string welcome = ":localhost 001 " + client.getNickname() + " :Welcome to mini_server " + client.getNickname() + "\r\n";
+		send(client.getFd(), welcome.c_str(), welcome.size(), 0);
 }
 // void Server::add_socket()
 //{

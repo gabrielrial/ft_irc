@@ -43,6 +43,4 @@ class Client
         int get_channel_amt();
 };
 
-//bool add_to_channel(Client *client, Channel channel);
-
 #endif
