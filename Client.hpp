@@ -17,22 +17,30 @@ class Client
         std::string _nickname;
         std::string _username;
         std::string _realname;
-  //      bool        _registered;
+        std::string _hostname;
+        std::string _servername;
+        bool        _has_nick;
+        bool        _has_user;
         std::vector<Channel*> channels;
- //     hostname?
 
     public:
         Client(int client_fd, sockaddr_in &addr);
         ~Client();
-        int get_channel_amt();
+
         int getFd() const;
         std::string getIP() const;
         std::string getNickname() const;
         std::string getUsername() const;
         std::string getRealname() const;
+        std::string getHostname() const;
+        std::string getServername() const;
         void setNickname(const std::string &nick);
         void setUsername(const std::string &user);
         void setRealname(const std::string &real);
+        void setHostname(const std::string &user);
+        void setServername(const std::string &real);
+        bool isRegistered();
+        int get_channel_amt();
 };
 
 //bool add_to_channel(Client *client, Channel channel);

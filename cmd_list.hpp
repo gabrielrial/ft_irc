@@ -3,7 +3,7 @@
 
 /* CONNECTION / REGISTRATION **********************************************/
 /*
-/* NICK <nickname> → sets your nickname.
+/* NICK <nickname> → changes your nickname - must be initially set before joining server.
 /* USER <username> <hostname> <servername> <realname> → identifies the user when connecting.
 /* PASS <password> → (optional) if the server requires a password
 /* QUIT [<message>] → disconnects from the server with an optional message.
