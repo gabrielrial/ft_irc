@@ -29,6 +29,8 @@
 #include <poll.h>
 #include <vector>
 #include <map>
+#include <stdio.h>
+#include <errno.h>
 
 // CONFIGS
 

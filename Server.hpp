@@ -10,34 +10,35 @@
 #include <map>
 #include <poll.h>
 
+class Client;
+
 class Server
 {
-private:
-	int _socket;
-	sockaddr_in _hint;
-	std::vector<int> clients;
+	private:
+		int _socket;
+		sockaddr_in _hint;
+		std::vector<Client*> clients;
 
-	//bool set_bind(); //one conn
-	void init_socket();
-	void create_socket();
-	void bind_socket();
-	void start_listening();
-	//void add_socket();
+		//bool set_bind(); //one conn
+		void init_socket();
+		void create_socket();
+		void bind_socket();
+		void start_listening();
+		//void add_socket();
 
-	int prepareFdSet(const std::vector<int>& clients, fd_set *readfds);
+		int prepareFdSet(const std::vector<Client*>& clients, fd_set *readfds);
 
-	void acceptNewClient();
+		void acceptNewClient();
+		Client* findClient(int fd);
+		void processLine(int fd, const std::string& line);
+		void handleClientData(int fd, char* buffer, ssize_t bytes_read, std::string& lineBuffer);
 
-	void processLine(int fd, const std::string& line);
-	void handleClientData(int fd, char* buffer, ssize_t bytes_read, std::string& lineBuffer);
 
+	public:
+		Server();
+		~Server();
 
-
-public:
-	Server();
-	~Server();
-
-	void srv_run();
+		void srv_run();
 };
 
 #endif

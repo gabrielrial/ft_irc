@@ -1,12 +1,21 @@
 #include "Client.hpp"
 
-Client::Client(int fd) : _client_fd(fd), _channel_amount(0),
-        _nickname("*"), _username(""), _realname(""), channels(0) {}
+Client::Client(int fd, sockaddr_in &addr) : _client_fd(fd), _channel_amount(0),
+        _nickname("*"), _username(""), _realname(""), channels(0)
+{
+    char ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
+    _ip = ip;
+}
 
 Client::~Client()
 {
-    if (_client_fd > 0)
+    if (_client_fd >= 0)
+    {
+        std::cout << "Closing fd=" << _client_fd << std::endl;
         close(_client_fd);
+       _client_fd = -1;
+    }
     return ;
 }
 //              getters
@@ -50,7 +59,10 @@ void    Client::setUsername(const std::string &user)
 {
     this->_username = user;
 }
-
+void    Client::setRealname(const std::string &real)
+{
+    this->_realname = real;
+}
 // bool add_to_channel(Client *client, Channel channel)
 // {
 //     // if channel exists, and client has requirements for entering channel met
