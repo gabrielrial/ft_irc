@@ -7,7 +7,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 	if (checkJoinParams(line, client) == 1)
 		return ;
 	std::string channel_name = line.getParams()[0];
-	if (channel_name[0] != '#')
+	if (channel_name[0] != '#' && channel_name[0] != '&' && channel_name[0] != '+' && channel_name[0] != '!')
 		channel_name = "#" + channel_name;
 	server.addChannel(channel_name);
 	Channel* channel = server.getChannel(channel_name);
