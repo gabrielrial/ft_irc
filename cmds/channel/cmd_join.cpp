@@ -1,8 +1,8 @@
-#include "../lib_irc.hpp"
+#include "../../lib_irc.hpp"
 
 int	checkJoinParams(RawTextLine &line, Client &client);
 
-void	cmdJoin(Server &server, RawTextLine &line, Client &client)
+void	cmd_join(Server &server, RawTextLine &line, Client &client)
 {
 	if (checkJoinParams(line, client) == 1)
 		return ;
