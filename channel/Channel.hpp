@@ -41,4 +41,6 @@ public:
 
 	// Broadcast message to all users in channel
 	//void	broadcast(const std::string& message, int sender_fd = -1);
+	
+	void		names_list(const Channel *chan, const Client &client) const;
 };

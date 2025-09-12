@@ -44,7 +44,6 @@ private:
 		Channel*	getChannel(const std::string &ch_name);
 		void		debugPrintChan() const;
 		void		debug_print_chan_users(const Channel& chan) const;
-		void		names_list(const Channel *chan, const Client &client) const;
 
 	void srv_run();
 };
