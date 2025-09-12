@@ -62,10 +62,10 @@ const std::string& Channel::getName() const
 	return _name;
 }
 
-const std::string& Channel::getTopic() const
-{
-	return _topic;
-}
+// const std::string& Channel::getTopic() const
+// {
+// 	return _topic;
+// }
 
 const std::vector<Client>& Channel::getUsers() const
 {
@@ -77,10 +77,10 @@ const std::vector<Client>& Channel::getUsers() const
 //	return _operators;
 //}
 
-void Channel::setTopic(const std::string& topic)
-{
-	_topic = topic;
-}
+// void Channel::setTopic(const std::string& topic)
+// {
+// 	_topic = topic;
+// }
 
 //void Channel::broadcast(const std::string& message, int sender_fd)
 //{
