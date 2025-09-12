@@ -15,6 +15,7 @@ private:
 	std::string			_topic;
 	std::vector<Client>	_users;		// Store client file descriptors
 	std::vector<Client>	_operators;	// Store operator client file descriptors
+	unsigned int		_userCount;	// Number of users in the channel
 
 public:
 	Channel(const std::string& name);
@@ -35,6 +36,7 @@ public:
 	const std::string&		  getTopic() const;
 	const std::vector<int>&	 getUsers() const;
 	const std::vector<int>&	 getOperators() const;
+	unsigned int			 get_UserCount() const;
 
 	// Setters
 	void	setTopic(const std::string& topic);

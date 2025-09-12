@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name) : _name(name), _topic("")
+Channel::Channel(const std::string& name) : _name(name), _topic(""), _userCount(0)
 {}
 
 Channel::~Channel()
@@ -65,6 +65,11 @@ const std::string& Channel::getName() const
 const std::string& Channel::getTopic() const
 {
 	return _topic;
+}
+
+unsigned int Channel::get_UserCount() const
+{
+	return _users.size();
 }
 
 //const std::vector<int>& Channel::getUsers() const

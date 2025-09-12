@@ -34,6 +34,7 @@
 #include <map>
 #include <stdio.h>
 #include <errno.h>
+#include <sstream>
 
 // CONFIGS
 

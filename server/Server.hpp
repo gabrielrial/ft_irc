@@ -42,6 +42,9 @@ private:
 
 		void		addChannel(const std::string &ch_name);
 		Channel*	getChannel(const std::string &ch_name);
+
+		const std::vector<Channel>& get_vector_channels() const;
+
 		void		debugPrintChan() const;
 
 	void srv_run();
