@@ -103,7 +103,7 @@ void	Channel::names_list(const Channel *chan, const Client &client) const
 	{
 		if (i > 0)
 			user_list += " ";
-		user_list += users[i].getNickname();
+		user_list += users[i].get_nickname();
 	}
 	std::string names_reply = ":localhost 353 " + client.getNickname() + " = " + 
 							chan->getName() + " :" + user_list + "\r\n"; //RPL_NAMREPLY

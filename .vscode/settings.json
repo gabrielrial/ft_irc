@@ -50,8 +50,9 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "cinttypes": "cpp",
-        "typeinfo": "cpp"
-	},
+        "typeinfo": "cpp",
+        "*.tcc": "cpp"
+    },
 	"workbench.colorCustomizations": {
 		"activityBar.activeBackground": "#66e59a",
 		"activityBar.background": "#66e59a",

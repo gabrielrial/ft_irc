@@ -39,27 +39,27 @@ RawTextLine &RawTextLine::operator=(const RawTextLine &copy)
 	return (*this);
 }
 
-std::string const	&RawTextLine::getPrefix() const
+std::string const	&RawTextLine::get_prefix() const
 {
 	return (this->_prefix);
 }
 
-std::string const	&RawTextLine::getCommand() const
+std::string const	&RawTextLine::get_command() const
 {
 	return (this->_command);
 }
 
-std::vector<std::string> const	&RawTextLine::getParams() const
+std::vector<std::string> const	&RawTextLine::get_params() const
 {
 	return (this->_params);
 }
 
-std::string const	&RawTextLine::getTrailing() const
+std::string const	&RawTextLine::get_trailing() const
 {
 	return (this->_trailing);
 }
 
-std::vector<std::string> const	&RawTextLine::getSepParams() const
+std::vector<std::string> const	&RawTextLine::get_sep_params() const
 {
 	return (this->_separ_params);
 }

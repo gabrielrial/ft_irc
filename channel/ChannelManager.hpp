@@ -14,7 +14,7 @@ public:
 
 	// Channel management
 	Channel*	createChannel(const std::string& name);
-	Channel*	getChannel(const std::string& name);
+	Channel*	get_channel(const std::string& name);
 	bool		deleteChannel(const std::string& name);
 	bool		channelExists(const std::string& name) const;
 	
@@ -22,5 +22,5 @@ public:
 	void		removeUserFromAllChannels(int client_fd);
 	
 	// Getters
-	const std::map<std::string, Channel*>& getChannels() const;
+	const std::map<std::string, Channel*>& get_channels() const;
 };

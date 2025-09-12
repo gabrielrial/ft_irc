@@ -20,7 +20,7 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
 
     for (int i = 0; i < MAX_CMDS; i++)
     {
-        if (line.getCommand() == cmds[i])
+        if (line.get_command() == cmds[i])
         {
             funcs[i](server, line, client);
         }
