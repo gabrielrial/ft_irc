@@ -20,11 +20,11 @@ public:
 	RawTextLine(const RawTextLine &copy);
 	RawTextLine	&operator=(const RawTextLine &copy);
 
-	std::string const				&getPrefix() const;
-	std::string const				&getCommand() const;
-	std::vector<std::string> const	&getParams() const;
-	std::string const				&getTrailing() const;
-	std::vector<std::string> const	&getSepParams() const;
+	std::string const				&get_prefix() const;
+	std::string const				&get_command() const;
+	std::vector<std::string> const	&get_params() const;
+	std::string const				&get_trailing() const;
+	std::vector<std::string> const	&get_sep_params() const;
 
 	bool parse(const std::string& raw);
 };

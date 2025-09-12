@@ -4,9 +4,9 @@ void cmd_pass(Server &server, RawTextLine &line, Client &client)
 {
 	(void)server;
 	(void)line;
-    if (line.getSepParams().empty())
+    if (line.get_sep_params().empty())
         return;
-    if (line.getSepParams()[0] == server.getPassword())
+    if (line.get_sep_params()[0] == server.get_password())
 		return;
 	else
 	{

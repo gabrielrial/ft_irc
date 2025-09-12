@@ -25,15 +25,15 @@ private:
 	void bind_socket();
 	void start_listening();
 
-	int prepareFdSet(fd_set *readfds);
+	int prepare_fd_set(fd_set *readfds);
 	std::vector<int> _fdsToClose;
 
-	void acceptNewClient();
-	Client* findClient(int fd);
+	void register_client();
+	Client* find_client(int fd);
 	void	welcome(Client client);
 
-	void processLine(int fd, const std::string &line);
-	void handleClientData(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer);
+	void process_line(int fd, const std::string &line);
+	void handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer);
 
 	
 	public:
@@ -43,11 +43,11 @@ private:
 		void check_client(RawTextLine &line, std::vector<Client*> &client_list);
 		bool check_channel(RawTextLine &line);
 
-		void		addChannel(const std::string &ch_name);
-		Channel*	getChannel(const std::string &ch_name);
-		std::string getPassword() const;
-		void 		removeClosedClients(std::string lineBuffer[]);
-		void		debugPrintChan() const;
+		void		add_channel(const std::string &ch_name);
+		Channel*	get_channel(const std::string &ch_name);
+		std::string get_password() const;
+		void 		remove_closed_clients(std::string lineBuffer[]);
+		void		debug_print_chan() const;
 		void		debug_print_chan_users(const Channel& chan) const;
 
 	void srv_run();
