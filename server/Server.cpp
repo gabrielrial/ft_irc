@@ -247,7 +247,7 @@ void Server::processLine(int fd, const std::string &line)
 		std::cout << "===============================================" << std::endl;
 	}
 	run_cmds(*this, parsed, *client);
-	this->debugPrintChannels();
+	this->debugPrintChan();
 }
 
 void Server::acceptNewClient()
