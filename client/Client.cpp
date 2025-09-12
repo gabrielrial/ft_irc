@@ -62,3 +62,8 @@ void Client::setRealname(const std::string &real)
 //     // add them to channel and
 //     // channel_amount++;
 // }
+
+bool Client::operator==(const Client& other) const
+{
+	return this->getFd() == other.getFd();
+}

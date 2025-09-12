@@ -32,5 +32,6 @@ class Client
         void setNickname(const std::string &nick);
         void setUsername(const std::string &user);
         void setRealname(const std::string &real);
+		bool operator==(const Client& other) const;
 };
 

@@ -40,5 +40,8 @@ private:
 		void check_client(RawTextLine &line, std::vector<Client*> &client_list);
 		bool check_channel(RawTextLine &line);
 
+		void		addChannel(const std::string &ch_name);
+		Channel*	getChannel(const std::string &ch_name);
+
 	void srv_run();
 };

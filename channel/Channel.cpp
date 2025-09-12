@@ -6,14 +6,14 @@ Channel::Channel(const std::string& name) : _name(name), _topic("")
 Channel::~Channel()
 {}
 
-//bool Channel::addUser(int client_fd)
-//{
-//	if (hasUser(client_fd))
-//		return false;
-//	_users.push_back(client_fd);
-//	_userModes[client_fd] = false; // Initialize with no special modes
-//	return true;
-//}
+bool Channel::addUser(Client client)
+{
+	if (hasUser(client))
+		return false;
+	_users.push_back(client);
+	//_userModes[client] = false; // Initialize with no special modes
+	return true;
+}
 
 //bool Channel::removeUser(int client_fd)
 //{
@@ -29,18 +29,18 @@ Channel::~Channel()
 //	return true;
 //}
 //
-//bool Channel::hasUser(int client_fd) const
-//{
-//	return std::find(_users.begin(), _users.end(), client_fd) != _users.end();
-//}
-//
-//bool Channel::addOperator(int client_fd)
-//{
-//	if (!hasUser(client_fd) || isOperator(client_fd))
-//		return false;
-//	_operators.push_back(client_fd);
-//	return true;
-//}
+bool Channel::hasUser(Client client) const
+{
+	return std::find(_users.begin(), _users.end(), client) != _users.end();
+}
+
+// bool Channel::addOperator(int client_fd)
+// {
+// 	if (!hasUser(client_fd) || isOperator(client_fd))
+// 		return false;
+// 	_operators.push_back(client_fd);
+// 	return true;
+// }
 //
 //bool Channel::removeOperator(int client_fd)
 //{

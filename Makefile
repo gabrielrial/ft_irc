@@ -9,7 +9,9 @@ SRC = main.cpp \
 		parser/Parser.cpp \
  		client/Client.cpp \
 		channel/Channel.cpp \
-		cmds/run_cmds.cpp cmds/cmdPrivmsg.cpp
+		cmds/run_cmds.cpp \
+		cmds/cmdPrivmsg.cpp \
+		cmds/cmdJoin.cpp
 
 OBJ = $(SRC:.cpp=.o)
 
