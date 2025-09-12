@@ -7,7 +7,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 	if (checkJoinParams(line, client) == 1)
 		return ;
 	std::string channel_name = line.getParams()[0];
-	if (channel_name[0] != '#')
+	if (channel_name[0] != '#' && channel_name[0] != '&' && channel_name[0] != '+' && channel_name[0] != '!')
 		channel_name = "#" + channel_name;
 	server.addChannel(channel_name);
 	Channel* channel = server.getChannel(channel_name);
@@ -16,15 +16,17 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		channel->addUser(client);
 		std::string joinMsg = ":" + client.getNickname() + " JOIN " + channel_name + "\r\n";
 		send(client.getFd(), joinMsg.c_str(), joinMsg.length(), 0);
+		//for (size_t i = 0; i < server.clients.size(); i++)
+		//server.names_list(channel, client);
+		channel->names_list(channel, client);
 	}
-		return;
 }
 
 int	checkJoinParams(RawTextLine &line, Client &client)
 {
 	if (line.getParams().empty())
 	{
-		std::string error = ":localhost 461 " + client.getNickname() + " JOIN :Not enough parameters\r\n";
+		std::string error = ":localhost 461 " + client.getNickname() + " JOIN :Not enough parameters\r\n"; //ERR_NEEDMOREPARAMS
 		send(client.getFd(), error.c_str(), error.length(), 0);
 		return 1;
 	}

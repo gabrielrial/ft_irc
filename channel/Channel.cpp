@@ -62,25 +62,25 @@ const std::string& Channel::getName() const
 	return _name;
 }
 
-const std::string& Channel::getTopic() const
-{
-	return _topic;
-}
+// const std::string& Channel::getTopic() const
+// {
+// 	return _topic;
+// }
 
-//const std::vector<int>& Channel::getUsers() const
-//{
-//	return _users;
-//}
+const std::vector<Client>& Channel::getUsers() const
+{
+	return _users;
+}
 //
 //const std::vector<int>& Channel::getOperators() const
 //{
 //	return _operators;
 //}
 
-void Channel::setTopic(const std::string& topic)
-{
-	_topic = topic;
-}
+// void Channel::setTopic(const std::string& topic)
+// {
+// 	_topic = topic;
+// }
 
 //void Channel::broadcast(const std::string& message, int sender_fd)
 //{
@@ -92,3 +92,26 @@ void Channel::setTopic(const std::string& topic)
 //		}
 //	}
 //}
+
+void	Channel::names_list(const Channel *chan, const Client &client) const
+{
+	if (!chan)
+		return;
+	const std::vector<Client> &users = chan->getUsers();
+	std::string user_list;
+	for (size_t i = 0; i < users.size(); ++i)
+	{
+		if (i > 0)
+			user_list += " ";
+		user_list += users[i].getNickname();
+	}
+	std::string namesReply = ":localhost 353 " + client.getNickname() + " = " + 
+							chan->getName() + " :" + user_list + "\r\n"; //RPL_NAMREPLY
+	send(client.getFd(), namesReply.c_str(), namesReply.length(), 0);
+	std::string endNames = ":localhost 366 " + client.getNickname() + " " + 
+						chan->getName() + " :End of /NAMES list.\r\n"; //RPL_ENDOFNAMES
+	for (size_t i = 0; i < users.size(); ++i)
+	{
+		send(client.getFd(), endNames.c_str(), endNames.length(), 0);
+	}
+}

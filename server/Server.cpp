@@ -400,10 +400,25 @@ void Server::debugPrintChan() const
 		const Channel& chan = channels[i];
 		std::cout << "Channel #" << i + 1 << ":" << std::endl;
 		std::cout << "  Name: " << chan.getName() << std::endl;
+		debug_print_chan_users(chan);
 	std::cout << "----------------------------------------" << std::endl;
 	}
 	std::cout << "=== End Channel Debug Info ===" << std::endl;
 }
+
+void Server::debug_print_chan_users(const Channel &chan) const
+{
+	std::cout << "  Users:" << std::endl;
+	const std::vector<Client>& users = chan.getUsers();
+	if (users.empty())
+		std::cout << "  (no users)" << std::endl;
+	else
+	{
+		for (size_t i = 0; i < users.size(); i++)
+			std::cout << "  - " << users[i].getNickname() << std::endl;
+	}
+}
+
 
 std::string Server::getPassword() const
 {

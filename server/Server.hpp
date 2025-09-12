@@ -48,6 +48,7 @@ private:
 		std::string getPassword() const;
 		void 		removeClosedClients(std::string lineBuffer[]);
 		void		debugPrintChan() const;
+		void		debug_print_chan_users(const Channel& chan) const;
 
 	void srv_run();
 };
