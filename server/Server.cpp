@@ -186,7 +186,7 @@ void Server::process_line(int fd, const std::string &line)
 {
 	Client *client = find_client(fd);
 
-	if (line.rfind("PASS ", 0) == 0)
+/* 	if (line.rfind("PASS ", 0) == 0)
 	{
 		std::string pass = line.substr(5);
 		if (client->has_pass())
@@ -212,7 +212,7 @@ void Server::process_line(int fd, const std::string &line)
 		_fdsToClose.push_back(fd);
 		std::cout << "client (fd = " << fd << ") disconnected. Incorrect password entered." << std::endl;
 		return;
-	}
+	} */
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
 	// std::cout << RED << "  Prefix: '" << parsed.get_prefix() << "'" << std::endl;
@@ -280,7 +280,9 @@ void Server::register_client()
 	else
 		c->set_hostname("unknown");
 	char serverName[256];
-	if (get_hostname(serverName, sizeof(serverName)) != 0)
+//	if (get_hostname(serverName, sizeof(serverName)) != 0)
+//		strcpy(serverName, "localhost");
+	if (c->get_hostname().empty())
 		strcpy(serverName, "localhost");
 	c->set_servername(serverName);
 	clients.push_back(*c);
