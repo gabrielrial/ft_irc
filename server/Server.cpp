@@ -247,6 +247,7 @@ void Server::processLine(int fd, const std::string &line)
 		std::cout << "===============================================" << std::endl;
 	}
 	run_cmds(*this, parsed, *client);
+	this->debugPrintChannels();
 }
 
 void Server::acceptNewClient()
@@ -301,17 +302,6 @@ void Server::check_client(RawTextLine &line, std::vector<Client*> &client_list)
     }
 }
 
-// bool Server::check_channel(RawTextLine &line)
-// {
-// 	for (size_t i = 0; i < channels.size(); i++)
-// 	{
-// 		for (size_t a = 0; a < line.getSepParams().size(); a++)
-// 			if (line.getSepParams()[a] == channels[i].getName())
-// 				return true;
-// 	}
-// 	return false;
-// }
-
 bool Server::check_channel(RawTextLine &line)
 {
     const std::vector<std::string>& channels_to_check = line.getSepParams();
@@ -343,4 +333,20 @@ void Server::addChannel(const std::string& name)
 	}
 	Channel newChannel(name);
 	channels.push_back(newChannel);
+}
+
+void Server::debugPrintChan() const
+{
+	std::cout << "\n=== Channel Debug Information ===" << std::endl;
+	if (channels.empty())
+		std::cout << "No channels." << std::endl;
+	for (size_t i = 0; i < channels.size(); i++)
+	{
+		const Channel& chan = channels[i];
+		std::cout << "Channel #" << i + 1 << ":" << std::endl;
+		std::cout << "  Name: " << chan.getName() << std::endl;
+		std::cout << "  Topic: " << chan.getTopic() << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
+	}
+	std::cout << "=== End Channel Debug Info ===" << std::endl;
 }

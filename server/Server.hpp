@@ -42,6 +42,7 @@ private:
 
 		void		addChannel(const std::string &ch_name);
 		Channel*	getChannel(const std::string &ch_name);
+		void		debugPrintChan() const;
 
 	void srv_run();
 };
