@@ -1,6 +1,8 @@
 #include "../../lib_irc.hpp"
 
-int	checkJoinParams(RawTextLine &line, Client &client);
+void	cmd_join(Server &server, RawTextLine &line, Client &client);
+int		checkJoinParams(RawTextLine &line, Client &client);
+void	broadcast_listupdate(const Channel *chan, const Client &client);
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client)
 {
@@ -16,7 +18,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		channel->addUser(client);
 		std::string joinMsg = ":" + client.get_nickname() + " JOIN " + channel_name + "\r\n";
 		send(client.getFd(), joinMsg.c_str(), joinMsg.length(), 0);
-		channel->names_list(channel, client);
+		broadcast_listupdate(channel, client);
 	}
 }
 
@@ -29,4 +31,33 @@ int	checkJoinParams(RawTextLine &line, Client &client)
 		return 1;
 	}
 	return 0;
+}
+
+void	broadcast_listupdate(const Channel *chan, const Client &client)
+{
+	if (!chan)
+		return;
+	const std::vector<Client> &users = chan->getUsers();
+	std::string user_list;
+	for (size_t i = 0; i < users.size(); ++i)
+	{
+		if (i > 0)
+			user_list += " ";
+		user_list += users[i].get_nickname();
+	}
+	char serverName[256];
+	if (gethostname(serverName, sizeof(serverName)) != 0)
+		strcpy(serverName, "localhost");
+	std::string names_reply = ":" + std::string(serverName) + " 353 " + 
+								client.get_nickname() + " = " + chan->getName() + 
+								" :" + user_list + "\r\n"; //RPL_NAMREPLY
+	std::string end_names = ":" + std::string(serverName) + " 366 " + 
+							client.get_nickname() + " " + chan->getName() + 
+							" :End of /NAMES list.\r\n"; //RPL_ENDOFNAMES
+	for (size_t i = 0; i < users.size(); ++i)
+	{
+		const Client &target = users[i];
+		send(target.getFd(), names_reply.c_str(), names_reply.length(), 0);
+		send(target.getFd(), end_names.c_str(), end_names.length(), 0);
+	}
 }
