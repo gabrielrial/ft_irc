@@ -202,7 +202,6 @@ void Server::processLine(int fd, const std::string &line)
 		size_t end = line.find_first_of(" \r\n", 5);
 		std::string nickname = line.substr(5, end - 5);
 		client->setNickname(nickname);
-		std::cout << nickname << std::endl;
 	}
 	if (line.rfind("USER ", 0) == 0)
 	{
@@ -211,57 +210,53 @@ void Server::processLine(int fd, const std::string &line)
 		if (end == std::string::npos)
 			return;
 		std::string username = line.substr(start, end - start);
+		client->setUsername(username);
 
-		start = end + 1;
-		end = line.find_first_of(" \r\n", start);
-		if (end == std::string::npos)
-			return;
-		std::string hostname = line.substr(start, end - start);
-
-		start = end + 1;
-		end = line.find_first_of(" \r\n", start);
-		if (end == std::string::npos)
-			return;
-		std::string servername = line.substr(start, end - start);
-
-		// Todo lo que sigue después de ':' es realname
 		size_t colon = line.find(':', start);
 		std::string realname;
 		if (colon != std::string::npos)
 			realname = line.substr(colon + 1);
-
-		client->setUsername(username);
-		// Usar el nick guardado si existe, sino '*'
-		//	nickname = clientNick.count(fd) ? clientNick[fd] : "*";
-
-		std::string welcome =
-			":localhost 001 " + client->getNickname() + " :Welcome to mini_server " + client->getNickname() + "\r\n";
-
-		send(fd, welcome.c_str(), welcome.size(), 0);
+		if (client->isRegistered())
+			welcome(*client);
 
 		// Debug
-		//std::cout << "Username: " << client->getUsername() << std::endl;
-		// std::cout << "Hostname: " << client.g << std::endl;
-		//	std::cout << "Servername: " << client->getUsername << std::endl;
-		//std::cout << "Realname: " << client->getRealname() << std::endl;
-		//std::cout << "===============================================" << std::endl;
+		std::cout << "Nickname: " << client->getNickname() << std::endl;
+		std::cout << "Username: " << client->getUsername() << std::endl;
+		std::cout << "Hostname: " << client->getHostname() << std::endl;
+		std::cout << "Servername: " << client->getServername() << std::endl;
+		std::cout << "Realname: " << client->getRealname() << std::endl;
+		std::cout << "===============================================" << std::endl;
 	}
 	run_cmds(*this, parsed, *client);
 	this->debugPrintChan();
 }
 
-void Server::acceptNewClient()
+void Server::acceptNewClient() //  rename
 {
     sockaddr_in clientAddr;
     socklen_t clientSize = sizeof(clientAddr);
 
-    int new_fd = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
-    if (new_fd >= 0)
-    {
-        Client newClient(new_fd, clientAddr);
-        clients.push_back(newClient);  // sin punteros
-        std::cout << "New client connected (fd=" << new_fd << ")\n";
-    }
+	int new_fd = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
+	if (new_fd < 0)
+	{
+		perror("accept");
+		return ;
+	}
+
+	Client *c = new Client(new_fd, clientAddr);
+	char host[NI_MAXHOST];
+	char serv[NI_MAXSERV];
+	if (getnameinfo((struct sockaddr*)&clientAddr, sizeof(clientAddr),
+                     host, sizeof(host), serv, sizeof(serv), 0) == 0)
+		c->setHostname(host);
+	else
+		c->setHostname("unknown");
+	char serverName[256];
+	if (gethostname(serverName, sizeof(serverName)) != 0)
+		strcpy(serverName, "localhost");
+	c->setServername(serverName);
+	clients.push_back(*c);
+	std::cout << "New client connected (fd=" << new_fd << ")\n";
 }
 
 Client *Server::findClient(int fd)
@@ -273,6 +268,22 @@ Client *Server::findClient(int fd)
 	}
 	return NULL;
 }
+
+void	Server::welcome(Client client)
+{
+	std::string welcome = ":localhost 001 " + client.getNickname() + " :Welcome to mini_server " + client.getNickname() + "\r\n";
+		send(client.getFd(), welcome.c_str(), welcome.size(), 0);
+}
+// void Server::add_socket()
+//{
+//	pollfd srv_fd;
+//
+//	srv_fd.fd = _socket;
+//	srv_fd.events = POLLIN;
+//	srv_fd.revents = 0;
+//
+//	_fds.push_back(srv_fd);
+// }
 
 int Server::prepareFdSet(fd_set *readfds)
 {

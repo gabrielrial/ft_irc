@@ -1,11 +1,12 @@
 #include "Client.hpp"
 
 Client::Client(int fd, sockaddr_in &addr) : _client_fd(fd), _channel_amount(0),
-											_nickname("*"), _username(""), _realname(""), channels(0)
+        _nickname("*"), _username("*"), _realname(""), _has_nick(false),
+        _has_user(false), channels(0)
 {
-	char ip[INET_ADDRSTRLEN];
-	inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
-	_ip = ip;
+    char ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
+    _ip = ip;
 }
 
 Client::~Client()
@@ -37,6 +38,16 @@ std::string Client::getRealname() const
 	return _realname;
 }
 
+std::string Client::getHostname() const
+{
+    return _hostname;
+}
+
+std::string Client::getServername() const
+{
+    return _servername;
+}
+
 int Client::get_channel_amt()
 {
 	return this->_channel_amount;
@@ -56,6 +67,25 @@ void Client::setRealname(const std::string &real)
 {
 	this->_realname = real;
 }
+
+void    Client::setHostname(const std::string &host)
+{
+    this->_hostname = host;
+}
+
+void    Client::setServername(const std::string &serv)
+{
+    this->_servername = serv;
+}
+
+bool    Client::isRegistered()
+{
+    if ((_has_nick == true) && (_has_user == true))
+        return true;
+    return false;
+}
+
+
 // bool add_to_channel(Client *client, Channel channel)
 // {
 //     // if channel exists, and client has requirements for entering channel met
