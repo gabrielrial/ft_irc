@@ -6,13 +6,13 @@
 #define BLU "\033[34m"
 #define YEL "\033[33m"
 
-Server::Server()
+Server::Server(uint16_t port, std::string password) : _port(port), _password(password), _socket(-1)
 {
 	try
 	{
 		init_socket();
 		//	add_socket();
-		std::cout << "Server listening on " << IP << ":" << PORT << std::endl;
+		std::cout << "Server listening on " << IP << ":" << port << std::endl;
 	}
 	catch (const std::runtime_error &e)
 	{
@@ -84,7 +84,7 @@ void Server::bind_socket()
 {
 	memset(&_hint, 0, sizeof(_hint));
 	_hint.sin_family = AF_INET;				 // IPv4
-	_hint.sin_port = htons(PORT);			 // convert port to network byte order
+	_hint.sin_port = htons(_port);			 // convert port to network byte order
 	inet_pton(AF_INET, IP, &_hint.sin_addr); // convert IP string to binary form
 
 	if (bind(_socket, (struct sockaddr *)&_hint, sizeof(_hint)) == -1)
@@ -164,6 +164,7 @@ void Server::srv_run()
 			}
 			++i;
 		}
+		removeClosedClients(lineBuffer);
 	}
 }
 
@@ -184,7 +185,33 @@ void Server::handleClientData(int fd, char *buffer, ssize_t bytes_read, std::str
 void Server::processLine(int fd, const std::string &line)
 {
 	Client *client = findClient(fd);
-	
+
+	if (line.rfind("PASS ", 0) == 0)
+	{
+		std::string pass = line.substr(5);
+		if (client->hasPass())
+		{
+			std::string msg = ":localhost 462 * :You may not reregister\r\n";
+			send(fd, msg.c_str(), msg.size(), 0);
+			return ;
+		}
+		if (pass[0] == ':') // some users enter ':' before the actual password
+			pass.erase(0, 1);
+		if (pass == _password)
+		{
+			client->passAccepted(true);
+			std::string ok = ":localhost NOTICE * :Password accepted\r\n";
+			send(fd, ok.c_str(), ok.size(), 0);
+		}
+		else
+		{
+			std::string err = ":localhost 464 * :Password incorrect\r\n";
+			send(fd, err.c_str(), err.size(), 0);
+			close(fd);
+			_fdsToClose.push_back(fd);
+			return;
+		}
+	}
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
 	// std::cout << RED << "  Prefix: '" << parsed.getPrefix() << "'" << std::endl;
@@ -301,6 +328,23 @@ int Server::prepareFdSet(fd_set *readfds)
 	return max_fd;
 }
 
+void Server::removeClosedClients(std::string lineBuffer[])
+{
+	for (size_t i = 0; i < _fdsToClose.size(); ++i)
+	{
+		int deadFd = _fdsToClose[i];
+		lineBuffer[deadFd].clear();
+		for (size_t j = 0; j < clients.size(); )
+		{
+			if (clients[j].getFd() == deadFd)
+				clients.erase(clients.begin() + j);
+			else
+				++j;
+		}
+	}
+	_fdsToClose.clear();
+}
+
 void Server::check_client(RawTextLine &line, std::vector<Client*> &client_list)
 {
     for (size_t i = 0; i < clients.size(); i++)
@@ -359,4 +403,9 @@ void Server::debugPrintChan() const
 	std::cout << "----------------------------------------" << std::endl;
 	}
 	std::cout << "=== End Channel Debug Info ===" << std::endl;
+}
+
+std::string Server::getPassword() const
+{
+	return _password;
 }

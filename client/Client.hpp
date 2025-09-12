@@ -18,6 +18,7 @@ class Client
         std::string _realname;
         std::string _hostname;
         std::string _servername;
+        bool        _has_pass;
         bool        _has_nick;
         bool        _has_user;
         std::vector<Channel*> channels;
@@ -33,11 +34,13 @@ class Client
         std::string getRealname() const;
         std::string getHostname() const;
         std::string getServername() const;
+        void passAccepted(bool accepted);
         void setNickname(const std::string &nick);
         void setUsername(const std::string &user);
         void setRealname(const std::string &real);
-        void setHostname(const std::string &user);
-        void setServername(const std::string &real);
+        void setHostname(const std::string &host);
+        void setServername(const std::string &server);
+        bool hasPass() const;
         bool isRegistered();
         int get_channel_amt();
 		bool operator==(const Client& other) const;

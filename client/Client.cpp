@@ -1,7 +1,7 @@
 #include "Client.hpp"
 
 Client::Client(int fd, sockaddr_in &addr) : _client_fd(fd), _channel_amount(0),
-        _nickname("*"), _username("*"), _realname(""), _has_nick(false),
+        _nickname("*"), _username("*"), _realname(""), _has_pass(false), _has_nick(false),
         _has_user(false), channels(0)
 {
     char ip[INET_ADDRSTRLEN];
@@ -21,6 +21,16 @@ int Client::getFd() const
 std::string Client::getIP() const
 {
 	return _ip;
+}
+
+bool    Client::hasPass() const
+{
+    return _has_pass;
+}
+
+void    Client::passAccepted(bool accepted)
+{
+    _has_pass = accepted;
 }
 
 std::string Client::getNickname() const
@@ -80,9 +90,7 @@ void    Client::setServername(const std::string &serv)
 
 bool    Client::isRegistered()
 {
-    if ((_has_nick == true) && (_has_user == true))
-        return true;
-    return false;
+    return _has_pass && _has_nick && _has_user;
 }
 
 

@@ -13,6 +13,8 @@
 class Server
 {
 private:
+	uint16_t _port;
+	std::string _password;
 	int _socket;
 	sockaddr_in _hint;
 	std::vector<Client> clients;
@@ -24,6 +26,7 @@ private:
 	void start_listening();
 
 	int prepareFdSet(fd_set *readfds);
+	std::vector<int> _fdsToClose;
 
 	void acceptNewClient();
 	Client* findClient(int fd);
@@ -34,7 +37,7 @@ private:
 
 	
 	public:
-		Server();
+		Server(uint16_t port, std::string password);
 		~Server();
 	
 		void check_client(RawTextLine &line, std::vector<Client*> &client_list);
@@ -42,6 +45,8 @@ private:
 
 		void		addChannel(const std::string &ch_name);
 		Channel*	getChannel(const std::string &ch_name);
+		std::string getPassword() const;
+		void 		removeClosedClients(std::string lineBuffer[]);
 		void		debugPrintChan() const;
 
 	void srv_run();
