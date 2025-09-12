@@ -197,55 +197,55 @@ void Server::processLine(int fd, const std::string &line)
 	std::cout << YEL << "  Trailing: '" << parsed.getTrailing() << "'" << std::endl;
 	std::cout << RES << std::endl;
 	//std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
-	// if (line.rfind("NICK ", 0) == 0)
-	// {
-	// 	size_t end = line.find_first_of(" \r\n", 5);
-	// 	std::string nickname = line.substr(5, end - 5);
-	// 	client->setNickname(nickname);
-	// 	std::cout << nickname << std::endl;
-	// }
-	// if (line.rfind("USER ", 0) == 0)
-	// {
-	// 	size_t start = 5;
-	// 	size_t end = line.find_first_of(" \r\n", start);
-	// 	if (end == std::string::npos)
-	// 		return;
-	// 	std::string username = line.substr(start, end - start);
+	if (line.rfind("NICK ", 0) == 0)
+	{
+		size_t end = line.find_first_of(" \r\n", 5);
+		std::string nickname = line.substr(5, end - 5);
+		client->setNickname(nickname);
+		std::cout << nickname << std::endl;
+	}
+	if (line.rfind("USER ", 0) == 0)
+	{
+		size_t start = 5;
+		size_t end = line.find_first_of(" \r\n", start);
+		if (end == std::string::npos)
+			return;
+		std::string username = line.substr(start, end - start);
 
-	// 	start = end + 1;
-	// 	end = line.find_first_of(" \r\n", start);
-	// 	if (end == std::string::npos)
-	// 		return;
-	// 	std::string hostname = line.substr(start, end - start);
+		start = end + 1;
+		end = line.find_first_of(" \r\n", start);
+		if (end == std::string::npos)
+			return;
+		std::string hostname = line.substr(start, end - start);
 
-	// 	start = end + 1;
-	// 	end = line.find_first_of(" \r\n", start);
-	// 	if (end == std::string::npos)
-	// 		return;
-	// 	std::string servername = line.substr(start, end - start);
+		start = end + 1;
+		end = line.find_first_of(" \r\n", start);
+		if (end == std::string::npos)
+			return;
+		std::string servername = line.substr(start, end - start);
 
-	// 	// Todo lo que sigue después de ':' es realname
-	// 	size_t colon = line.find(':', start);
-	// 	std::string realname;
-	// 	if (colon != std::string::npos)
-	// 		realname = line.substr(colon + 1);
+		// Todo lo que sigue después de ':' es realname
+		size_t colon = line.find(':', start);
+		std::string realname;
+		if (colon != std::string::npos)
+			realname = line.substr(colon + 1);
 
-	// 	client->setUsername(username);
-	// 	// Usar el nick guardado si existe, sino '*'
-	// 	//	nickname = clientNick.count(fd) ? clientNick[fd] : "*";
+		client->setUsername(username);
+		// Usar el nick guardado si existe, sino '*'
+		//	nickname = clientNick.count(fd) ? clientNick[fd] : "*";
 
-	// 	std::string welcome =
-	// 		":localhost 001 " + client->getNickname() + " :Welcome to mini_server " + client->getNickname() + "\r\n";
+		std::string welcome =
+			":localhost 001 " + client->getNickname() + " :Welcome to mini_server " + client->getNickname() + "\r\n";
 
-	// 	send(fd, welcome.c_str(), welcome.size(), 0);
+		send(fd, welcome.c_str(), welcome.size(), 0);
 
-	// 	// Debug
-	// 	std::cout << "Username: " << client->getUsername() << std::endl;
-	// 	// std::cout << "Hostname: " << client.g << std::endl;
-	// 	//	std::cout << "Servername: " << client->getUsername << std::endl;
-	// 	std::cout << "Realname: " << client->getRealname() << std::endl;
-	// 	std::cout << "===============================================" << std::endl;
-	// }
+		// Debug
+		std::cout << "Username: " << client->getUsername() << std::endl;
+		// std::cout << "Hostname: " << client.g << std::endl;
+		//	std::cout << "Servername: " << client->getUsername << std::endl;
+		std::cout << "Realname: " << client->getRealname() << std::endl;
+		std::cout << "===============================================" << std::endl;
+	}
 	run_cmds(*this, parsed, *client);
 }
 
