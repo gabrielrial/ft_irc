@@ -203,14 +203,15 @@ void Server::processLine(int fd, const std::string &line)
 			std::string ok = ":localhost NOTICE * :Password accepted\r\n";
 			send(fd, ok.c_str(), ok.size(), 0);
 		}
-		else
-		{
-			std::string err = ":localhost 464 * :Password incorrect\r\n";
-			send(fd, err.c_str(), err.size(), 0);
-			close(fd);
-			_fdsToClose.push_back(fd);
-			return;
-		}
+	}
+	else
+	{
+		std::string err = ":localhost 464 * :Password incorrect\r\n";
+		send(fd, err.c_str(), err.size(), 0);
+		close(fd);
+		_fdsToClose.push_back(fd);
+		std::cout << "client (fd = " << fd << ") disconnected. Incorrect password entered." << std::endl;
+		return;
 	}
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
