@@ -13,7 +13,7 @@ void cmd_list(Server &server, RawTextLine &line, Client &client)
         if (topic.empty())
             topic = "No topic set";
 
-        std::string channel_info =
+        std::string channel_info = ":" +
             std::string(SERVER_NAME) + " 322 " +
             client.getNickname() + " " +
             channels[i].getName() + " " +
@@ -24,7 +24,7 @@ void cmd_list(Server &server, RawTextLine &line, Client &client)
         std::cout << "Sent LIST info: " << channel_info;
     }
 
-    std::string channel_info =
+    std::string channel_info = ":" +
         std::string(SERVER_NAME) + " 323 " +
         client.getNickname() + " :End of /LIST\r\n";
 
