@@ -92,3 +92,8 @@ bool    Client::isRegistered()
 //     // add them to channel and
 //     // channel_amount++;
 // }
+
+bool Client::operator==(const Client& other) const
+{
+	return this->getFd() == other.getFd();
+}

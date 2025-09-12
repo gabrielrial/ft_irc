@@ -37,6 +37,6 @@
 
 // CONFIGS
 
-#define PORT 12345
+#define PORT 6667
 #define IP "127.0.0.1"
 #define SERVER_NAME "mini_irc"

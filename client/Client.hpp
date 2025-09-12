@@ -40,5 +40,6 @@ class Client
         void setServername(const std::string &real);
         bool isRegistered();
         int get_channel_amt();
+		bool operator==(const Client& other) const;
 };
 

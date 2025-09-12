@@ -6,10 +6,17 @@ CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
 SRC = main.cpp \
 		server/Server.cpp \
-		parser/parser.cpp \
+		parser/Parser.cpp \
  		client/Client.cpp \
 		channel/Channel.cpp \
-		cmds/run_cmds.cpp cmds/cmdPrivmsg.cpp
+		cmds/run_cmds.cpp \
+	\
+		cmds/channel/cmd_list.cpp \
+		cmds/channel/cmd_part.cpp \
+		cmds/channel/cmd_join.cpp \
+		cmds/connection/cmd_nick.cpp \
+		cmds/connection/cmd_pass.cpp \
+		cmds/messaging/cmd_privmsg.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 

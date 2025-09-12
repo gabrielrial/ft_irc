@@ -187,16 +187,16 @@ void Server::processLine(int fd, const std::string &line)
 	
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
-	std::cout << RED << "  Prefix: '" << parsed.getPrefix() << "'" << std::endl;
-	std::cout << GRE << "  Command: '" << parsed.getCommand() << "'" << std::endl;
-	std::cout << BLU << "  Params:";
-	const std::vector<std::string>& params = parsed.getParams();
-	for (std::vector<std::string>::const_iterator it = params.begin(); it != params.end(); ++it)
-		std::cout << " '" << *it << "'";
-	std::cout << std::endl;
-	std::cout << YEL << "  Trailing: '" << parsed.getTrailing() << "'" << std::endl;
-	std::cout << RES << std::endl;
-	std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
+	// std::cout << RED << "  Prefix: '" << parsed.getPrefix() << "'" << std::endl;
+	// std::cout << GRE << "  Command: '" << parsed.getCommand() << "'" << std::endl;
+	// std::cout << BLU << "  Params:";
+	// const std::vector<std::string>& params = parsed.getParams();
+	// for (std::vector<std::string>::const_iterator it = params.begin(); it != params.end(); ++it)
+	// 	std::cout << " '" << *it << "'";
+	// std::cout << std::endl;
+	// std::cout << YEL << "  Trailing: '" << parsed.getTrailing() << "'" << std::endl;
+	// std::cout << RES << std::endl;
+	//std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
 	if (line.rfind("NICK ", 0) == 0)
 	{
 		size_t end = line.find_first_of(" \r\n", 5);
@@ -228,6 +228,7 @@ void Server::processLine(int fd, const std::string &line)
 		std::cout << "===============================================" << std::endl;
 	}
 	run_cmds(*this, parsed, *client);
+	this->debugPrintChan();
 }
 
 void Server::acceptNewClient() //  rename
@@ -314,11 +315,48 @@ void Server::check_client(RawTextLine &line, std::vector<Client*> &client_list)
 
 bool Server::check_channel(RawTextLine &line)
 {
+    const std::vector<std::string>& channels_to_check = line.getSepParams();
+    for (size_t i = 0; i < channels_to_check.size(); i++)
+    {
+        if (getChannel(channels_to_check[i]) != NULL)
+            return true;
+    }
+    return false;
+}
+
+//like check_channel but returns the channel
+Channel* Server::getChannel(const std::string& name)
+{
+	for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
+	{
+		if (it->getName() == name)
+			return &(*it);
+	}
+	return NULL;
+}
+
+void Server::addChannel(const std::string& name)
+{
+	for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
+	{
+		if (it->getName() == name)
+			return;
+	}
+	Channel newChannel(name);
+	channels.push_back(newChannel);
+}
+
+void Server::debugPrintChan() const
+{
+	std::cout << "\n=== Channel Debug Information ===" << std::endl;
+	if (channels.empty())
+		std::cout << "No channels." << std::endl;
 	for (size_t i = 0; i < channels.size(); i++)
 	{
-		for (size_t a = 0; a < line.getSepParams().size(); a++)
-			if (line.getSepParams()[a] == channels[i].getName())
-				return true;
+		const Channel& chan = channels[i];
+		std::cout << "Channel #" << i + 1 << ":" << std::endl;
+		std::cout << "  Name: " << chan.getName() << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
 	}
-	return false;
+	std::cout << "=== End Channel Debug Info ===" << std::endl;
 }
