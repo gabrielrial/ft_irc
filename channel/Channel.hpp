@@ -32,13 +32,13 @@ public:
 
 	// Getters
 	const std::string&		  getName() const;
-	const std::string&		  getTopic() const;
-	const std::vector<int>&	 getUsers() const;
-	const std::vector<int>&	 getOperators() const;
+	//const std::string&		  getTopic() const;
+	const std::vector<Client>&	 getUsers() const;
+	//const std::vector<int>&	 getOperators() const;
 
 	// Setters
-	void	setTopic(const std::string& topic);
+	//void	setTopic(const std::string& topic);
 
 	// Broadcast message to all users in channel
-	void	broadcast(const std::string& message, int sender_fd = -1);
+	//void	broadcast(const std::string& message, int sender_fd = -1);
 };

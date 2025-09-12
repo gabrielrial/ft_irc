@@ -345,7 +345,41 @@ void Server::debugPrintChan() const
 		const Channel& chan = channels[i];
 		std::cout << "Channel #" << i + 1 << ":" << std::endl;
 		std::cout << "  Name: " << chan.getName() << std::endl;
+		debug_print_chan_users(chan);
 	std::cout << "----------------------------------------" << std::endl;
 	}
 	std::cout << "=== End Channel Debug Info ===" << std::endl;
+}
+
+void Server::debug_print_chan_users(const Channel &chan) const
+{
+	std::cout << "  Users:" << std::endl;
+	const std::vector<Client>& users = chan.getUsers();
+	if (users.empty())
+		std::cout << "  (no users)" << std::endl;
+	else
+	{
+		for (size_t i = 0; i < users.size(); i++)
+			std::cout << "  - " << users[i].getNickname() << std::endl;
+	}
+}
+
+void Server::names_list(const Channel *chan, const Client &client) const
+{
+	if (!chan)
+		return;
+	const std::vector<Client>& users = chan->getUsers();
+	std::string user_list;
+	for (size_t i = 0; i < users.size(); ++i)
+	{
+		if (i > 0)
+			user_list += " ";
+		user_list += users[i].getNickname();
+	}
+	std::string namesReply = ":localhost 353 " + client.getNickname() + " = " + 
+							chan->getName() + " :" + user_list + "\r\n"; //RPL_NAMREPLY
+	send(client.getFd(), namesReply.c_str(), namesReply.length(), 0);
+	std::string endNames = ":localhost 366 " + client.getNickname() + " " + 
+						chan->getName() + " :End of /NAMES list.\r\n"; //RPL_ENDOFNAMES
+	send(client.getFd(), endNames.c_str(), endNames.length(), 0);
 }

@@ -16,15 +16,15 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		channel->addUser(client);
 		std::string joinMsg = ":" + client.getNickname() + " JOIN " + channel_name + "\r\n";
 		send(client.getFd(), joinMsg.c_str(), joinMsg.length(), 0);
+		server.names_list(channel, client);
 	}
-		return;
 }
 
 int	checkJoinParams(RawTextLine &line, Client &client)
 {
 	if (line.getParams().empty())
 	{
-		std::string error = ":localhost 461 " + client.getNickname() + " JOIN :Not enough parameters\r\n";
+		std::string error = ":localhost 461 " + client.getNickname() + " JOIN :Not enough parameters\r\n"; //ERR_NEEDMOREPARAMS
 		send(client.getFd(), error.c_str(), error.length(), 0);
 		return 1;
 	}

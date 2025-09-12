@@ -67,10 +67,10 @@ const std::string& Channel::getTopic() const
 	return _topic;
 }
 
-//const std::vector<int>& Channel::getUsers() const
-//{
-//	return _users;
-//}
+const std::vector<Client>& Channel::getUsers() const
+{
+	return _users;
+}
 //
 //const std::vector<int>& Channel::getOperators() const
 //{
