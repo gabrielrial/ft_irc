@@ -42,7 +42,3 @@ class Client
         int get_channel_amt();
 };
 
-<<<<<<< HEAD:Client.hpp
-#endif
-=======
->>>>>>> main:client/Client.hpp

@@ -254,7 +254,7 @@ void Server::acceptNewClient() //  rename
 	if (gethostname(serverName, sizeof(serverName)) != 0)
 		strcpy(serverName, "localhost");
 	c->setServername(serverName);
-	clients.push_back(c);
+	clients.push_back(*c);
 	std::cout << "New client connected (fd=" << new_fd << ")\n";
 }
 

@@ -26,8 +26,8 @@ private:
 	int prepareFdSet(fd_set *readfds);
 
 	void acceptNewClient();
-
 	Client* findClient(int fd);
+	void	welcome(Client client);
 
 	void processLine(int fd, const std::string &line);
 	void handleClientData(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer);
