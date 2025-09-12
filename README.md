@@ -12,9 +12,10 @@ I will postpone merging the latest iteration of JOIN until the main is confirmed
 ## To do:
 1. ~~make the server response to use the actual IP/hostname of the server instead of just "localhost".~~ done
 2. ~~rethink if `names_list` should be a method in `Channel` or better be moved to be directly under `cmd_join` because it sends a server response regarding JOIN and maybe it makes no sense to have it under `Channel`.~~ now under `cmd_join`
-3. make an implementation of WHO (?).
-4. maybe change the branch name to better reflect the current progress.
-5. if WHO is too difficult, maybe just try PART or TOPIC.
+3. must/should make the JOIN command support multiple channels as the parameter
+4. make an implementation of WHO (?).
+5. maybe change the branch name to better reflect the current progress.
+6. if WHO is too difficult, maybe just try PART or TOPIC.
 
 ## Notes:
 `WHO [<mask> [<o>]]`
