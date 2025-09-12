@@ -5,12 +5,12 @@ JOIN now sends/updates the list of users (clients) in the channel to all users i
 This has not been integrated to main. 
 
 I merged the most updated main to this branch, but I have compilation errors and cant get the password to work.
-So I edited `register_client` for the compilation and comment out the password part in `process_line`.
+So I edited `register_client` for the compilation (`get_hostname` --> `gethostname`) and comment out the password part in `process_line`.
 
 I will postpone merging the latest iteration of JOIN until the main is confirmed.
 
 ## To do:
-1. make the server response to use the actual IP/hostname of the server instead of just "localhost".
+1. ~~make the server response to use the actual IP/hostname of the server instead of just "localhost".~~ done
 2. rethink if `names_list` should be a method in `Channel` or better be moved to be directly under `cmd_join` because it sends a server response regarding JOIN and maybe it makes no sense to have it under `Channel`.
 3. make an implementation of WHO (?).
 4. maybe change the branch name to better reflect the current progress.

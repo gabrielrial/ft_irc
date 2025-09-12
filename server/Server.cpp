@@ -280,9 +280,7 @@ void Server::register_client()
 	else
 		c->set_hostname("unknown");
 	char serverName[256];
-//	if (get_hostname(serverName, sizeof(serverName)) != 0)
-//		strcpy(serverName, "localhost");
-	if (c->get_hostname().empty())
+	if (gethostname(serverName, sizeof(serverName)) != 0)
 		strcpy(serverName, "localhost");
 	c->set_servername(serverName);
 	clients.push_back(*c);
