@@ -323,7 +323,7 @@ Channel* Server::get_channel(const std::string& name)
 {
 	for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
 	{
-		if (it->getName() == name)
+		if (it->get_name() == name)
 			return &(*it);
 	}
 	return NULL;
@@ -333,7 +333,7 @@ void Server::add_channel(const std::string& name)
 {
 	for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
 	{
-		if (it->getName() == name)
+		if (it->get_name() == name)
 			return;
 	}
 	Channel newChannel(name);
@@ -349,7 +349,7 @@ void Server::debug_print_chan() const
 	{
 		const Channel& chan = channels[i];
 		std::cout << "Channel #" << i + 1 << ":" << std::endl;
-		std::cout << "  Name: " << chan.getName() << std::endl;
+		std::cout << "  Name: " << chan.get_name() << std::endl;
 		debug_print_chan_users(chan);
 	std::cout << "----------------------------------------" << std::endl;
 	}
@@ -359,7 +359,7 @@ void Server::debug_print_chan() const
 void Server::debug_print_chan_users(const Channel &chan) const
 {
 	std::cout << "  Users:" << std::endl;
-	const std::vector<Client>& users = chan.getUsers();
+	const std::vector<Client>& users = chan.get_users();
 	if (users.empty())
 		std::cout << "  (no users)" << std::endl;
 	else

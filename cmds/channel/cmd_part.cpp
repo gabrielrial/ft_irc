@@ -71,11 +71,11 @@ void broadcast_part(const Channel *chan, const Client &client, const std::string
 	if (!chan)
 		return;
 	std::string part_msg = ":" + client.get_nickname() + " PART " + 
-						 chan->getName();
+						 chan->get_name();
 	if (!reason.empty())
 		part_msg += " :" + reason;
 	part_msg += "\r\n";
-	const std::vector<Client>& users = chan->getUsers();
+	const std::vector<Client>& users = chan->get_users();
 	for (size_t i = 0; i < users.size(); ++i)
 		send(users[i].get_FD(), part_msg.c_str(), part_msg.length(), 0);
 }

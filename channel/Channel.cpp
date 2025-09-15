@@ -54,7 +54,7 @@ bool Channel::has_user(Client client) const
 //	return std::find(_operators.begin(), _operators.end(), client_fd) != _operators.end();
 //}
 
-const std::string& Channel::getName() const
+const std::string& Channel::get_name() const
 {
 	return _name;
 }
@@ -64,7 +64,7 @@ const std::string& Channel::getName() const
 // 	return _topic;
 // }
 
-const std::vector<Client>& Channel::getUsers() const
+const std::vector<Client>& Channel::get_users() const
 {
 	return _users;
 }

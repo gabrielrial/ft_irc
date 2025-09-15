@@ -31,9 +31,9 @@ public:
 	//bool		isOperator(int client_fd) const;
 
 	// Getters
-	const std::string&		  getName() const;
+	const std::string&		  get_name() const;
 	//const std::string&		  getTopic() const;
-	const std::vector<Client>&	 getUsers() const;
+	const std::vector<Client>&	 get_users() const;
 	//const std::vector<int>&	 getOperators() const;
 
 	// Setters

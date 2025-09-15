@@ -51,7 +51,7 @@ void	broadcast_listupdate(const Channel *chan, const Client &client, char *serve
 {
 	if (!chan)
 		return;
-	const std::vector<Client> &users = chan->getUsers();
+	const std::vector<Client> &users = chan->get_users();
 	std::string user_list;
 	for (size_t i = 0; i < users.size(); ++i)
 	{
@@ -60,10 +60,10 @@ void	broadcast_listupdate(const Channel *chan, const Client &client, char *serve
 		user_list += users[i].get_nickname();
 	}
 	std::string rpl_namreply = ":" + std::string(server_name) + " 353 " + 
-								client.get_nickname() + " = " + chan->getName() + 
+								client.get_nickname() + " = " + chan->get_name() + 
 								" :" + user_list + "\r\n"; //RPL_NAMREPLY
 	std::string rpl_endofnames = ":" + std::string(server_name) + " 366 " + 
-							client.get_nickname() + " " + chan->getName() + 
+							client.get_nickname() + " " + chan->get_name() + 
 							" :End of /NAMES list.\r\n"; //RPL_ENDOFNAMES
 	for (size_t i = 0; i < users.size(); ++i)
 	{
