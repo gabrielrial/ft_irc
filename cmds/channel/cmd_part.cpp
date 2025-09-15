@@ -4,6 +4,9 @@ void	cmd_part(Server &server, RawTextLine &line, Client &client);
 int		check_part_params(RawTextLine &line, Client &client, char *server_name);
 void	broadcast_part(const Channel *chan, const Client &client, const std::string &reason);
 
+#define RES "\033[0m"
+#define RED "\033[31m"
+
 void cmd_part(Server &server, RawTextLine &line, Client &client)
 {
 	char server_name[256];
@@ -25,21 +28,22 @@ void cmd_part(Server &server, RawTextLine &line, Client &client)
 		if (channel_name[0] != '#' && channel_name[0] != '&' && 
 			channel_name[0] != '+' && channel_name[0] != '!')
 			channel_name = "#" + channel_name;
-		Channel* channel = server.get_channel(channel_name);
-		std::cout << "Channel:" << channel << std::endl;
-		if (!channel) //questionable		//const Client &target = users[i];
+		Channel *channel = server.get_channel(channel_name);
+		std::cout << RED << "Channel:" << channel << RES << std::endl;
+		std::cout << RED << "Channel name:" << channel_name << RES << std::endl;
+		if (!channel)
 		{
-			std::string error = ":" + std::string(server_name) + " 403 " + 
+			std::string err_nosuchchannel = ":" + std::string(server_name) + " 403 " + 
 							client.get_nickname() + " " + channel_name + 
 							" :No such channel\r\n";
-			send(client.get_FD(), error.c_str(), error.length(), 0);
+			send(client.get_FD(), err_nosuchchannel.c_str(), err_nosuchchannel.length(), 0);
 		}
-		else if (!channel->hasUser(client)) //questionable
+		else if (!channel->hasUser(client))
 		{
-			std::string error = ":" + std::string(server_name) + " 442 " + 
+			std::string err_notonchannel = ":" + std::string(server_name) + " 442 " + 
 							client.get_nickname() + " " + channel_name + 
 							" :You're not on that channel\r\n";
-			send(client.get_FD(), error.c_str(), error.length(), 0);
+			send(client.get_FD(), err_notonchannel.c_str(), err_notonchannel.length(), 0);
 		}
 		else
 		{
@@ -55,7 +59,7 @@ int check_part_params(RawTextLine &line, Client &client, char *server_name)
 	if (line.get_params().empty())
 	{
 		std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
-				client.get_nickname() + " PART :Not enough parameters\r\n"; //ERR_NEEDMOREPARAMS
+				client.get_nickname() + " PART :Not enough parameters\r\n";
 		send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
 		return 1;
 	}

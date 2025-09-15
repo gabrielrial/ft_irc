@@ -33,7 +33,6 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		broadcast_listupdate(channel, client, server_name);
 		start = end + 1;
 	}
-	//broadcast_listupdate(channel, client, server_name);
 }
 
 int	check_join_params(RawTextLine &line, Client &client, char *server_name)
