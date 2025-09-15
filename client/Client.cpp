@@ -1,7 +1,7 @@
 #include "Client.hpp"
 
 Client::Client(int fd, sockaddr_in &addr) : _client_fd(fd), _channel_amount(0),
-        _nickname("*"), _username("*"), _realname(""), _has_nick(false),
+        _nickname("*"), _username("*"), _realname(""), _has_pass(false), _has_nick(false),
         _has_user(false), channels(0)
 {
     char ip[INET_ADDRSTRLEN];
@@ -18,32 +18,42 @@ int Client::getFd() const
 	return _client_fd;
 }
 
-std::string Client::getIP() const
+std::string Client::get_IP() const
 {
 	return _ip;
 }
 
-std::string Client::getNickname() const
+bool    Client::has_pass() const
+{
+    return _has_pass;
+}
+
+void    Client::pass_accepted(bool accepted)
+{
+    _has_pass = accepted;
+}
+
+std::string Client::get_nickname() const
 {
 	return _nickname;
 }
 
-std::string Client::getUsername() const
+std::string Client::get_username() const
 {
 	return _username;
 }
 
-std::string Client::getRealname() const
+std::string Client::get_realname() const
 {
 	return _realname;
 }
 
-std::string Client::getHostname() const
+std::string Client::get_hostname() const
 {
     return _hostname;
 }
 
-std::string Client::getServername() const
+std::string Client::get_servername() const
 {
     return _servername;
 }
@@ -54,35 +64,33 @@ int Client::get_channel_amt()
 }
 
 //              setters
-void Client::setNickname(const std::string &nick)
+void Client::set_nickname(const std::string &nick)
 {
 	this->_nickname = nick;
 }
 
-void Client::setUsername(const std::string &user)
+void Client::set_username(const std::string &user)
 {
 	this->_username = user;
 }
-void Client::setRealname(const std::string &real)
+void Client::set_realname(const std::string &real)
 {
 	this->_realname = real;
 }
 
-void    Client::setHostname(const std::string &host)
+void    Client::set_hostname(const std::string &host)
 {
     this->_hostname = host;
 }
 
-void    Client::setServername(const std::string &serv)
+void    Client::set_servername(const std::string &serv)
 {
     this->_servername = serv;
 }
 
-bool    Client::isRegistered()
+bool    Client::is_registered()
 {
-    if ((_has_nick == true) && (_has_user == true))
-        return true;
-    return false;
+    return _has_pass && _has_nick && _has_user;
 }
 
 
