@@ -2,7 +2,7 @@
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client);
 int		check_join_params(RawTextLine &line, Client &client, char *server_name);
-void	broadcast_listupdate(const Channel *chan, const Client &client, char *server_name); //previously names_list() in server.cpp
+void	broadcast_listupdate(const Channel *chan, const Client &client, char *server_name);
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client)
 {

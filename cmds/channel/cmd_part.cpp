@@ -1,8 +1,8 @@
 #include "../../lib_irc.hpp"
 
-void cmd_part(Server &server, RawTextLine &line, Client &client);
-int check_part_params(RawTextLine &line, Client &client, char *server_name);
-void broadcast_part(const Channel *chan, const Client &client, const std::string &reason);
+void	cmd_part(Server &server, RawTextLine &line, Client &client);
+int		check_part_params(RawTextLine &line, Client &client, char *server_name);
+void	broadcast_part(const Channel *chan, const Client &client, const std::string &reason);
 
 void cmd_part(Server &server, RawTextLine &line, Client &client)
 {
