@@ -29,7 +29,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		channel->addUser(client);
 		std::string joinMsg = ":" + client.get_nickname() + 
 							" JOIN " + channel_name + "\r\n";
-		send(client.getFd(), joinMsg.c_str(), joinMsg.length(), 0);
+		send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);
 		broadcast_listupdate(channel, client, server_name);
 		start = end + 1;
 	}
@@ -42,7 +42,7 @@ int	check_join_params(RawTextLine &line, Client &client, char *server_name)
 	{
 		std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
 				client.get_nickname() + " JOIN :Not enough parameters\r\n"; //ERR_NEEDMOREPARAMS
-		send(client.getFd(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
+		send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
 		return 1;
 	}
 	return 0;
@@ -68,7 +68,7 @@ void	broadcast_listupdate(const Channel *chan, const Client &client, char *serve
 							" :End of /NAMES list.\r\n"; //RPL_ENDOFNAMES
 	for (size_t i = 0; i < users.size(); ++i)
 	{
-		send(users[i].getFd(), rpl_namreply.c_str(), rpl_namreply.length(), 0);
-		send(users[i].getFd(), rpl_endofnames.c_str(), rpl_endofnames.length(), 0);
+		send(users[i].get_FD(), rpl_namreply.c_str(), rpl_namreply.length(), 0);
+		send(users[i].get_FD(), rpl_endofnames.c_str(), rpl_endofnames.length(), 0);
 	}
 }
