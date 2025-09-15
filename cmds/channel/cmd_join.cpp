@@ -11,7 +11,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		strcpy(server_name, "localhost");
 	if (check_join_params(line, client, server_name) == 1)
 		return ;
-	const std::vector<std::string>& params = line.get_params();
+	const std::vector<std::string> &params = line.get_params();
 	std::string first_param = params[0];
 	size_t start = 0;
 	size_t end = 0;
@@ -25,7 +25,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 			channel_name[0] != '+' && channel_name[0] != '!')
 			channel_name = "#" + channel_name;
 		server.add_channel(channel_name);
-		Channel* channel = server.get_channel(channel_name);
+		Channel *channel = server.get_channel(channel_name);
 		channel->addUser(client);
 		std::string joinMsg = ":" + client.get_nickname() + 
 							" JOIN " + channel_name + "\r\n";
@@ -68,8 +68,7 @@ void	broadcast_listupdate(const Channel *chan, const Client &client, char *serve
 							" :End of /NAMES list.\r\n"; //RPL_ENDOFNAMES
 	for (size_t i = 0; i < users.size(); ++i)
 	{
-		const Client &target = users[i];
-		send(target.getFd(), rpl_namreply.c_str(), rpl_namreply.length(), 0);
-		send(target.getFd(), rpl_endofnames.c_str(), rpl_endofnames.length(), 0);
+		send(users[i].getFd(), rpl_namreply.c_str(), rpl_namreply.length(), 0);
+		send(users[i].getFd(), rpl_endofnames.c_str(), rpl_endofnames.length(), 0);
 	}
 }

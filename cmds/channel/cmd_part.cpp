@@ -26,7 +26,8 @@ void cmd_part(Server &server, RawTextLine &line, Client &client)
 			channel_name[0] != '+' && channel_name[0] != '!')
 			channel_name = "#" + channel_name;
 		Channel* channel = server.get_channel(channel_name);
-		if (!channel) //questionable
+		std::cout << "Channel:" << channel << std::endl;
+		if (!channel) //questionable		//const Client &target = users[i];
 		{
 			std::string error = ":" + std::string(server_name) + " 403 " + 
 							client.get_nickname() + " " + channel_name + 
