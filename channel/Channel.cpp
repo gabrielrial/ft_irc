@@ -105,13 +105,14 @@ void	Channel::names_list(const Channel *chan, const Client &client) const
 			user_list += " ";
 		user_list += users[i].get_nickname();
 	}
-	std::string namesReply = ":localhost 353 " + client.get_nickname() + " = " + 
+	std::string names_reply = ":localhost 353 " + client.get_nickname() + " = " + 
 							chan->getName() + " :" + user_list + "\r\n"; //RPL_NAMREPLY
-	send(client.get_FD(), namesReply.c_str(), namesReply.length(), 0);
-	std::string endNames = ":localhost 366 " + client.get_nickname() + " " + 
+	std::string end_names = ":localhost 366 " + client.get_nickname() + " " + 
 						chan->getName() + " :End of /NAMES list.\r\n"; //RPL_ENDOFNAMES
 	for (size_t i = 0; i < users.size(); ++i)
 	{
-		send(client.get_FD(), endNames.c_str(), endNames.length(), 0);
+		const Client &target = users[i];
+		send(target.getFd(), names_reply.c_str(), names_reply.length(), 0);
+		send(target.getFd(), end_names.c_str(), end_names.length(), 0);
 	}
 }
