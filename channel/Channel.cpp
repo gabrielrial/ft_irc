@@ -15,19 +15,16 @@ bool Channel::addUser(Client client)
 	return true;
 }
 
-//bool Channel::removeUser(int client_fd)
-//{
-//	std::vector<int>::iterator it = std::find(_users.begin(), _users.end(), client_fd);
-//	if (it == _users.end())
-//		return false;
-//	
-//	_users.erase(it);
-//	_userModes.erase(client_fd);
-//	
-//	// Also remove from operators if they were one
-//	removeOperator(client_fd);
-//	return true;
-//}
+bool Channel::removeUser(Client client)
+{
+	std::vector<Client>::iterator it = std::find(_users.begin(), _users.end(), client);
+	if (it == _users.end())
+		return false;
+	_users.erase(it);
+	//_userModes.erase(client_fd);
+	//removeOperator(client_fd);
+	return true;
+}
 //
 bool Channel::hasUser(Client client) const
 {

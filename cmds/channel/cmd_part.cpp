@@ -1,7 +1,5 @@
 #include "../../lib_irc.hpp"
 
-#include "../../lib_irc.hpp"
-
 void cmd_part(Server &server, RawTextLine &line, Client &client);
 int check_part_params(RawTextLine &line, Client &client, char *server_name);
 void broadcast_part(const Channel *chan, const Client &client, const std::string &reason);
@@ -28,18 +26,18 @@ void cmd_part(Server &server, RawTextLine &line, Client &client)
 			channel_name[0] != '+' && channel_name[0] != '!')
 			channel_name = "#" + channel_name;
 		Channel* channel = server.get_channel(channel_name);
-		if (!channel)
+		if (!channel) //questionable
 		{
 			std::string error = ":" + std::string(server_name) + " 403 " + 
-							   client.get_nickname() + " " + channel_name + 
-							   " :No such channel\r\n";
+							client.get_nickname() + " " + channel_name + 
+							" :No such channel\r\n";
 			send(client.getFd(), error.c_str(), error.length(), 0);
 		}
-		else if (!channel->hasUser(client))
+		else if (!channel->hasUser(client)) //questionable
 		{
 			std::string error = ":" + std::string(server_name) + " 442 " + 
-							   client.get_nickname() + " " + channel_name + 
-							   " :You're not on that channel\r\n";
+							client.get_nickname() + " " + channel_name + 
+							" :You're not on that channel\r\n";
 			send(client.getFd(), error.c_str(), error.length(), 0);
 		}
 		else
@@ -55,10 +53,9 @@ int check_part_params(RawTextLine &line, Client &client, char *server_name)
 {
 	if (line.get_params().empty())
 	{
-		std::string error = ":" + std::string(server_name) + " 461 " + 
-						   client.get_nickname() + " PART " +
-						   ":Not enough parameters\r\n";
-		send(client.getFd(), error.c_str(), error.length(), 0);
+		std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
+				client.get_nickname() + " PART :Not enough parameters\r\n"; //ERR_NEEDMOREPARAMS
+		send(client.getFd(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
 		return 1;
 	}
 	return 0;
@@ -68,17 +65,12 @@ void broadcast_part(const Channel *chan, const Client &client, const std::string
 {
 	if (!chan)
 		return;
-		
-	std::string partMsg = ":" + client.get_nickname() + " PART " + 
+	std::string part_msg = ":" + client.get_nickname() + " PART " + 
 						 chan->getName();
 	if (!reason.empty())
-		partMsg += " :" + reason;
-	partMsg += "\r\n";
-	
-	// Send to all users in channel including the leaving user
+		part_msg += " :" + reason;
+	part_msg += "\r\n";
 	const std::vector<Client>& users = chan->getUsers();
 	for (size_t i = 0; i < users.size(); ++i)
-	{
-		send(users[i].getFd(), partMsg.c_str(), partMsg.length(), 0);
-	}
+		send(users[i].getFd(), part_msg.c_str(), part_msg.length(), 0);
 }

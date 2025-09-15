@@ -33,14 +33,15 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		broadcast_listupdate(channel, client, server_name);
 		start = end + 1;
 	}
+	//broadcast_listupdate(channel, client, server_name);
 }
 
 int	check_join_params(RawTextLine &line, Client &client, char *server_name)
 {
 	if (line.get_params().empty())
 	{
-		std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + client.get_nickname() + 
-		" JOIN :Not enough parameters\r\n"; //ERR_NEEDMOREPARAMS
+		std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
+				client.get_nickname() + " JOIN :Not enough parameters\r\n"; //ERR_NEEDMOREPARAMS
 		send(client.getFd(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
 		return 1;
 	}

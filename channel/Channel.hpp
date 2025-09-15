@@ -22,7 +22,7 @@ public:
 
 	// Basic channel operations
 	bool		addUser(Client client);
-	//bool		removeUser(int client_fd);
+	bool		removeUser(Client client);
 	bool		hasUser(Client client) const;
 	
 	// Operator management
