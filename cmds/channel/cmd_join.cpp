@@ -2,7 +2,7 @@
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client);
 int		check_join_params(RawTextLine &line, Client &client, char *server_name);
-void	broadcast_listupdate(const Channel *chan, const Client &client, char *server_name);
+void	broadcast_listupdate(const Channel *chan, const Client &client, char *server_name); //previously names_list() in server.cpp
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client)
 {
@@ -59,16 +59,16 @@ void	broadcast_listupdate(const Channel *chan, const Client &client, char *serve
 			user_list += " ";
 		user_list += users[i].get_nickname();
 	}
-	std::string names_reply = ":" + std::string(server_name) + " 353 " + 
+	std::string rpl_namreply = ":" + std::string(server_name) + " 353 " + 
 								client.get_nickname() + " = " + chan->getName() + 
 								" :" + user_list + "\r\n"; //RPL_NAMREPLY
-	std::string end_names = ":" + std::string(server_name) + " 366 " + 
+	std::string rpl_endofnames = ":" + std::string(server_name) + " 366 " + 
 							client.get_nickname() + " " + chan->getName() + 
 							" :End of /NAMES list.\r\n"; //RPL_ENDOFNAMES
 	for (size_t i = 0; i < users.size(); ++i)
 	{
 		const Client &target = users[i];
-		send(target.getFd(), names_reply.c_str(), names_reply.length(), 0);
-		send(target.getFd(), end_names.c_str(), end_names.length(), 0);
+		send(target.getFd(), rpl_namreply.c_str(), rpl_namreply.length(), 0);
+		send(target.getFd(), rpl_endofnames.c_str(), rpl_endofnames.length(), 0);
 	}
 }
