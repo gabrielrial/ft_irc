@@ -105,9 +105,9 @@ void	Channel::names_list(const Channel *chan, const Client &client) const
 			user_list += " ";
 		user_list += users[i].get_nickname();
 	}
-	std::string names_reply = ":localhost 353 " + client.getNickname() + " = " + 
+	std::string names_reply = ":localhost 353 " + client.get_nickname() + " = " + 
 							chan->getName() + " :" + user_list + "\r\n"; //RPL_NAMREPLY
-	std::string end_names = ":localhost 366 " + client.getNickname() + " " + 
+	std::string end_names = ":localhost 366 " + client.get_nickname() + " " + 
 						chan->getName() + " :End of /NAMES list.\r\n"; //RPL_ENDOFNAMES
 	for (size_t i = 0; i < users.size(); ++i)
 	{
