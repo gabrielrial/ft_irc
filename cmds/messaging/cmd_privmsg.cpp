@@ -14,6 +14,6 @@ void cmd_privmsg(Server &server, RawTextLine &line, Client &client)
 		std::string msg = std::string(":") + client.get_nickname() + " PRIVMSG " + target->get_username() + " :" + line.get_trailing() + "\r\n";
 		std::cout << msg << std::endl;
 
-		send(target->getFd(), msg.c_str(), msg.size(), 0);
+		send(target->get_FD(), msg.c_str(), msg.size(), 0);
 	}
 }

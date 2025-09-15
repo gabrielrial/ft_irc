@@ -30,7 +30,6 @@ private:
 
 	void register_client();
 	Client* find_client(int fd);
-	void	welcome(Client client);
 
 	void process_line(int fd, const std::string &line);
 	void handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer);
@@ -42,6 +41,7 @@ private:
 	
 		void check_client(RawTextLine &line, std::vector<Client*> &client_list);
 		bool check_channel(RawTextLine &line);
+		void	welcome(Client client);
 
 		void		add_channel(const std::string &ch_name);
 		Channel*	get_channel(const std::string &ch_name);
@@ -50,5 +50,6 @@ private:
 		void		debug_print_chan() const;
 		void		debug_print_chan_users(const Channel& chan) const;
 
-	void srv_run();
+		void srv_run();
+		void schedule_close(int fd);
 };

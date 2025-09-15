@@ -27,7 +27,7 @@ class Client
         Client(int client_fd, sockaddr_in &addr);
         ~Client();
 
-        int getFd() const;
+        int get_FD() const;
         std::string get_IP() const;
         std::string get_nickname() const;
         std::string get_username() const;
@@ -41,6 +41,8 @@ class Client
         void set_hostname(const std::string &host);
         void set_servername(const std::string &server);
         bool has_pass() const;
+        bool has_nick() const;
+        bool has_user() const;
         bool is_registered();
         int get_channel_amt();
 		bool operator==(const Client& other) const;
