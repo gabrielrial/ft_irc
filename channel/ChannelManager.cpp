@@ -47,11 +47,11 @@ bool ChannelManager::channelExists(const std::string& name) const
 	return _channels.find(name) != _channels.end();
 }
 
-void ChannelManager::removeUserFromAllChannels(int client_fd)
+void ChannelManager::remove_userFromAllChannels(int client_fd)
 {
 	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it)
 	{
-		it->second->removeUser(client_fd);
+		it->second->remove_user(client_fd);
 	}
 }
 

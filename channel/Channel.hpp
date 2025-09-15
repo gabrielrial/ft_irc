@@ -21,9 +21,9 @@ public:
 	~Channel();
 
 	// Basic channel operations
-	bool		addUser(Client client);
-	bool		removeUser(Client client);
-	bool		hasUser(Client client) const;
+	bool		add_user(Client client);
+	bool		remove_user(Client client);
+	bool		has_user(Client client) const;
 	
 	// Operator management
 	//bool		addOperator(int client_fd);

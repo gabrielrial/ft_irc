@@ -26,7 +26,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 			channel_name = "#" + channel_name;
 		server.add_channel(channel_name);
 		Channel *channel = server.get_channel(channel_name);
-		channel->addUser(client);
+		channel->add_user(client);
 		std::string joinMsg = ":" + client.get_nickname() + 
 							" JOIN " + channel_name + "\r\n";
 		send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);

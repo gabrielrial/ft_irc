@@ -19,7 +19,7 @@ public:
 	bool		channelExists(const std::string& name) const;
 	
 	// User management across channels
-	void		removeUserFromAllChannels(int client_fd);
+	void		remove_userFromAllChannels(int client_fd);
 	
 	// Getters
 	const std::map<std::string, Channel*>& get_channels() const;

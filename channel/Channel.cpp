@@ -6,16 +6,16 @@ Channel::Channel(const std::string& name) : _name(name), _topic("")
 Channel::~Channel()
 {}
 
-bool Channel::addUser(Client client)
+bool Channel::add_user(Client client)
 {
-	if (hasUser(client))
+	if (has_user(client))
 		return false;
 	_users.push_back(client);
 	//_userModes[client] = false; // Initialize with no special modes
 	return true;
 }
 
-bool Channel::removeUser(Client client)
+bool Channel::remove_user(Client client)
 {
 	std::vector<Client>::iterator it = std::find(_users.begin(), _users.end(), client);
 	if (it == _users.end())
@@ -26,14 +26,14 @@ bool Channel::removeUser(Client client)
 	return true;
 }
 //
-bool Channel::hasUser(Client client) const
+bool Channel::has_user(Client client) const
 {
 	return std::find(_users.begin(), _users.end(), client) != _users.end();
 }
 
 // bool Channel::addOperator(int client_fd)
 // {
-// 	if (!hasUser(client_fd) || isOperator(client_fd))
+// 	if (!has_user(client_fd) || isOperator(client_fd))
 // 		return false;
 // 	_operators.push_back(client_fd);
 // 	return true;

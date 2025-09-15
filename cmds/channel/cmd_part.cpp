@@ -38,7 +38,7 @@ void cmd_part(Server &server, RawTextLine &line, Client &client)
 							" :No such channel\r\n";
 			send(client.get_FD(), err_nosuchchannel.c_str(), err_nosuchchannel.length(), 0);
 		}
-		else if (!channel->hasUser(client))
+		else if (!channel->has_user(client))
 		{
 			std::string err_notonchannel = ":" + std::string(server_name) + " 442 " + 
 							client.get_nickname() + " " + channel_name + 
@@ -48,7 +48,7 @@ void cmd_part(Server &server, RawTextLine &line, Client &client)
 		else
 		{
 			broadcast_part(channel, client, reason);
-			channel->removeUser(client);
+			channel->remove_user(client);
 		}
 		start = end + 1;
 	}
