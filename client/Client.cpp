@@ -28,6 +28,16 @@ bool    Client::has_pass() const
     return _has_pass;
 }
 
+bool Client::has_nick() const
+{
+    return _has_nick;
+}
+
+bool Client::has_user() const
+{
+    return _has_user;
+}
+
 void    Client::pass_accepted(bool accepted)
 {
     _has_pass = accepted;
