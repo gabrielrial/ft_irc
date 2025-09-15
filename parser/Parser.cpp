@@ -122,19 +122,3 @@ bool	RawTextLine::parse(const std::string& raw)
 	}
 	return true;
 }
-
-// void RawTextLine::separateParams()
-// {
-// 	_separ_params.clear();
-// 	for (std::vector<std::string>::const_iterator it = _params.begin(); it != _params.end(); ++it)
-// 	{
-// 		size_t start = 0;
-// 		size_t end = 0;
-// 		while ((end = it->find(',', start)) != std::string::npos)
-// 		{
-// 			_separ_params.push_back(it->substr(start, end - start));
-// 			start = end + 1;
-// 		}
-// 		_separ_params.push_back(it->substr(start));
-// 	}
-// }
