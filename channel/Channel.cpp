@@ -112,7 +112,7 @@ void	Channel::names_list(const Channel *chan, const Client &client) const
 	for (size_t i = 0; i < users.size(); ++i)
 	{
 		const Client &target = users[i];
-		send(target.getFd(), names_reply.c_str(), names_reply.length(), 0);
-		send(target.getFd(), end_names.c_str(), end_names.length(), 0);
+		send(target.get_FD(), names_reply.c_str(), names_reply.length(), 0);
+		send(target.get_FD(), end_names.c_str(), end_names.length(), 0);
 	}
 }
