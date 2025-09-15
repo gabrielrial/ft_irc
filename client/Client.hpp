@@ -27,7 +27,7 @@ class Client
         Client(int client_fd, sockaddr_in &addr);
         ~Client();
 
-        int getFd() const;
+        int get_FD() const;
         std::string get_IP() const;
         std::string get_nickname() const;
         std::string get_username() const;

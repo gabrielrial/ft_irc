@@ -150,7 +150,7 @@ void Server::srv_run()
 		// Existing clients
 		for (size_t i = 0; i < clients.size(); )
 		{
-			int fd = clients[i].getFd();
+			int fd = clients[i].get_FD();
 			if (FD_ISSET(fd, &readfds))
 			{
 				ssize_t bytes_read = recv(fd, buffer, BUFFER_SIZE - 1, 0);
@@ -182,37 +182,10 @@ void Server::handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::s
 	}
 }
 
-void Server::process_line(int fd, const std::string &line)
+void Server::process_line(int fd, const std::string &line) // change to parse through potential commands and use cmd_nick etc
 {
 	Client *client = find_client(fd);
 
-	if (line.rfind("PASS ", 0) == 0)
-	{
-		std::string pass = line.substr(5);
-		if (client->has_pass())
-		{
-			std::string msg = ":localhost 462 * :You may not reregister\r\n";
-			send(fd, msg.c_str(), msg.size(), 0);
-			return ;
-		}
-		if (pass[0] == ':') // some users enter ':' before the actual password
-			pass.erase(0, 1);
-		if (pass == _password)
-		{
-			client->pass_accepted(true);
-			std::string ok = ":localhost NOTICE * :Password accepted\r\n";
-			send(fd, ok.c_str(), ok.size(), 0);
-		}
-	}
-	else
-	{
-		std::string err = ":localhost 464 * :Password incorrect\r\n";
-		send(fd, err.c_str(), err.size(), 0);
-		close(fd);
-		_fdsToClose.push_back(fd);
-		std::cout << "client (fd = " << fd << ") disconnected. Incorrect password entered." << std::endl;
-		return;
-	}
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
 	// std::cout << RED << "  Prefix: '" << parsed.get_prefix() << "'" << std::endl;
@@ -225,38 +198,14 @@ void Server::process_line(int fd, const std::string &line)
 	// std::cout << YEL << "  Trailing: '" << parsed.get_trailing() << "'" << std::endl;
 	// std::cout << RES << std::endl;
 	//std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
-	if (line.rfind("NICK ", 0) == 0)
+	if (line.rfind("NICK ", 0) == 0) // change 
 	{
 		size_t end = line.find_first_of(" \r\n", 5);
 		std::string nickname = line.substr(5, end - 5);
 		client->set_nickname(nickname);
 	}
-	if (line.rfind("USER ", 0) == 0)
-	{
-		size_t start = 5;
-		size_t end = line.find_first_of(" \r\n", start);
-		if (end == std::string::npos)
-			return;
-		std::string username = line.substr(start, end - start);
-		client->set_username(username);
-
-		size_t colon = line.find(':', start);
-		std::string realname;
-		if (colon != std::string::npos)
-			realname = line.substr(colon + 1);
-		if (client->is_registered())
-			welcome(*client);
-
-		// Debug
-		std::cout << "Nickname: " << client->get_nickname() << std::endl;
-		std::cout << "Username: " << client->get_username() << std::endl;
-		std::cout << "Hostname: " << client->get_hostname() << std::endl;
-		std::cout << "Servername: " << client->get_servername() << std::endl;
-		std::cout << "Realname: " << client->get_realname() << std::endl;
-		std::cout << "===============================================" << std::endl;
-	}
 	run_cmds(*this, parsed, *client);
-	this->debug_print_chan();
+	//this->debug_print_chan();
 }
 
 void Server::register_client()
@@ -291,7 +240,7 @@ Client *Server::find_client(int fd)
 {
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		if (fd == clients[i].getFd())
+		if (fd == clients[i].get_FD())
 			return &clients[i];
 	}
 	return NULL;
@@ -300,7 +249,7 @@ Client *Server::find_client(int fd)
 void	Server::welcome(Client client)
 {
 	std::string welcome = ":localhost 001 " + client.get_nickname() + " :Welcome to mini_server " + client.get_nickname() + "\r\n";
-		send(client.getFd(), welcome.c_str(), welcome.size(), 0);
+		send(client.get_FD(), welcome.c_str(), welcome.size(), 0);
 }
 // void Server::add_socket()
 //{
@@ -321,7 +270,7 @@ int Server::prepare_fd_set(fd_set *readfds)
 
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		int fd = clients[i].getFd();
+		int fd = clients[i].get_FD();
 		FD_SET(fd, readfds);
 		if (fd > max_fd)
 			max_fd = fd;
@@ -337,7 +286,7 @@ void Server::remove_closed_clients(std::string lineBuffer[])
 		lineBuffer[deadFd].clear();
 		for (size_t j = 0; j < clients.size(); )
 		{
-			if (clients[j].getFd() == deadFd)
+			if (clients[j].get_FD() == deadFd)
 				clients.erase(clients.begin() + j);
 			else
 				++j;
@@ -424,4 +373,10 @@ void Server::debug_print_chan_users(const Channel &chan) const
 std::string Server::get_password() const
 {
 	return _password;
+}
+
+void Server::schedule_close(int fd)
+{
+	close(fd);
+	_fdsToClose.push_back(fd);
 }

@@ -1,14 +1,5 @@
 #include "lib_irc.hpp"
 
-int	invalid_arguments(char **argv)
-{
-    if (std::string(argv[1]) != "6667")
-        return 1;
-    if (std::string(argv[2]) != "password42")
-        return 1;
-    return 0;
-}
-
 int main(int argc, char **argv)
 {
     (void) argv;

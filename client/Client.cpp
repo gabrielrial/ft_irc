@@ -13,7 +13,7 @@ Client::~Client()
 {
 }
 //              getters
-int Client::getFd() const
+int Client::get_FD() const
 {
 	return _client_fd;
 }
@@ -67,11 +67,13 @@ int Client::get_channel_amt()
 void Client::set_nickname(const std::string &nick)
 {
 	this->_nickname = nick;
+    this->_has_nick = true;
 }
 
 void Client::set_username(const std::string &user)
 {
 	this->_username = user;
+    this->_has_user = true;
 }
 void Client::set_realname(const std::string &real)
 {
@@ -103,5 +105,5 @@ bool    Client::is_registered()
 
 bool Client::operator==(const Client& other) const
 {
-	return this->getFd() == other.getFd();
+	return this->get_FD() == other.get_FD();
 }
