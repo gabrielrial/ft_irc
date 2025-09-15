@@ -8,17 +8,35 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 {
 	if (checkJoinParams(line, client) == 1)
 		return ;
-	std::string channel_name = line.get_params()[0];
-	if (channel_name[0] != '#' && channel_name[0] != '&' && channel_name[0] != '+' && channel_name[0] != '!')
-		channel_name = "#" + channel_name;
-	server.add_channel(channel_name);
-	Channel* channel = server.get_channel(channel_name);
-	if (channel)
+	// std::string channel_name = line.get_params()[0];
+	// if (channel_name[0] != '#' && channel_name[0] != '&' && channel_name[0] != '+' && channel_name[0] != '!')
+	// 	channel_name = "#" + channel_name;
+	// server.add_channel(channel_name);
+	// Channel* channel = server.get_channel(channel_name);
+	// if (channel)
+	// {
+	// 	channel->addUser(client);
+	// 	std::string joinMsg = ":" + client.get_nickname() + " JOIN " + channel_name + "\r\n";
+	// 	send(client.getFd(), joinMsg.c_str(), joinMsg.length(), 0);
+	// 	broadcast_listupdate(channel, client);
+	// }
+	const std::vector<std::string>& channels = line.get_sep_params();
+	for (size_t i = 0; i < channels.size(); ++i)
 	{
-		channel->addUser(client);
-		std::string joinMsg = ":" + client.get_nickname() + " JOIN " + channel_name + "\r\n";
-		send(client.getFd(), joinMsg.c_str(), joinMsg.length(), 0);
-		broadcast_listupdate(channel, client);
+		std::string channel_name = channels[i];
+		if (channel_name[0] != '#' && channel_name[0] != '&' && 
+			channel_name[0] != '+' && channel_name[0] != '!')
+			channel_name = "#" + channel_name;
+		server.add_channel(channel_name);
+		Channel* channel = server.get_channel(channel_name);
+		if (channel)
+		{
+			channel->addUser(client);
+			std::string joinMsg = ":" + client.get_nickname() + 
+								" JOIN " + channel_name + "\r\n";
+			send(client.getFd(), joinMsg.c_str(), joinMsg.length(), 0);
+			broadcast_listupdate(channel, client);
+		}
 	}
 }
 
