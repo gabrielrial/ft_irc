@@ -31,13 +31,13 @@ public:
 	//bool		isOperator(int client_fd) const;
 
 	// Getters
-	const std::string&		  get_name() const;
-	//const std::string&		  getTopic() const;
-	const std::vector<Client>&	 get_users() const;
-	//const std::vector<int>&	 getOperators() const;
+	const std::string			&get_name() const;
+	const std::string			&get_topic() const;
+	const std::vector<Client>	&get_users() const;
+	//const std::vector<int>	&getOperators() const;
 
 	// Setters
-	//void	setTopic(const std::string& topic);
+	void	set_topic(const std::string& topic);
 
 	// Broadcast message to all users in channel
 	//void	broadcast(const std::string& message, int sender_fd = -1);

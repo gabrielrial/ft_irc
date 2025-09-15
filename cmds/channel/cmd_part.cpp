@@ -2,21 +2,22 @@
 
 void	cmd_part(Server &server, RawTextLine &line, Client &client);
 int		check_part_params(RawTextLine &line, Client &client, char *server_name);
-void	broadcast_part(const Channel *chan, const Client &client, const std::string &reason);
+//void	broadcast_part(const Channel *chan, const Client &client, const std::string &reason);
+void	broadcast_part(const Channel *chan, const Client &client);
 
 //#define RES "\033[0m"
 //#define RED "\033[31m"
 
-void cmd_part(Server &server, RawTextLine &line, Client &client)
+void	cmd_part(Server &server, RawTextLine &line, Client &client)
 {
 	char server_name[256];
 	if (gethostname(server_name, sizeof(server_name)) != 0)
 		strcpy(server_name, "localhost");
 	if (check_part_params(line, client, server_name) == 1)
 		return;
-	const std::vector<std::string>& params = line.get_params();
+	const std::vector<std::string> &params = line.get_params();
 	std::string first_param = params[0];
-	std::string reason = (params.size() > 1) ? params[1] : "";
+	//std::string reason = (params.size() > 1) ? params[1] : "";
 	size_t start = 0;
 	size_t end = 0;
 	while (start < first_param.length())
@@ -47,14 +48,15 @@ void cmd_part(Server &server, RawTextLine &line, Client &client)
 		}
 		else
 		{
-			broadcast_part(channel, client, reason);
+			//broadcast_part(channel, client, reason);
+			broadcast_part(channel, client);
 			channel->remove_user(client);
 		}
 		start = end + 1;
 	}
 }
 
-int check_part_params(RawTextLine &line, Client &client, char *server_name)
+int	check_part_params(RawTextLine &line, Client &client, char *server_name)
 {
 	if (line.get_params().empty())
 	{
@@ -66,15 +68,16 @@ int check_part_params(RawTextLine &line, Client &client, char *server_name)
 	return 0;
 }
 
-void broadcast_part(const Channel *chan, const Client &client, const std::string &reason)
+//void broadcast_part(const Channel *chan, const Client &client, const std::string &reason)
+void	broadcast_part(const Channel *chan, const Client &client)
 {
 	if (!chan)
 		return;
 	std::string part_msg = ":" + client.get_nickname() + " PART " + 
-						 chan->get_name();
-	if (!reason.empty())
-		part_msg += " :" + reason;
-	part_msg += "\r\n";
+						 chan->get_name() + "\r\n";
+	//if (!reason.empty())
+	//	part_msg += " :" + reason;
+	//part_msg += "\r\n";
 	const std::vector<Client>& users = chan->get_users();
 	for (size_t i = 0; i < users.size(); ++i)
 		send(users[i].get_FD(), part_msg.c_str(), part_msg.length(), 0);
