@@ -41,7 +41,7 @@ int	check_join_params(RawTextLine &line, Client &client, char *server_name)
 	{
 		std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + client.get_nickname() + 
 		" JOIN :Not enough parameters\r\n"; //ERR_NEEDMOREPARAMS
-		send(client.getFd(), err_needmoreparams.c_str(), error.length(), 0);
+		send(client.getFd(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
 		return 1;
 	}
 	return 0;
