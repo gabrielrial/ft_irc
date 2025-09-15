@@ -198,12 +198,12 @@ void Server::process_line(int fd, const std::string &line) // change to parse th
 	// std::cout << YEL << "  Trailing: '" << parsed.get_trailing() << "'" << std::endl;
 	// std::cout << RES << std::endl;
 	//std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
-	if (line.rfind("NICK ", 0) == 0) // change 
-	{
-		size_t end = line.find_first_of(" \r\n", 5);
-		std::string nickname = line.substr(5, end - 5);
-		client->set_nickname(nickname);
-	}
+	// if (line.rfind("NICK ", 0) == 0) // change 
+	// {
+	// 	size_t end = line.find_first_of(" \r\n", 5);
+	// 	std::string nickname = line.substr(5, end - 5);
+	// 	client->set_nickname(nickname);
+	// }
 	run_cmds(*this, parsed, *client);
 	//this->debug_print_chan();
 }
