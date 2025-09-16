@@ -21,7 +21,7 @@ void	cmd_topic(Server &server, RawTextLine &line, Client &client)
 	std::cout << RED << "works fine" << RES << std::endl;
 	const std::vector<std::string> &params = line.get_sep_params();
 	std::string channel_name = params[0];
-	if (check_topic_channel(server, client, channel_name, server_name) == 1);
+	if (check_topic_channel(server, client, channel_name, server_name) == 1)
 		return;
 	
 	// std::string channel_topic = params[1];
