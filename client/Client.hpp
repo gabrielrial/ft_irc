@@ -34,6 +34,7 @@ class Client
         std::string get_realname() const;
         std::string get_hostname() const;
         std::string get_servername() const;
+        std::string get_prefix() const;
         void pass_accepted(bool accepted);
         void set_nickname(const std::string &nick);
         void set_username(const std::string &user);

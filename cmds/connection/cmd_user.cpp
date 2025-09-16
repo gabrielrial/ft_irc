@@ -39,7 +39,10 @@ void cmd_user(Server &server, RawTextLine &line, Client &client)
 		client.set_servername(servername);
 
 	if (client.is_registered())
+	{
 		server.welcome(client);
+		server.set_client_amt();
+	}
     std::cout << "Nickname: " << client.get_nickname() << std::endl;
 	std::cout << "Username: " << client.get_username() << std::endl;
 	std::cout << "Hostname: " << client.get_hostname() << std::endl;

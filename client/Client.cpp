@@ -68,6 +68,14 @@ std::string Client::get_servername() const
     return _servername;
 }
 
+std::string Client::get_prefix() const
+{
+    const std::string& n = _nickname.empty() ? "*" : _nickname;
+	const std::string& u = _username.empty() ? "*" : _username;
+	const std::string& h = _hostname.empty() ? _ip : _hostname;
+	return std::string(":") + n + "!" + u + "@" + h;
+}
+
 int Client::get_channel_amt()
 {
 	return this->_channel_amount;
