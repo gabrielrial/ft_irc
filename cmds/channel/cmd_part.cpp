@@ -1,7 +1,7 @@
 #include "../../lib_irc.hpp"
 
 void	cmd_part(Server &server, RawTextLine &line, Client &client);
-int		check_part_params(RawTextLine &line, Client &client, char *server_name);
+int		check_part_params(RawTextLine &line, Client &client, std::string server_name);
 //void	broadcast_part(const Channel *chan, const Client &client, const std::string &reason);
 void	broadcast_part(const Channel *chan, const Client &client);
 
@@ -56,7 +56,7 @@ void	cmd_part(Server &server, RawTextLine &line, Client &client)
 	}
 }
 
-int	check_part_params(RawTextLine &line, Client &client, char *server_name)
+int	check_part_params(RawTextLine &line, Client &client, std::string server_name)
 {
 	if (line.get_params().empty())
 	{

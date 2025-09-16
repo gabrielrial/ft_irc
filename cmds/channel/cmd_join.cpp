@@ -1,8 +1,8 @@
 #include "../../lib_irc.hpp"
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client);
-int		check_join_params(RawTextLine &line, Client &client, char *server_name);
-void	broadcast_listupdate(const Channel *chan, const Client &client, char *server_name);
+int		check_join_params(RawTextLine &line, Client &client, std::string server_name);
+void	broadcast_listupdate(const Channel *chan, const Client &client, std::string server_name);
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client)
 {
@@ -35,7 +35,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 	}
 }
 
-int	check_join_params(RawTextLine &line, Client &client, char *server_name)
+int	check_join_params(RawTextLine &line, Client &client, std::string server_name)
 {
 	if (line.get_params().empty())
 	{
@@ -47,7 +47,7 @@ int	check_join_params(RawTextLine &line, Client &client, char *server_name)
 	return 0;
 }
 
-void	broadcast_listupdate(const Channel *chan, const Client &client, char *server_name)
+void	broadcast_listupdate(const Channel *chan, const Client &client, std::string server_name)
 {
 	if (!chan)
 		return;
