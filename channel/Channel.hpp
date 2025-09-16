@@ -15,16 +15,15 @@ private:
 	std::string			_topic;
 	std::vector<Client>	_users;		// Store client file descriptors
 	std::vector<Client>	_operators;	// Store operator client file descriptors
-	unsigned int		_userCount;	// Number of users in the channel
 
 public:
 	Channel(const std::string& name);
 	~Channel();
 
 	// Basic channel operations
-	bool		addUser(Client client);
-	//bool		removeUser(int client_fd);
-	bool		hasUser(Client client) const;
+	bool		add_user(Client client);
+	bool		remove_user(Client client);
+	bool		has_user(Client client) const;
 	
 	// Operator management
 	//bool		addOperator(int client_fd);
@@ -32,15 +31,15 @@ public:
 	//bool		isOperator(int client_fd) const;
 
 	// Getters
-	const std::string&		  getName() const;
-	const std::string&		  getTopic() const;
-	const std::vector<int>&	 getUsers() const;
-	const std::vector<int>&	 getOperators() const;
-	unsigned int			 get_UserCount() const;
+	const std::string			&get_name() const;
+	const std::string			&get_topic() const;
+	const std::vector<Client>	&get_users() const;
+	//const std::vector<int>	&getOperators() const;
+	unsigned int			 	get_UserCount() const;
 
 	// Setters
-	void	setTopic(const std::string& topic);
+	void	set_topic(const std::string& topic);
 
 	// Broadcast message to all users in channel
-	void	broadcast(const std::string& message, int sender_fd = -1);
+	//void	broadcast(const std::string& message, int sender_fd = -1);
 };

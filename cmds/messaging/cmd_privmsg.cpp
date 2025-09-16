@@ -11,9 +11,9 @@ void cmd_privmsg(Server &server, RawTextLine &line, Client &client)
 	for (size_t i = 0; i < client_list.size(); ++i)
 	{
 		Client *target = client_list[i];
-		std::string msg = std::string(":") + client.getNickname() + " PRIVMSG " + target->getUsername() + " :" + line.getTrailing() + "\r\n";
+		std::string msg = std::string(":") + client.get_nickname() + " PRIVMSG " + target->get_username() + " :" + line.get_trailing() + "\r\n";
 		std::cout << msg << std::endl;
 
-		send(target->getFd(), msg.c_str(), msg.size(), 0);
+		send(target->get_FD(), msg.c_str(), msg.size(), 0);
 	}
 }

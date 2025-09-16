@@ -1,42 +1,39 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name) : _name(name), _topic(""), _userCount(0)
+Channel::Channel(const std::string& name) : _name(name), _topic("")
 {}
 
 Channel::~Channel()
 {}
 
-bool Channel::addUser(Client client)
+bool	Channel::add_user(Client client)
 {
-	if (hasUser(client))
+	if (has_user(client))
 		return false;
 	_users.push_back(client);
 	//_userModes[client] = false; // Initialize with no special modes
 	return true;
 }
 
-//bool Channel::removeUser(int client_fd)
-//{
-//	std::vector<int>::iterator it = std::find(_users.begin(), _users.end(), client_fd);
-//	if (it == _users.end())
-//		return false;
-//	
-//	_users.erase(it);
-//	_userModes.erase(client_fd);
-//	
-//	// Also remove from operators if they were one
-//	removeOperator(client_fd);
-//	return true;
-//}
+bool	Channel::remove_user(Client client)
+{
+	std::vector<Client>::iterator it = std::find(_users.begin(), _users.end(), client);
+	if (it == _users.end())
+		return false;
+	_users.erase(it);
+	//_userModes.erase(client_fd);
+	//removeOperator(client_fd);
+	return true;
+}
 //
-bool Channel::hasUser(Client client) const
+bool	Channel::has_user(Client client) const
 {
 	return std::find(_users.begin(), _users.end(), client) != _users.end();
 }
 
 // bool Channel::addOperator(int client_fd)
 // {
-// 	if (!hasUser(client_fd) || isOperator(client_fd))
+// 	if (!has_user(client_fd) || isOperator(client_fd))
 // 		return false;
 // 	_operators.push_back(client_fd);
 // 	return true;
@@ -57,12 +54,12 @@ bool Channel::hasUser(Client client) const
 //	return std::find(_operators.begin(), _operators.end(), client_fd) != _operators.end();
 //}
 
-const std::string& Channel::getName() const
+const	std::string &Channel::get_name() const
 {
 	return _name;
 }
 
-const std::string& Channel::getTopic() const
+const	std::string &Channel::get_topic() const
 {
 	return _topic;
 }
@@ -72,17 +69,17 @@ unsigned int Channel::get_UserCount() const
 	return _users.size();
 }
 
-//const std::vector<int>& Channel::getUsers() const
-//{
-//	return _users;
-//}
-//
+const std::vector<Client>& Channel::get_users() const
+{
+	return _users;
+}
+
 //const std::vector<int>& Channel::getOperators() const
 //{
 //	return _operators;
 //}
 
-void Channel::setTopic(const std::string& topic)
+void	Channel::set_topic(const std::string &topic)
 {
 	_topic = topic;
 }

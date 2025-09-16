@@ -6,13 +6,13 @@
 #define BLU "\033[34m"
 #define YEL "\033[33m"
 
-Server::Server()
+Server::Server(uint16_t port, std::string password) : _port(port), _password(password), _socket(-1)
 {
 	try
 	{
 		init_socket();
 		//	add_socket();
-		std::cout << "Server listening on " << IP << ":" << PORT << std::endl;
+		std::cout << "Server listening on " << IP << ":" << port << std::endl;
 	}
 	catch (const std::runtime_error &e)
 	{
@@ -84,7 +84,7 @@ void Server::bind_socket()
 {
 	memset(&_hint, 0, sizeof(_hint));
 	_hint.sin_family = AF_INET;				 // IPv4
-	_hint.sin_port = htons(PORT);			 // convert port to network byte order
+	_hint.sin_port = htons(_port);			 // convert port to network byte order
 	inet_pton(AF_INET, IP, &_hint.sin_addr); // convert IP string to binary form
 
 	if (bind(_socket, (struct sockaddr *)&_hint, sizeof(_hint)) == -1)
@@ -136,7 +136,7 @@ void Server::srv_run()
 	while (true)
 	{
 		fd_set readfds;
-		int max_fd = prepareFdSet(&readfds);
+		int max_fd = prepare_fd_set(&readfds);
 
 		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
 		if (activity < 0)
@@ -145,12 +145,12 @@ void Server::srv_run()
 		}
 		// New Clients
 		if (FD_ISSET(_socket, &readfds))
-			acceptNewClient();
+			register_client();
 
 		// Existing clients
 		for (size_t i = 0; i < clients.size(); )
 		{
-			int fd = clients[i].getFd();
+			int fd = clients[i].get_FD();
 			if (FD_ISSET(fd, &readfds))
 			{
 				ssize_t bytes_read = recv(fd, buffer, BUFFER_SIZE - 1, 0);
@@ -160,14 +160,15 @@ void Server::srv_run()
 					clients.erase(clients.begin() + i);
 					continue;
 				}
-				handleClientData(fd, buffer, bytes_read, lineBuffer[fd]);
+				handle_client_data(fd, buffer, bytes_read, lineBuffer[fd]);
 			}
 			++i;
 		}
+		remove_closed_clients(lineBuffer);
 	}
 }
 
-void Server::handleClientData(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer)
+void Server::handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer)
 {
 	buffer[bytes_read] = '\0';
 	lineBuffer.append(buffer);
@@ -177,104 +178,91 @@ void Server::handleClientData(int fd, char *buffer, ssize_t bytes_read, std::str
 	{
 		std::string line = lineBuffer.substr(0, pos);
 		lineBuffer.erase(0, pos + 2);
-		processLine(fd, line);
+		process_line(fd, line);
 	}
 }
 
-void Server::processLine(int fd, const std::string &line)
+void Server::process_line(int fd, const std::string &line) // change to parse through potential commands and use cmd_nick etc
 {
-	Client *client = findClient(fd);
-	
+	Client *client = find_client(fd);
+
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
-	// std::cout << RED << "  Prefix: '" << parsed.getPrefix() << "'" << std::endl;
-	// std::cout << GRE << "  Command: '" << parsed.getCommand() << "'" << std::endl;
+	// std::cout << RED << "  Prefix: '" << parsed.get_prefix() << "'" << std::endl;
+	// std::cout << GRE << "  Command: '" << parsed.get_command() << "'" << std::endl;
 	// std::cout << BLU << "  Params:";
-	// const std::vector<std::string>& params = parsed.getParams();
+	// const std::vector<std::string>& params = parsed.get_params();
 	// for (std::vector<std::string>::const_iterator it = params.begin(); it != params.end(); ++it)
 	// 	std::cout << " '" << *it << "'";
 	// std::cout << std::endl;
-	// std::cout << YEL << "  Trailing: '" << parsed.getTrailing() << "'" << std::endl;
+	// std::cout << YEL << "  Trailing: '" << parsed.get_trailing() << "'" << std::endl;
 	// std::cout << RES << std::endl;
 	//std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
-	if (line.rfind("NICK ", 0) == 0)
-	{
-		size_t end = line.find_first_of(" \r\n", 5);
-		std::string nickname = line.substr(5, end - 5);
-		client->setNickname(nickname);
-		std::cout << nickname << std::endl;
-	}
-	if (line.rfind("USER ", 0) == 0)
-	{
-		size_t start = 5;
-		size_t end = line.find_first_of(" \r\n", start);
-		if (end == std::string::npos)
-			return;
-		std::string username = line.substr(start, end - start);
-
-		start = end + 1;
-		end = line.find_first_of(" \r\n", start);
-		if (end == std::string::npos)
-			return;
-		std::string hostname = line.substr(start, end - start);
-
-		start = end + 1;
-		end = line.find_first_of(" \r\n", start);
-		if (end == std::string::npos)
-			return;
-		std::string servername = line.substr(start, end - start);
-
-		// Todo lo que sigue después de ':' es realname
-		size_t colon = line.find(':', start);
-		std::string realname;
-		if (colon != std::string::npos)
-			realname = line.substr(colon + 1);
-
-		client->setUsername(username);
-		// Usar el nick guardado si existe, sino '*'
-		//	nickname = clientNick.count(fd) ? clientNick[fd] : "*";
-
-		std::string welcome =
-			":localhost 001 " + client->getNickname() + " :Welcome to mini_server " + client->getNickname() + "\r\n";
-
-		send(fd, welcome.c_str(), welcome.size(), 0);
-
-		// Debug
-		//std::cout << "Username: " << client->getUsername() << std::endl;
-		// std::cout << "Hostname: " << client.g << std::endl;
-		//	std::cout << "Servername: " << client->getUsername << std::endl;
-		//std::cout << "Realname: " << client->getRealname() << std::endl;
-		//std::cout << "===============================================" << std::endl;
-	}
+	// if (line.rfind("NICK ", 0) == 0) // change 
+	// {
+	// 	size_t end = line.find_first_of(" \r\n", 5);
+	// 	std::string nickname = line.substr(5, end - 5);
+	// 	client->set_nickname(nickname);
+	// }
 	run_cmds(*this, parsed, *client);
-	this->debugPrintChan();
+	//this->debug_print_chan();
 }
 
-void Server::acceptNewClient()
+void Server::register_client()
 {
     sockaddr_in clientAddr;
     socklen_t clientSize = sizeof(clientAddr);
 
-    int new_fd = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
-    if (new_fd >= 0)
-    {
-        Client newClient(new_fd, clientAddr);
-        clients.push_back(newClient);  // sin punteros
-        std::cout << "New client connected (fd=" << new_fd << ")\n";
-    }
+	int new_fd = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
+	if (new_fd < 0)
+	{
+		perror("accept");
+		return ;
+	}
+
+	Client *c = new Client(new_fd, clientAddr);
+	char host[NI_MAXHOST];
+	char serv[NI_MAXSERV];
+	if (getnameinfo((struct sockaddr*)&clientAddr, sizeof(clientAddr),
+                     host, sizeof(host), serv, sizeof(serv), 0) == 0)
+		c->set_hostname(host);
+	else
+		c->set_hostname("unknown");
+	char serverName[256];
+	if (gethostname(serverName, sizeof(serverName)) != 0)
+		strcpy(serverName, "localhost");
+	c->set_servername(serverName);
+	clients.push_back(*c);
+	std::cout << "New client connected (fd=" << new_fd << ")\n";
 }
 
-Client *Server::findClient(int fd)
+Client *Server::find_client(int fd)
 {
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		if (fd == clients[i].getFd())
+		if (fd == clients[i].get_FD())
 			return &clients[i];
 	}
 	return NULL;
 }
 
-int Server::prepareFdSet(fd_set *readfds)
+void	Server::welcome(Client client)
+{
+	std::string welcome = ":localhost 001 " + client.get_nickname() + " :Welcome to mini_server " + client.get_nickname() + "\r\n";
+		send(client.get_FD(), welcome.c_str(), welcome.size(), 0);
+}
+// void Server::add_socket()
+//{
+//	pollfd srv_fd;
+//
+//	srv_fd.fd = _socket;
+//	srv_fd.events = POLLIN;
+//	srv_fd.revents = 0;
+//
+//	_fds.push_back(srv_fd);
+// }
+
+int Server::prepare_fd_set(fd_set *readfds)
 {
 	FD_ZERO(readfds);
 	FD_SET(_socket, readfds);
@@ -282,7 +270,7 @@ int Server::prepareFdSet(fd_set *readfds)
 
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		int fd = clients[i].getFd();
+		int fd = clients[i].get_FD();
 		FD_SET(fd, readfds);
 		if (fd > max_fd)
 			max_fd = fd;
@@ -290,13 +278,30 @@ int Server::prepareFdSet(fd_set *readfds)
 	return max_fd;
 }
 
+void Server::remove_closed_clients(std::string lineBuffer[])
+{
+	for (size_t i = 0; i < _fdsToClose.size(); ++i)
+	{
+		int deadFd = _fdsToClose[i];
+		lineBuffer[deadFd].clear();
+		for (size_t j = 0; j < clients.size(); )
+		{
+			if (clients[j].get_FD() == deadFd)
+				clients.erase(clients.begin() + j);
+			else
+				++j;
+		}
+	}
+	_fdsToClose.clear();
+}
+
 void Server::check_client(RawTextLine &line, std::vector<Client*> &client_list)
 {
     for (size_t i = 0; i < clients.size(); i++)
     {
-        for (size_t a = 0; a < line.getSepParams().size(); a++)
+        for (size_t a = 0; a < line.get_sep_params().size(); a++)
         {
-            if (line.getSepParams()[a] == clients[i].getNickname())
+            if (line.get_sep_params()[a] == clients[i].get_nickname())
                 client_list.push_back(&clients[i]); // guardamos puntero al cliente
         }
     }
@@ -304,38 +309,38 @@ void Server::check_client(RawTextLine &line, std::vector<Client*> &client_list)
 
 bool Server::check_channel(RawTextLine &line)
 {
-    const std::vector<std::string>& channels_to_check = line.getSepParams();
+    const std::vector<std::string>& channels_to_check = line.get_sep_params();
     for (size_t i = 0; i < channels_to_check.size(); i++)
     {
-        if (getChannel(channels_to_check[i]) != NULL)
+        if (get_channel(channels_to_check[i]) != NULL)
             return true;
     }
     return false;
 }
 
 //like check_channel but returns the channel
-Channel* Server::getChannel(const std::string& name)
+Channel* Server::get_channel(const std::string& name)
 {
 	for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
 	{
-		if (it->getName() == name)
+		if (it->get_name() == name)
 			return &(*it);
 	}
 	return NULL;
 }
 
-void Server::addChannel(const std::string& name)
+void Server::add_channel(const std::string& name)
 {
 	for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
 	{
-		if (it->getName() == name)
+		if (it->get_name() == name)
 			return;
 	}
 	Channel newChannel(name);
 	channels.push_back(newChannel);
 }
 
-void Server::debugPrintChan() const
+void Server::debug_print_chan() const
 {
 	std::cout << "\n=== Channel Debug Information ===" << std::endl;
 	if (channels.empty())
@@ -344,7 +349,8 @@ void Server::debugPrintChan() const
 	{
 		const Channel& chan = channels[i];
 		std::cout << "Channel #" << i + 1 << ":" << std::endl;
-		std::cout << "  Name: " << chan.getName() << std::endl;
+		std::cout << "  Name: " << chan.get_name() << std::endl;
+		debug_print_chan_users(chan);
 	std::cout << "----------------------------------------" << std::endl;
 	}
 	std::cout << "=== End Channel Debug Info ===" << std::endl;
@@ -353,4 +359,29 @@ void Server::debugPrintChan() const
 const std::vector<Channel>& Server::get_vector_channels() const
 {
     return channels;
+}
+
+void Server::debug_print_chan_users(const Channel &chan) const
+{
+	std::cout << "  Users:" << std::endl;
+	const std::vector<Client>& users = chan.get_users();
+	if (users.empty())
+		std::cout << "  (no users)" << std::endl;
+	else
+	{
+		for (size_t i = 0; i < users.size(); i++)
+			std::cout << "  - " << users[i].get_nickname() << std::endl;
+	}
+}
+
+
+std::string Server::get_password() const
+{
+	return _password;
+}
+
+void Server::schedule_close(int fd)
+{
+	close(fd);
+	_fdsToClose.push_back(fd);
 }

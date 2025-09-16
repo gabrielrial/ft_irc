@@ -20,19 +20,17 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
 
     for (int i = 0; i < MAX_CMDS; i++)
     {
-        if (line.getCommand() == cmds[i])
+        if (line.get_command() == cmds[i])
         {
             funcs[i](server, line, client);
         }
     }
 }
 
-void cmd_user(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;}
-
 void cmd_quit(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;}
 void cmd_notice(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;};
 
-void cmd_topic(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
+//void cmd_topic(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 void cmd_names(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 void cmd_who(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 void cmd_whois(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};

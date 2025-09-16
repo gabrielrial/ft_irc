@@ -14,8 +14,10 @@ SRC = main.cpp \
 		cmds/channel/cmd_list.cpp \
 		cmds/channel/cmd_part.cpp \
 		cmds/channel/cmd_join.cpp \
+		cmds/channel/cmd_topic.cpp \
 		cmds/connection/cmd_nick.cpp \
 		cmds/connection/cmd_pass.cpp \
+		cmds/connection/cmd_user.cpp \
 		cmds/messaging/cmd_privmsg.cpp \
 
 OBJ = $(SRC:.cpp=.o)

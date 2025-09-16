@@ -14,7 +14,7 @@ void run_cmds(Server &server, RawTextLine &line, Client &client);
  *
  * NICK <nickname> → sets your nickname.
  * USER <username> <hostname> <servername> <realname> → identifies the user when connecting.
- * PASS <password> → (optional) if the server requires a password
+ * PASS <password> → Checks if the client has entered the password.
  * QUIT [<message>] → disconnects from the server with an optional message.
  * */
 

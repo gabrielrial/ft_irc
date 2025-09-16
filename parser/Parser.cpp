@@ -39,27 +39,27 @@ RawTextLine &RawTextLine::operator=(const RawTextLine &copy)
 	return (*this);
 }
 
-std::string const	&RawTextLine::getPrefix() const
+std::string const	&RawTextLine::get_prefix() const
 {
 	return (this->_prefix);
 }
 
-std::string const	&RawTextLine::getCommand() const
+std::string const	&RawTextLine::get_command() const
 {
 	return (this->_command);
 }
 
-std::vector<std::string> const	&RawTextLine::getParams() const
+std::vector<std::string> const	&RawTextLine::get_params() const
 {
 	return (this->_params);
 }
 
-std::string const	&RawTextLine::getTrailing() const
+std::string const	&RawTextLine::get_trailing() const
 {
 	return (this->_trailing);
 }
 
-std::vector<std::string> const	&RawTextLine::getSepParams() const
+std::vector<std::string> const	&RawTextLine::get_sep_params() const
 {
 	return (this->_separ_params);
 }
@@ -67,7 +67,6 @@ std::vector<std::string> const	&RawTextLine::getSepParams() const
 bool	RawTextLine::parse(const std::string& raw)
 {
 	size_t pos = 0;
-	//std::cout << "Parsing raw message: '" << raw << "'" << std::endl;
 
 	if (raw[0] == ':')
 	{
@@ -77,7 +76,6 @@ bool	RawTextLine::parse(const std::string& raw)
 		_prefix = raw.substr(1, space - 1);
 		pos = space + 1;
 	}
-
 	size_t space = raw.find(' ', pos);
 	if (space == std::string::npos)
 	{
@@ -86,7 +84,6 @@ bool	RawTextLine::parse(const std::string& raw)
 	}
 	_command = raw.substr(pos, space - pos);
 	pos = space + 1;
-
 	while (pos < raw.length())
 	{
 		while (pos < raw.length() && raw[pos] == ' ')
@@ -107,7 +104,6 @@ bool	RawTextLine::parse(const std::string& raw)
 		_params.push_back(raw.substr(pos, space - pos));
 		pos = space + 1;
 	}
-
 	_separ_params.clear();
 	for (std::vector<std::string>::const_iterator it = _params.begin(); it != _params.end(); ++it)
 	{
@@ -122,19 +118,3 @@ bool	RawTextLine::parse(const std::string& raw)
 	}
 	return true;
 }
-
-// void RawTextLine::separateParams()
-// {
-// 	_separ_params.clear();
-// 	for (std::vector<std::string>::const_iterator it = _params.begin(); it != _params.end(); ++it)
-// 	{
-// 		size_t start = 0;
-// 		size_t end = 0;
-// 		while ((end = it->find(',', start)) != std::string::npos)
-// 		{
-// 			_separ_params.push_back(it->substr(start, end - start));
-// 			start = end + 1;
-// 		}
-// 		_separ_params.push_back(it->substr(start));
-// 	}
-// }

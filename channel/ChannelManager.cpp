@@ -23,7 +23,7 @@ Channel* ChannelManager::createChannel(const std::string& name)
 	return channel;
 }
 
-Channel* ChannelManager::getChannel(const std::string& name)
+Channel* ChannelManager::get_channel(const std::string& name)
 {
 	std::map<std::string, Channel*>::iterator it = _channels.find(name);
 	if (it == _channels.end())
@@ -47,15 +47,15 @@ bool ChannelManager::channelExists(const std::string& name) const
 	return _channels.find(name) != _channels.end();
 }
 
-void ChannelManager::removeUserFromAllChannels(int client_fd)
+void ChannelManager::remove_userFromAllChannels(int client_fd)
 {
 	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it)
 	{
-		it->second->removeUser(client_fd);
+		it->second->remove_user(client_fd);
 	}
 }
 
-const std::map<std::string, Channel*>& ChannelManager::getChannels() const
+const std::map<std::string, Channel*>& ChannelManager::get_channels() const
 {
 	return _channels;
 }
