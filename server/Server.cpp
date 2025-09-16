@@ -376,6 +376,11 @@ void Server::debug_print_chan() const
 	std::cout << "=== End Channel Debug Info ===" << std::endl;
 }
 
+const std::vector<Channel>& Server::get_vector_channels() const
+{
+    return channels;
+}
+
 void Server::debug_print_chan_users(const Channel &chan) const
 {
 	std::cout << "  Users:" << std::endl;

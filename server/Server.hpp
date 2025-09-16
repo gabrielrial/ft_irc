@@ -48,6 +48,9 @@ private:
 		void		add_channel(const std::string &ch_name);
 		Channel*	get_channel(const std::string &ch_name);
 		int			get_client_amt();
+
+		const std::vector<Channel>& get_vector_channels() const;
+
 		std::string get_password() const;
 		void		set_client_amt();
 		void 		remove_closed_clients(std::string lineBuffer[]);
