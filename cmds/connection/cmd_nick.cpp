@@ -23,13 +23,12 @@ void cmd_nick(Server &server, RawTextLine &line, Client &client)
 		send(client.get_FD(), msg.c_str(), msg.size(), 0);
 		return ;
 	}
-	const std::string oldNick = client.get_nickname();
-	client.set_nickname(newNick);
-	std::string nickMsg = ":" + oldNick + "!" + client.get_username() + "@" + client.get_hostname()
-		+ " NICK :" + newNick + "\r\n";
-	send(client.get_FD(), nickMsg.c_str(), nickMsg.size(), 0);
-	if (client.has_nick())
+	if (client.has_nick()) // if 'correctly'/'successfully' changing nickname
 	{
+		const std::string oldNick = client.get_nickname();
+		client.set_nickname(newNick);
+		std::string nickMsg = ":" + oldNick + "!" + client.get_username() + "@" + client.get_hostname()
+			+ " NICK :" + newNick + "\r\n";
 		const std::string msg = "You are now known as " + line.get_sep_params()[0] + "\r\n";
 		send(client.get_FD(), msg.c_str(), msg.size(), 0);
 	}
