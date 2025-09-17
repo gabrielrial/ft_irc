@@ -55,15 +55,15 @@ bool	Channel::has_user(Client client) const
 	return std::find(_users.begin(), _users.end(), client) != _users.end();
 }
 
-bool Channel::add_opertr(Client client)
+bool Channel::add_operator(Client client)
 {
-	if (!has_user(client) || is_opertr(client))
+	if (!has_user(client) || is_operator(client))
 		return false;
 	_operators.push_back(client);
 	return true;
 }
 
-bool Channel::rem_opertr(Client client)
+bool Channel::rem_operator(Client client)
 {
 	std::vector<Client>::iterator it = std::find(_operators.begin(), _operators.end(), client);
 	if (it == _operators.end())
@@ -73,7 +73,7 @@ bool Channel::rem_opertr(Client client)
 	return true;
 }
 
-bool Channel::is_opertr(Client client) const
+bool Channel::is_operator(Client client) const
 {
 	return std::find(_operators.begin(), _operators.end(), client) != _operators.end();
 }
