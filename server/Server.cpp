@@ -394,6 +394,19 @@ void Server::debug_print_chan_users(const Channel &chan) const
 	}
 }
 
+void Server::debug_print_ops(const Channel *channel, const std::string &context)
+{
+	std::cout << "=== DEBUG [" << context << "] ===" << std::endl;
+	std::cout << "Channel: " << channel->get_name() << std::endl;
+	const std::vector<Client>& operators = channel->get_operators();
+	std::cout << "Operators (" << operators.size() << "):" << std::endl;
+	for (size_t i = 0; i < operators.size(); ++i)
+	{
+		std::cout << " - " << operators[i].get_nickname() 
+				<< " (fd: " << operators[i].get_FD() << ")" << std::endl;
+	}
+	std::cout << "=========================" << std::endl;
+}
 
 std::string Server::get_password() const
 {

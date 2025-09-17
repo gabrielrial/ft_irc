@@ -37,7 +37,7 @@ public:
 	const std::string			&get_name() const;
 	const std::string			&get_topic() const;
 	const std::vector<Client>	&get_users() const;
-	//const std::vector<int>	&getOperators() const;
+	const std::vector<Client>	&get_operators() const;
 	unsigned int			 	get_UserCount() const;
 
 	// Setters

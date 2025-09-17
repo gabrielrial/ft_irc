@@ -22,6 +22,8 @@ void cmd_list(Server &server, RawTextLine &line, Client &client)
 
         send(client.get_FD(), channel_info.c_str(), channel_info.length(), 0);
         std::cout << "Sent LIST info: " << channel_info;
+		const Channel &channel = channels[i];
+		server.debug_print_ops(&channel, "in list");
     }
 
     std::string channel_info = ":" +

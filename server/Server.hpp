@@ -56,6 +56,7 @@ private:
 		void 		remove_closed_clients(std::string lineBuffer[]);
 		void		debug_print_chan() const;
 		void		debug_print_chan_users(const Channel& chan) const;
+		void		debug_print_ops(const Channel* channel, const std::string& context);
 
 		void srv_run();
 		void schedule_close(int fd);
