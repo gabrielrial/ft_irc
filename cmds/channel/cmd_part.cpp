@@ -5,9 +5,6 @@ int		check_part_params(RawTextLine &line, Client &client, std::string server_nam
 //void	broadcast_part(const Channel *chan, const Client &client, const std::string &reason);
 void	broadcast_part(const Channel *chan, const Client &client);
 
-//#define RES "\033[0m"
-//#define RED "\033[31m"
-
 void	cmd_part(Server &server, RawTextLine &line, Client &client)
 {
 	char server_name[256];
@@ -30,8 +27,6 @@ void	cmd_part(Server &server, RawTextLine &line, Client &client)
 			channel_name[0] != '+' && channel_name[0] != '!')
 			channel_name = "#" + channel_name;
 		Channel *channel = server.get_channel(channel_name);
-		//std::cout << RED << "Channel:" << channel << RES << std::endl;
-		//std::cout << RED << "Channel name:" << channel_name << RES << std::endl;
 		if (!channel)
 		{
 			std::string err_nosuchchannel = ":" + std::string(server_name) + " 403 " + 
