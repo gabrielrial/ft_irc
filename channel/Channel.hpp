@@ -13,11 +13,13 @@ class Channel {
 private:
 	std::string			_name;
 	std::string			_topic;
-	std::vector<Client>	_users;		// Store client file descriptors
-	std::vector<Client>	_operators;	// Store operator client file descriptors
+	std::vector<Client>	_users;
+	std::vector<Client>	_operators;
 
 public:
-	Channel(const std::string& name);
+	Channel();
+	Channel(const Channel &copy);
+	Channel& operator=(const Channel &copy);
 	~Channel();
 
 	// Basic channel operations

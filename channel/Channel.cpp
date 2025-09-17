@@ -1,7 +1,26 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name) : _name(name), _topic("")
+Channel::Channel() : 
+	_name(""),
+	_topic("")
 {}
+
+Channel::Channel(const Channel &copy)
+{
+	*this = copy;
+}
+
+Channel& Channel::operator=(const Channel &copy)
+{
+	if (this != &copy) 
+	{
+		_name = copy._name;
+		_topic = copy._topic;
+		_users = copy._users;
+		_operators = copy._operators;
+	}
+	return *this;
+}
 
 Channel::~Channel()
 {}
