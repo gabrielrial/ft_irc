@@ -2,11 +2,11 @@
 
 void	cmd_topic(Server &server, RawTextLine &line, Client &client);
 int		check_topic_params(RawTextLine &line, Client &client, std::string server_name);
-int		check_topic_channel(Server &server, Client &client, std::string channel_name, std::string server_name);
-void	topic_queryandset(Server &server, Client &client, const std::vector<std::string> &params, std::string channel_name , std::string server_name);
-
-// #define RES "\033[0m"
-// #define RED "\033[31m"
+int		check_topic_channel(Server &server, Client &client, 
+							std::string channel_name, std::string server_name);
+void	topic_queryandset(Server &server, Client &client, 
+							const std::vector<std::string> &params, 
+							std::string channel_name , std::string server_name);
 
 void	cmd_topic(Server &server, RawTextLine &line, Client &client)
 {
@@ -15,12 +15,15 @@ void	cmd_topic(Server &server, RawTextLine &line, Client &client)
 		strcpy(server_name, "localhost");
 	if (check_topic_params(line, client, server_name) == 1)
 		return;
-	//std::cout << RED << "works fine" << RES << std::endl;
-	const std::vector<std::string> &params = line.get_sep_params();
-	std::string channel_name = params[0];
-	if (check_topic_channel(server, client, channel_name, server_name) == 1)
+	const std::vector<std::string> &params = line.get_params();
+	std::cout << "params content:" << std::endl;
+	for (size_t i = 0; i < params.size(); ++i) {
+		std::cout << "  [" << i << "]: " << params[i] << std::endl;
+	}
+	const std::vector<std::string> &sep_params = line.get_sep_params();
+	if (check_topic_channel(server, client, sep_params[0], server_name) == 1)
 		return;
-	topic_queryandset(server, client, params, channel_name, server_name);
+	topic_queryandset(server, client, params, sep_params[0], server_name);
 }
 
 int	check_topic_params(RawTextLine &line, Client &client, std::string server_name)
@@ -28,14 +31,15 @@ int	check_topic_params(RawTextLine &line, Client &client, std::string server_nam
 	if (line.get_params().empty())
 	{
 		std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
-				client.get_nickname() + " PART :Not enough parameters\r\n";
+				client.get_nickname() + " TOPIC :Not enough parameters\r\n";
 		send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
 		return 1;
 	}
 	return 0;
 }
 
-int	check_topic_channel(Server &server, Client &client, std::string channel_name, std::string server_name)
+int	check_topic_channel(Server &server, Client &client, 
+						std::string channel_name, std::string server_name)
 {
 	Channel *channel = server.get_channel(channel_name);
 	if (!channel)
@@ -55,7 +59,9 @@ int	check_topic_channel(Server &server, Client &client, std::string channel_name
 	return 0;
 }
 
-void	topic_queryandset(Server &server, Client &client, const std::vector<std::string> &params, std::string channel_name , std::string server_name)
+void	topic_queryandset(Server &server, Client &client, 
+							const std::vector<std::string> &params, 
+							std::string channel_name , std::string server_name)
 {
 	Channel *channel = server.get_channel(channel_name);
 	if (params.size() == 1) 
