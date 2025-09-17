@@ -46,6 +46,7 @@ public:
 	Channel *get_channel(const std::string &ch_name);
 
 	const std::vector<Channel> &get_vector_channels() const;
+	const std::vector<Client> &get_vector_clients() const;
 
 	std::string get_password() const;
 	void remove_closed_clients(std::string lineBuffer[]);

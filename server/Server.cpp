@@ -23,7 +23,6 @@ Server::Server(uint16_t port, std::string password) : _port(port), _password(pas
 
 Server::~Server()
 {
-
 }
 
 /*
@@ -148,7 +147,7 @@ void Server::srv_run()
 			register_client();
 
 		// Existing clients
-		for (size_t i = 0; i < clients.size(); )
+		for (size_t i = 0; i < clients.size();)
 		{
 			int fd = clients[i].get_FD();
 			if (FD_ISSET(fd, &readfds))
@@ -197,34 +196,34 @@ void Server::process_line(int fd, const std::string &line) // change to parse th
 	// std::cout << std::endl;
 	// std::cout << YEL << "  Trailing: '" << parsed.get_trailing() << "'" << std::endl;
 	// std::cout << RES << std::endl;
-	//std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
-	// if (line.rfind("NICK ", 0) == 0) // change 
+	// std::cout << "what happens if i change my nickname during the execution?"<< std::endl;
+	// if (line.rfind("NICK ", 0) == 0) // change
 	// {
 	// 	size_t end = line.find_first_of(" \r\n", 5);
 	// 	std::string nickname = line.substr(5, end - 5);
 	// 	client->set_nickname(nickname);
 	// }
 	run_cmds(*this, parsed, *client);
-	//this->debug_print_chan();
+	// this->debug_print_chan();
 }
 
 void Server::register_client()
 {
-    sockaddr_in clientAddr;
-    socklen_t clientSize = sizeof(clientAddr);
+	sockaddr_in clientAddr;
+	socklen_t clientSize = sizeof(clientAddr);
 
 	int new_fd = accept(_socket, (struct sockaddr *)&clientAddr, &clientSize);
 	if (new_fd < 0)
 	{
 		perror("accept");
-		return ;
+		return;
 	}
 
 	Client *c = new Client(new_fd, clientAddr);
 	char host[NI_MAXHOST];
 	char serv[NI_MAXSERV];
-	if (getnameinfo((struct sockaddr*)&clientAddr, sizeof(clientAddr),
-                     host, sizeof(host), serv, sizeof(serv), 0) == 0)
+	if (getnameinfo((struct sockaddr *)&clientAddr, sizeof(clientAddr),
+					host, sizeof(host), serv, sizeof(serv), 0) == 0)
 		c->set_hostname(host);
 	else
 		c->set_hostname("unknown");
@@ -246,10 +245,10 @@ Client *Server::find_client(int fd)
 	return NULL;
 }
 
-void	Server::welcome(Client client)
+void Server::welcome(Client client)
 {
 	std::string welcome = ":localhost 001 " + client.get_nickname() + " :Welcome to mini_server " + client.get_nickname() + "\r\n";
-		send(client.get_FD(), welcome.c_str(), welcome.size(), 0);
+	send(client.get_FD(), welcome.c_str(), welcome.size(), 0);
 }
 // void Server::add_socket()
 //{
@@ -284,7 +283,7 @@ void Server::remove_closed_clients(std::string lineBuffer[])
 	{
 		int deadFd = _fdsToClose[i];
 		lineBuffer[deadFd].clear();
-		for (size_t j = 0; j < clients.size(); )
+		for (size_t j = 0; j < clients.size();)
 		{
 			if (clients[j].get_FD() == deadFd)
 				clients.erase(clients.begin() + j);
@@ -295,31 +294,31 @@ void Server::remove_closed_clients(std::string lineBuffer[])
 	_fdsToClose.clear();
 }
 
-void Server::check_client(RawTextLine &line, std::vector<Client*> &client_list)
+void Server::check_client(RawTextLine &line, std::vector<Client *> &client_list)
 {
-    for (size_t i = 0; i < clients.size(); i++)
-    {
-        for (size_t a = 0; a < line.get_sep_params().size(); a++)
-        {
-            if (line.get_sep_params()[a] == clients[i].get_nickname())
-                client_list.push_back(&clients[i]); // guardamos puntero al cliente
-        }
-    }
+	for (size_t i = 0; i < clients.size(); i++)
+	{
+		for (size_t a = 0; a < line.get_sep_params().size(); a++)
+		{
+			if (line.get_sep_params()[a] == clients[i].get_nickname())
+				client_list.push_back(&clients[i]); // guardamos puntero al cliente
+		}
+	}
 }
 
 bool Server::check_channel(RawTextLine &line)
 {
-    const std::vector<std::string>& channels_to_check = line.get_sep_params();
-    for (size_t i = 0; i < channels_to_check.size(); i++)
-    {
-        if (get_channel(channels_to_check[i]) != NULL)
-            return true;
-    }
-    return false;
+	const std::vector<std::string> &channels_to_check = line.get_sep_params();
+	for (size_t i = 0; i < channels_to_check.size(); i++)
+	{
+		if (get_channel(channels_to_check[i]) != NULL)
+			return true;
+	}
+	return false;
 }
 
-//like check_channel but returns the channel
-Channel* Server::get_channel(const std::string& name)
+// like check_channel but returns the channel
+Channel *Server::get_channel(const std::string &name)
 {
 	for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
 	{
@@ -329,7 +328,7 @@ Channel* Server::get_channel(const std::string& name)
 	return NULL;
 }
 
-void Server::add_channel(const std::string& name)
+void Server::add_channel(const std::string &name)
 {
 	for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
 	{
@@ -347,24 +346,29 @@ void Server::debug_print_chan() const
 		std::cout << "No channels." << std::endl;
 	for (size_t i = 0; i < channels.size(); i++)
 	{
-		const Channel& chan = channels[i];
+		const Channel &chan = channels[i];
 		std::cout << "Channel #" << i + 1 << ":" << std::endl;
 		std::cout << "  Name: " << chan.get_name() << std::endl;
 		debug_print_chan_users(chan);
-	std::cout << "----------------------------------------" << std::endl;
+		std::cout << "----------------------------------------" << std::endl;
 	}
 	std::cout << "=== End Channel Debug Info ===" << std::endl;
 }
 
-const std::vector<Channel>& Server::get_vector_channels() const
+const std::vector<Channel> &Server::get_vector_channels() const
 {
-    return channels;
+	return channels;
+}
+
+const std::vector<Client> &Server::get_vector_clients() const
+{
+	return clients;
 }
 
 void Server::debug_print_chan_users(const Channel &chan) const
 {
 	std::cout << "  Users:" << std::endl;
-	const std::vector<Client>& users = chan.get_users();
+	const std::vector<Client> &users = chan.get_users();
 	if (users.empty())
 		std::cout << "  (no users)" << std::endl;
 	else
@@ -373,7 +377,6 @@ void Server::debug_print_chan_users(const Channel &chan) const
 			std::cout << "  - " << users[i].get_nickname() << std::endl;
 	}
 }
-
 
 std::string Server::get_password() const
 {
