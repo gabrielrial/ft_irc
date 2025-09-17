@@ -29,9 +29,9 @@ public:
 	bool		has_user(Client client) const;
 	
 	// Operator management
-	//bool		addOperator(int client_fd);
-	//bool		removeOperator(int client_fd);
-	//bool		isOperator(int client_fd) const;
+	bool		add_opertr(Client client);
+	bool		rem_opertr(Client client);
+	bool		is_opertr(Client client) const;
 
 	// Getters
 	const std::string			&get_name() const;

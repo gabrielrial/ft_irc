@@ -55,28 +55,28 @@ bool	Channel::has_user(Client client) const
 	return std::find(_users.begin(), _users.end(), client) != _users.end();
 }
 
-// bool Channel::addOperator(int client_fd)
-// {
-// 	if (!has_user(client_fd) || isOperator(client_fd))
-// 		return false;
-// 	_operators.push_back(client_fd);
-// 	return true;
-// }
-//
-//bool Channel::removeOperator(int client_fd)
-//{
-//	std::vector<int>::iterator it = std::find(_operators.begin(), _operators.end(), client_fd);
-//	if (it == _operators.end())
-//		return false;
-//	
-//	_operators.erase(it);
-//	return true;
-//}
-//
-//bool Channel::isOperator(int client_fd) const
-//{
-//	return std::find(_operators.begin(), _operators.end(), client_fd) != _operators.end();
-//}
+bool Channel::add_opertr(Client client)
+{
+	if (!has_user(client) || is_opertr(client))
+		return false;
+	_operators.push_back(client);
+	return true;
+}
+
+bool Channel::rem_opertr(Client client)
+{
+	std::vector<Client>::iterator it = std::find(_operators.begin(), _operators.end(), client);
+	if (it == _operators.end())
+		return false;
+	
+	_operators.erase(it);
+	return true;
+}
+
+bool Channel::is_opertr(Client client) const
+{
+	return std::find(_operators.begin(), _operators.end(), client) != _operators.end();
+}
 
 const	std::string &Channel::get_name() const
 {
