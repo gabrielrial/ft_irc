@@ -6,6 +6,7 @@ int		check_topic_channel(Server &server, Client &client,
 							std::string channel_name, std::string server_name);
 void	topic_queryandset(Server &server, Client &client, 
 							const std::vector<std::string> &params, 
+							RawTextLine &line,
 							std::string channel_name , std::string server_name);
 
 void	cmd_topic(Server &server, RawTextLine &line, Client &client)
@@ -15,15 +16,12 @@ void	cmd_topic(Server &server, RawTextLine &line, Client &client)
 		strcpy(server_name, "localhost");
 	if (check_topic_params(line, client, server_name) == 1)
 		return;
-	const std::vector<std::string> &params = line.get_params();
-	std::cout << "params content:" << std::endl;
-	for (size_t i = 0; i < params.size(); ++i) {
-		std::cout << "  [" << i << "]: " << params[i] << std::endl;
-	}
 	const std::vector<std::string> &sep_params = line.get_sep_params();
-	if (check_topic_channel(server, client, sep_params[0], server_name) == 1)
+	std::string channel_name = sep_params[0];
+	if (check_topic_channel(server, client, channel_name, server_name) == 1)
 		return;
-	topic_queryandset(server, client, params, sep_params[0], server_name);
+	const std::vector<std::string> &params = line.get_params();
+	topic_queryandset(server, client, params, line, channel_name, server_name);
 }
 
 int	check_topic_params(RawTextLine &line, Client &client, std::string server_name)
@@ -61,10 +59,11 @@ int	check_topic_channel(Server &server, Client &client,
 
 void	topic_queryandset(Server &server, Client &client, 
 							const std::vector<std::string> &params, 
+							RawTextLine &line,
 							std::string channel_name , std::string server_name)
 {
 	Channel *channel = server.get_channel(channel_name);
-	if (params.size() == 1) 
+	if (params.size() == 1 && line.get_trailing().empty()) 
 	{
 		std::string topic = channel->get_topic();
 		if (topic.empty())
@@ -79,16 +78,10 @@ void	topic_queryandset(Server &server, Client &client,
 					client.get_nickname() + " " + channel_name + " :" + topic + "\r\n";
 			send(client.get_FD(), rpl_topic.c_str(), rpl_topic.size(), 0);
 		}
-	} 
+	}
 	else
 	{
-		std::string new_topic = params[1];
-		// if (channel->is_mode_t() && !channel->is_operator(client.get_FD()))
-		// {
-		// 	std::string err = ":localhost 482 " + client.get_nickname() + " " + channel_name + " :You're not channel operator\r\n";
-		// 	send(client.get_FD(), err.c_str(), err.size(), 0);
-		// 	return;
-		// }
+		std::string new_topic = line.get_trailing();
 		channel->set_topic(new_topic);
 		std::string prefix = ":" + client.get_nickname() + "!" + client.get_username() + "@" + client.get_hostname();
 		std::string announce = prefix + " TOPIC " + channel_name + " :" + new_topic + "\r\n";
