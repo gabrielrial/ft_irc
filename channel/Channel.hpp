@@ -17,6 +17,7 @@ private:
 	std::vector<Client>	_operators;	// Store operator client file descriptors
 
 public:
+	Channel();
 	Channel(const std::string& name);
 	~Channel();
 

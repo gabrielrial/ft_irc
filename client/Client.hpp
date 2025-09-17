@@ -21,6 +21,8 @@ class Client
         bool        _has_pass;
         bool        _has_nick;
         bool        _has_user;
+        bool        _is_visible;
+        bool        _is_operator;
         std::vector<Channel*> channels;
 
     public:
@@ -39,10 +41,14 @@ class Client
         void set_username(const std::string &user);
         void set_realname(const std::string &real);
         void set_hostname(const std::string &host);
+        void set_operator();
+        void set_visible();
         void set_servername(const std::string &server);
         bool has_pass() const;
         bool has_nick() const;
         bool has_user() const;
+        bool get_visible() const;
+        bool get_operator() const;
         bool is_registered();
         int get_channel_amt();
 		bool operator==(const Client& other) const;
