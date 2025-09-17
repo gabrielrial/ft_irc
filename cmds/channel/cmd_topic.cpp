@@ -4,10 +4,12 @@ void	cmd_topic(Server &server, RawTextLine &line, Client &client);
 int		check_topic_params(RawTextLine &line, Client &client, std::string server_name);
 int		check_topic_channel(Server &server, Client &client, 
 							std::string channel_name, std::string server_name);
-void	topic_queryandset(Server &server, Client &client, 
+void	topic_queryandbroadcast(Server &server, Client &client, 
 							const std::vector<std::string> &params, 
 							RawTextLine &line,
 							std::string channel_name , std::string server_name);
+void	broadcast_topic(Channel *chan, const Client &client, 
+							RawTextLine &line, std::string channel_name);
 
 void	cmd_topic(Server &server, RawTextLine &line, Client &client)
 {
@@ -21,7 +23,7 @@ void	cmd_topic(Server &server, RawTextLine &line, Client &client)
 	if (check_topic_channel(server, client, channel_name, server_name) == 1)
 		return;
 	const std::vector<std::string> &params = line.get_params();
-	topic_queryandset(server, client, params, line, channel_name, server_name);
+	topic_queryandbroadcast(server, client, params, line, channel_name, server_name);
 }
 
 int	check_topic_params(RawTextLine &line, Client &client, std::string server_name)
@@ -57,7 +59,7 @@ int	check_topic_channel(Server &server, Client &client,
 	return 0;
 }
 
-void	topic_queryandset(Server &server, Client &client, 
+void	topic_queryandbroadcast(Server &server, Client &client, 
 							const std::vector<std::string> &params, 
 							RawTextLine &line,
 							std::string channel_name , std::string server_name)
@@ -80,13 +82,16 @@ void	topic_queryandset(Server &server, Client &client,
 		}
 	}
 	else
-	{
-		std::string new_topic = line.get_trailing();
-		channel->set_topic(new_topic);
+		broadcast_topic(channel, client, line, channel_name);
+}
+
+void	broadcast_topic(Channel *chan, const Client &client, RawTextLine &line, std::string channel_name)
+{
+	std::string new_topic = line.get_trailing();
+		chan->set_topic(new_topic);
 		//std::string announce = client.get_nickname() + " TOPIC " + channel_name + " :" + new_topic + "\r\n";
 		std::string announce = client.get_prefix() + " TOPIC " + channel_name + " :" + new_topic + "\r\n";
-		const std::vector<Client>& users = channel->get_users();
+		const std::vector<Client>& users = chan->get_users();
 			for (size_t i = 0; i < users.size(); ++i)
 			send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
-	}
 }

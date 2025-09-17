@@ -2,7 +2,7 @@
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client);
 int		check_join_params(RawTextLine &line, Client &client, std::string server_name);
-void	broadcast_listupdate(const Channel *chan, const Client &client, std::string server_name);
+void	broadcast_join(const Channel *chan, const Client &client, std::string server_name);
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client)
 {
@@ -32,7 +32,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		// std::string joinMsg = ":" + client.get_prefix() +  //doesnt work with hexchat
 		// 					" JOIN " + channel_name + "\r\n";
 		send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);
-		broadcast_listupdate(channel, client, server_name);
+		broadcast_join(channel, client, server_name);
 		start = end + 1;
 	}
 }
@@ -49,7 +49,7 @@ int	check_join_params(RawTextLine &line, Client &client, std::string server_name
 	return 0;
 }
 
-void	broadcast_listupdate(const Channel *chan, const Client &client, std::string server_name)
+void	broadcast_join(const Channel *chan, const Client &client, std::string server_name)
 {
 	if (!chan)
 		return;
