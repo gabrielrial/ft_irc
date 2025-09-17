@@ -35,6 +35,7 @@ public:
 	const std::string			&get_topic() const;
 	const std::vector<Client>	&get_users() const;
 	//const std::vector<int>	&getOperators() const;
+	unsigned int			 	get_UserCount() const;
 
 	// Setters
 	void	set_topic(const std::string& topic);

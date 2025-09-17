@@ -6,7 +6,7 @@
 #define BLU "\033[34m"
 #define YEL "\033[33m"
 
-Server::Server(uint16_t port, std::string password) : _port(port), _password(password), _socket(-1)
+Server::Server(uint16_t port, std::string password) : _port(port), _password(password), _socket(-1), client_amt(0)
 {
 	try
 	{
@@ -278,6 +278,11 @@ int Server::prepare_fd_set(fd_set *readfds)
 	return max_fd;
 }
 
+void	Server::set_client_amt()
+{
+	this->client_amt++;
+}
+
 void Server::remove_closed_clients(std::string lineBuffer[])
 {
 	for (size_t i = 0; i < _fdsToClose.size(); ++i)
@@ -340,6 +345,21 @@ void Server::add_channel(const std::string& name)
 	channels.push_back(newChannel);
 }
 
+int	Server::get_client_amt()
+{
+	return this->client_amt;
+}
+
+bool	Server::check_nick_uniqueness(const std::string new_nick)
+{
+	for (int i = 0; i < get_client_amt(); i++)
+	{
+		if (clients[i].get_nickname() == new_nick)
+			return false;
+	}
+	return true;
+}
+
 void Server::debug_print_chan() const
 {
 	std::cout << "\n=== Channel Debug Information ===" << std::endl;
@@ -354,6 +374,11 @@ void Server::debug_print_chan() const
 	std::cout << "----------------------------------------" << std::endl;
 	}
 	std::cout << "=== End Channel Debug Info ===" << std::endl;
+}
+
+const std::vector<Channel>& Server::get_vector_channels() const
+{
+    return channels;
 }
 
 void Server::debug_print_chan_users(const Channel &chan) const

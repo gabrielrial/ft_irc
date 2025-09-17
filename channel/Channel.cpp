@@ -64,11 +64,16 @@ const	std::string &Channel::get_topic() const
 	return _topic;
 }
 
-const	std::vector<Client> &Channel::get_users() const
+unsigned int Channel::get_UserCount() const
+{
+	return _users.size();
+}
+
+const std::vector<Client>& Channel::get_users() const
 {
 	return _users;
 }
-//
+
 //const std::vector<int>& Channel::getOperators() const
 //{
 //	return _operators;
