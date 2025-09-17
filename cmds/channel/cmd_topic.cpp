@@ -83,8 +83,8 @@ void	topic_queryandset(Server &server, Client &client,
 	{
 		std::string new_topic = line.get_trailing();
 		channel->set_topic(new_topic);
-		std::string prefix = ":" + client.get_nickname() + "!" + client.get_username() + "@" + client.get_hostname();
-		std::string announce = prefix + " TOPIC " + channel_name + " :" + new_topic + "\r\n";
+		//std::string announce = client.get_nickname() + " TOPIC " + channel_name + " :" + new_topic + "\r\n";
+		std::string announce = client.get_prefix() + " TOPIC " + channel_name + " :" + new_topic + "\r\n";
 		const std::vector<Client>& users = channel->get_users();
 			for (size_t i = 0; i < users.size(); ++i)
 			send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
