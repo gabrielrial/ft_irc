@@ -13,13 +13,15 @@ class Channel {
 private:
 	std::string			_name;
 	std::string			_topic;
-	std::vector<Client>	_users;		// Store client file descriptors
-	std::vector<Client>	_operators;	// Store operator client file descriptors
+	std::vector<Client>	_users;
+	std::vector<Client>	_operators;
 
 public:
 	Channel();
-	Channel(const std::string& name);
+	Channel(const std::string &name);
 	~Channel();
+	Channel(const Channel &copy);
+	Channel& operator=(const Channel &copy);
 
 	// Basic channel operations
 	bool		add_user(Client client);
@@ -27,9 +29,9 @@ public:
 	bool		has_user(Client client) const;
 	
 	// Operator management
-	//bool		addOperator(int client_fd);
-	//bool		removeOperator(int client_fd);
-	//bool		isOperator(int client_fd) const;
+	bool		add_operator(Client client);
+	bool		rem_operator(Client client);
+	bool		is_operator(Client client) const;
 
 	// Getters
 	const std::string			&get_name() const;

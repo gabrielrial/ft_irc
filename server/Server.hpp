@@ -44,6 +44,7 @@ public:
 
 	void add_channel(const std::string &ch_name);
 	Channel *get_channel(const std::string &ch_name);
+	Client *get_client(const std::string &cl_name);
 
 	const std::vector<Channel> &get_vector_channels() const;
 	const std::vector<Client> &get_vector_clients() const;

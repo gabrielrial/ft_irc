@@ -6,7 +6,7 @@
 /*   By: grial <grial@student.42berlin.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 11:13:06 by grial             #+#    #+#             */
-/*   Updated: 2025/09/17 17:49:04 by grial            ###   ########.fr       */
+/*   Updated: 2025/09/17 18:22:18 by grial            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,25 +27,26 @@ bool only_operators(const std::vector<std::string> &params);
 std::string wildcard(RawTextLine &line);
 std::vector<Client> mask_user(Server &server, bool only_op, const char *mask);
 std::vector<Client> channel_users(bool only_op, const Channel *channel);
-std::vector<Client> get_users(Server &server, bool only_op);
+std::vector<Client> get_users(Server &server);
 const Channel *get_channel(Server &server, RawTextLine &line);
 std::vector<Client> get_list(Server &server, RawTextLine &line);
 
 void cmd_who(Server &server, RawTextLine &line, Client &client)
 {
 	if (!is_valid_who(line))
-		return; // TODO: enviar ERR_NOSUCHSERVER o mensaje de error
+		return; // report error
+	std::cout << "1" << std::endl;
 
 	std::vector<Client> client_list = get_list(server, line);
 
 	std::string target = "*";
 	if (line.get_sep_params().size() > 1 && line.get_sep_params()[1] != "o")
 		target = line.get_sep_params()[1];
-
+	std::cout << "2" << std::endl;
 	for (size_t i = 0; i < client_list.size(); i++)
 	{
 		Client &c = client_list[i];
-
+		std::cout << "3" << std::endl;
 		std::string reply = ":" + std::string(SERVER_NAME) + " 352 " +
 							client.get_nickname() + " " +
 							target + " " +
@@ -53,9 +54,6 @@ void cmd_who(Server &server, RawTextLine &line, Client &client)
 							c.get_hostname() + " " +
 							SERVER_NAME + " " +
 							c.get_nickname() + " H";
-
-		if (c.get_operator())
-			reply += "*";
 
 		reply += " :0 " + c.get_realname() + CRLF;
 
@@ -73,9 +71,9 @@ bool is_valid_who(RawTextLine &line)
 	std::vector<std::string> param = line.get_sep_params();
 
 	if (param.size() > 3)
-		return false; // demasiados parámetros
+		return false; // report error
 	if (param.size() == 3 && !(param[2].size() == 1 && param[2] == "o"))
-		return false; // el tercer parámetro solo puede ser "o"
+		return false; // report error
 	return true;
 }
 
@@ -89,7 +87,7 @@ std::vector<Client> get_list(Server &server, RawTextLine &line)
 
 	if (line.get_sep_params().size() == 1 || 
 	    (line.get_sep_params().size() == 2 && only_op)) // WHO, WHO o
-		client_list = get_users(server, only_op);
+		client_list = get_users(server);
 	else if (line.get_sep_params().size() > 1 && channel) // WHO #channel [o]
 		client_list = channel_users(only_op, channel);
 	else if (!mask.empty()) // WHO mask [o]
@@ -119,14 +117,14 @@ const Channel *get_channel(Server &server, RawTextLine &line)
 	return NULL;
 }
 
-std::vector<Client> get_users(Server &server, bool only_op)
+std::vector<Client> get_users(Server &server)
 {
 	std::vector<Client> clients = server.get_vector_clients();
 	std::vector<Client> result;
 
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		if (clients[i].get_visible() && (!only_op || clients[i].get_operator()))
+		if (clients[i].get_visible())
 			result.push_back(clients[i]);
 	}
 	return result;
@@ -139,7 +137,9 @@ std::vector<Client> channel_users(bool only_op, const Channel *channel)
 
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		if (clients[i].get_visible() && (!only_op || clients[i].get_operator()))
+		if (only_op && !channel->is_operator(clients[i]) && !clients[i].get_visible())
+			continue ;
+		if (clients[i].get_visible() && !only_op)
 			result.push_back(clients[i]);
 	}
 	return result;
@@ -158,7 +158,7 @@ std::vector<Client> mask_user(Server &server, bool only_op, const char *mask)
 			strcmp(clients[i].get_hostname().c_str(), mask) == 0 ||
 			strcmp(clients[i].get_realname().c_str(), mask) == 0;
 
-		if (match && clients[i].get_visible() && (!only_op || clients[i].get_operator()))
+		if (match && clients[i].get_visible() && !only_op)
 			result.push_back(clients[i]);
 	}
 	return result;

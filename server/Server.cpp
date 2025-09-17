@@ -328,6 +328,16 @@ Channel *Server::get_channel(const std::string &name)
 	return NULL;
 }
 
+Client *Server::get_client(const std::string &name)
+{
+	for (std::vector<Client>::iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		if (it->get_nickname() == name)
+			return &(*it);
+	}
+	return NULL;
+}
+
 void Server::add_channel(const std::string &name)
 {
 	for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
