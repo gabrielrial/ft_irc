@@ -18,9 +18,10 @@ private:
 
 public:
 	Channel();
+	Channel(const std::string &name);
+	~Channel();
 	Channel(const Channel &copy);
 	Channel& operator=(const Channel &copy);
-	~Channel();
 
 	// Basic channel operations
 	bool		add_user(Client client);

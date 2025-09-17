@@ -5,6 +5,14 @@ Channel::Channel() :
 	_topic("")
 {}
 
+Channel::Channel(const std::string &name) : 
+	_name(name),
+	_topic("")
+{}
+
+Channel::~Channel()
+{}
+
 Channel::Channel(const Channel &copy)
 {
 	*this = copy;
@@ -21,9 +29,6 @@ Channel& Channel::operator=(const Channel &copy)
 	}
 	return *this;
 }
-
-Channel::~Channel()
-{}
 
 bool	Channel::add_user(Client client)
 {
