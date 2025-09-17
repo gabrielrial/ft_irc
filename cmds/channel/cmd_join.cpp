@@ -26,7 +26,10 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 			channel_name = "#" + channel_name;
 		server.add_channel(channel_name);
 		Channel *channel = server.get_channel(channel_name);
+		bool empty_channel = (channel->get_UserCount() == 0);
 		channel->add_user(client);
+		if (empty_channel)
+			channel->add_operator(client);
 		std::string joinMsg = ":" + client.get_nickname() +  //works with hexchat
 							" JOIN " + channel_name + "\r\n";
 		// std::string joinMsg = ":" + client.get_prefix() +  //doesnt work with hexchat
