@@ -7,14 +7,20 @@
 #include <map>
 #include <algorithm>
 #include <sys/socket.h>
+
 class Client;
 
-class Channel {
+class Channel
+{
 private:
 	std::string			_name;
 	std::string			_topic;
 	std::vector<Client>	_users;
 	std::vector<Client>	_operators;
+	bool				_mode_i;
+	bool				_mode_t;
+	std::string			_mode_key;
+	size_t				_mode_l;
 
 public:
 	Channel();
