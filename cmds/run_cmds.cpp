@@ -4,6 +4,15 @@
 
 void run_cmds(Server &server, RawTextLine &line, Client &client)
 {
+    if (client.has_pass() == false)
+    {
+        if (line.get_command() == "PASS")
+        {
+            cmd_pass(server, line, client);
+        }
+        return ;
+    }
+
     typedef void (*CmdFunc)(Server &, RawTextLine &, Client &);
 
     const std::string cmds[MAX_CMDS] = {

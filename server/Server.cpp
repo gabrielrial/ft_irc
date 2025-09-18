@@ -204,8 +204,8 @@ void Server::process_line(int fd, const std::string &line) // change to parse th
 	// 	std::string nickname = line.substr(5, end - 5);
 	// 	client->set_nickname(nickname);
 	// }
+	
 	run_cmds(*this, parsed, *client);
-	//this->debug_print_chan();
 }
 
 void Server::register_client()
