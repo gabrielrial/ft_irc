@@ -1,7 +1,7 @@
 #include "Client.hpp"
 
-Client::Client(int fd, sockaddr_in &addr) : _client_fd(fd), _channel_amount(0),
-											_nickname("*"), _username("*"), _realname(""), _has_pass(false), _has_nick(false),
+Client::Client(int fd, sockaddr_in &addr) : _client_fd(fd), _nickname("*"), _username("*"),
+										 _realname(""), _has_pass(false), _has_nick(false),
 											_has_user(false), _visible(true), channels(0)
 {
 	char ip[INET_ADDRSTRLEN];
@@ -89,10 +89,6 @@ std::string Client::get_prefix() const
 	return std::string(":") + n + "!" + u + "@" + h;
 }
 
-int Client::get_channel_amt()
-{
-	return this->_channel_amount;
-}
 
 //              setters
 void Client::set_nickname(const std::string &nick)
@@ -130,7 +126,6 @@ bool Client::is_registered()
 // {
 //     // if channel exists, and client has requirements for entering channel met
 //     // add them to channel and
-//     // channel_amount++;
 // }
 
 bool Client::operator==(const Client &other) const

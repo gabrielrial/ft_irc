@@ -11,7 +11,6 @@ class Client
 {
     private:
         int         _client_fd;
-        int         _channel_amount;
         std::string _ip;
         std::string _nickname;
         std::string _username;
@@ -48,7 +47,6 @@ class Client
         bool has_nick() const;
         bool has_user() const;
         bool is_registered();
-        int get_channel_amt();
 		bool operator==(const Client& other) const;
 };
 
