@@ -8,8 +8,8 @@ void	topic_queryandbroadcast(Server &server, Client &client,
 							const std::vector<std::string> &params, 
 							RawTextLine &line,
 							std::string channel_name , std::string server_name);
-void	broadcast_topic(Channel *chan, const Client &client, 
-							RawTextLine &line, std::string channel_name);
+void	broadcast_topic(Channel *chan, const Client &client, RawTextLine &line,
+						std::string channel_name, std::string server_name);
 
 void	cmd_topic(Server &server, RawTextLine &line, Client &client)
 {
@@ -82,16 +82,25 @@ void	topic_queryandbroadcast(Server &server, Client &client,
 		}
 	}
 	else
-		broadcast_topic(channel, client, line, channel_name);
+		broadcast_topic(channel, client, line, channel_name, server_name);
 }
 
-void	broadcast_topic(Channel *chan, const Client &client, RawTextLine &line, std::string channel_name)
+void	broadcast_topic(Channel *chan, const Client &client, RawTextLine &line,
+						std::string channel_name, std::string server_name)
 {
 	std::string new_topic = line.get_trailing();
-		chan->set_topic(new_topic);
-		//std::string announce = client.get_nickname() + " TOPIC " + channel_name + " :" + new_topic + "\r\n";
-		std::string announce = client.get_prefix() + " TOPIC " + channel_name + " :" + new_topic + "\r\n";
-		const std::vector<Client>& users = chan->get_users();
-			for (size_t i = 0; i < users.size(); ++i)
-			send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
+	if (!chan->is_operator(client))
+	{
+		std::string err_chanoprivsneeded = ":" + server_name + " 482 " + 
+							client.get_nickname() + " " + channel_name + 
+							" :You're not channel operator\r\n";
+		send(client.get_FD(), err_chanoprivsneeded.c_str(), err_chanoprivsneeded.length(), 0);
+		return;
+	}
+	chan->set_topic(new_topic);
+	//std::string announce = client.get_nickname() + " TOPIC " + channel_name + " :" + new_topic + "\r\n";
+	std::string announce = client.get_prefix() + " TOPIC " + channel_name + " :" + new_topic + "\r\n";
+	const std::vector<Client>& users = chan->get_users();
+	for (size_t i = 0; i < users.size(); ++i)
+		send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
 }
