@@ -3,7 +3,9 @@
 //  PARAMETERS
 
 #define BUFFER_SIZE 1024
+#define BUFFER_LINE 510
 #define HOST_NAME_SIZE 128
+#define CRLF "\r\n"
 
 
 // CLASS INCLUDE
