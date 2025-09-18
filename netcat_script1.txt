@@ -1,0 +1,3 @@
+PASS 42
+NICK netcat
+USER nc_user nc_host nc_server :nc_real
