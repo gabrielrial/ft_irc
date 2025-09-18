@@ -1,10 +1,34 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name) : _name(name), _topic("")
+Channel::Channel() : 
+	_name(""),
+	_topic("")
+{}
+
+Channel::Channel(const std::string &name) : 
+	_name(name),
+	_topic("")
 {}
 
 Channel::~Channel()
 {}
+
+Channel::Channel(const Channel &copy)
+{
+	*this = copy;
+}
+
+Channel& Channel::operator=(const Channel &copy)
+{
+	if (this != &copy) 
+	{
+		_name = copy._name;
+		_topic = copy._topic;
+		_users = copy._users;
+		_operators = copy._operators;
+	}
+	return *this;
+}
 
 bool	Channel::add_user(Client client)
 {
@@ -31,28 +55,28 @@ bool	Channel::has_user(Client client) const
 	return std::find(_users.begin(), _users.end(), client) != _users.end();
 }
 
-// bool Channel::addOperator(int client_fd)
-// {
-// 	if (!has_user(client_fd) || isOperator(client_fd))
-// 		return false;
-// 	_operators.push_back(client_fd);
-// 	return true;
-// }
-//
-//bool Channel::removeOperator(int client_fd)
-//{
-//	std::vector<int>::iterator it = std::find(_operators.begin(), _operators.end(), client_fd);
-//	if (it == _operators.end())
-//		return false;
-//	
-//	_operators.erase(it);
-//	return true;
-//}
-//
-//bool Channel::isOperator(int client_fd) const
-//{
-//	return std::find(_operators.begin(), _operators.end(), client_fd) != _operators.end();
-//}
+bool Channel::add_operator(Client client)
+{
+	if (!has_user(client) || is_operator(client))
+		return false;
+	_operators.push_back(client);
+	return true;
+}
+
+bool Channel::rem_operator(Client client)
+{
+	std::vector<Client>::iterator it = std::find(_operators.begin(), _operators.end(), client);
+	if (it == _operators.end())
+		return false;
+	
+	_operators.erase(it);
+	return true;
+}
+
+bool Channel::is_operator(Client client) const
+{
+	return std::find(_operators.begin(), _operators.end(), client) != _operators.end();
+}
 
 const	std::string &Channel::get_name() const
 {

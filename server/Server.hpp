@@ -1,10 +1,10 @@
 #pragma once
 
-#include <netinet/in.h>   // sockaddr_in
-#include <sys/socket.h>   // socket functions
-#include <unistd.h>       // close()
-#include <string>         // std::string
-#include <vector>         // std::vector
+#include <netinet/in.h> // sockaddr_in
+#include <sys/socket.h> // socket functions
+#include <unistd.h>		// close()
+#include <string>		// std::string
+#include <vector>		// std::vector
 
 #include "../client/Client.hpp"
 #include "../channel/Channel.hpp"
@@ -30,33 +30,34 @@ private:
 	std::vector<int> _fdsToClose;
 
 	void register_client();
-	Client* find_client(int fd);
+	Client *find_client(int fd);
 
 	void process_line(int fd, const std::string &line);
 	void handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer);
 
-	
-	public:
-		Server(uint16_t port, std::string password);
-		~Server();
-	
-		void check_client(RawTextLine &line, std::vector<Client*> &client_list);
-		bool check_channel(RawTextLine &line);
-		void	welcome(Client client);
+public:
+	Server(uint16_t port, std::string password);
+	~Server();
+
+	void check_client(RawTextLine &line, std::vector<Client *> &client_list);
+	bool check_channel(RawTextLine &line);
+	void welcome(Client client);
 		bool	check_nick_uniqueness(const std::string new_nick);
 
-		void		add_channel(const std::string &ch_name);
-		Channel*	get_channel(const std::string &ch_name);
+	void add_channel(const std::string &ch_name);
+	Channel *get_channel(const std::string &ch_name);
+	Client *get_client(const std::string &cl_name);
 		int			get_client_amt();
 
-		const std::vector<Channel>& get_vector_channels() const;
+	const std::vector<Channel> &get_vector_channels() const;
+	const std::vector<Client> &get_vector_clients() const;
 
-		std::string get_password() const;
+	std::string get_password() const;
 		void		set_client_amt();
-		void 		remove_closed_clients(std::string lineBuffer[]);
-		void		debug_print_chan() const;
-		void		debug_print_chan_users(const Channel& chan) const;
+	void remove_closed_clients(std::string lineBuffer[]);
+	void debug_print_chan() const;
+	void debug_print_chan_users(const Channel &chan) const;
 
-		void srv_run();
-		void schedule_close(int fd);
+	void srv_run();
+	void schedule_close(int fd);
 };
