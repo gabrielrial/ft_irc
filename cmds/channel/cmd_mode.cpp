@@ -22,7 +22,13 @@ void cmd_mode(Server &server, RawTextLine &line, Client &client)
 		return;
 	if (params.size() == 1)
 	{
-		//RPL_CHANNELMODEIS (324)
+		Channel *channel = server.get_channel(channel_name); //inefficient, recall 2x
+		std::string modestring = channel->get_allmode();
+		std::string rpl_channelmodeis = ":" + std::string(server_name) + " 324 " + 
+							client.get_nickname() + " " + 
+							channel_name + " " + 
+							modestring + "\r\n";
+		send(client.get_FD(), rpl_channelmodeis.c_str(), rpl_channelmodeis.length(), 0);
 		return;
 	}
 	change_mode(server, client, server.get_channel(channel_name),
@@ -71,7 +77,7 @@ int check_mode_channel(Server &server, Client &client,
 	}
 	return 0;
 }
-
+//GPT generated, rethink!!!!!
 void change_mode(Server &server, Client &client, Channel *channel,
 				const std::string &modes, const std::vector<std::string> &mode_params,
 				std::string server_name)

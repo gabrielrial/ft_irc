@@ -103,6 +103,20 @@ const std::vector<Client>& Channel::get_operators() const
 	return _operators;
 }
 
+std::string Channel::get_allmode() const
+{
+	std::string modes = "+";
+	if (this->get_mode_i())
+		modes += "i";
+	if (this->get_mode_t())
+		modes += "t";
+	if (!this->get_mode_k().empty())
+		modes += "k";
+	if (this->get_mode_l())
+		modes += "l";
+	return modes;
+}
+
 void	Channel::set_topic(const std::string &topic)
 {
 	_topic = topic;
