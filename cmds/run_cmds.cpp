@@ -4,6 +4,15 @@
 
 void run_cmds(Server &server, RawTextLine &line, Client &client)
 {
+    if (client.has_pass() == false)
+    {
+        if (line.get_command() == "PASS")
+        {
+            cmd_pass(server, line, client);
+        }
+        return ;
+    }
+
     typedef void (*CmdFunc)(Server &, RawTextLine &, Client &);
 
     const std::string cmds[MAX_CMDS] = {
@@ -32,6 +41,6 @@ void cmd_notice(Server &server, RawTextLine &line, Client &client) {(void)server
 
 //void cmd_topic(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 void cmd_names(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
-void cmd_who(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
+
 void cmd_whois(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 void cmd_whowas(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};

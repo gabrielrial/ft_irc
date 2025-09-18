@@ -15,9 +15,8 @@ void cmd_pass(Server &server, RawTextLine &line, Client &client)
 		return ;
 	}
 	std::string provided = line.get_sep_params()[0];
-	if (!provided.empty() && provided[0] == ':') // some users enter ':' before the actual pw
+	if (!provided.empty() && provided[0] == ':') // some clients enter ':' before the actual pw
 		provided.erase(0, 1);
-
     if (provided == server.get_password())
 	{
 		client.pass_accepted(true);
