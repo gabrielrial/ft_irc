@@ -69,8 +69,7 @@ int check_mode_channel(Client &client, Channel *channel, std::string server_name
 	}
 	return 0;
 }
-//GPT generated, rethink!!!!!
-//handle unknown mode error (472 ERR_UNKNOWNMODE)
+
 void change_mode(Server &server, Client &client, Channel *channel,
 				const std::vector<std::string> &params, std::string server_name)
 {
