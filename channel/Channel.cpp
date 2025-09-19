@@ -98,10 +98,10 @@ const std::vector<Client>& Channel::get_users() const
 	return _users;
 }
 
-//const std::vector<int>& Channel::getOperators() const
-//{
-//	return _operators;
-//}
+const std::vector<Client>& Channel::getOperators() const
+{
+	return _operators;
+}
 
 void	Channel::set_topic(const std::string &topic)
 {

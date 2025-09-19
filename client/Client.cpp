@@ -2,7 +2,7 @@
 
 Client::Client(int fd, sockaddr_in &addr) : _client_fd(fd), _nickname("*"), _username("*"),
 										 _realname(""), _has_pass(false), _has_nick(false),
-											_has_user(false), _visible(true), channels(0)
+											_has_user(false), _visible(true), _operator(false), channels(0)
 {
 	char ip[INET_ADDRSTRLEN];
 	inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
@@ -81,6 +81,11 @@ bool Client::get_visible() const
 	return _visible;
 }
 
+bool Client::is_operator()
+{
+	return _operator;
+}
+
 std::string Client::get_prefix() const
 {
     const std::string& n = _nickname.empty() ? "*" : _nickname;
@@ -120,6 +125,11 @@ void Client::set_servername(const std::string &serv)
 bool Client::is_registered()
 {
 	return _has_pass && _has_nick && _has_user;
+}
+
+void	Client::set_operator(bool set)
+{
+	this->_operator = set;
 }
 
 // bool add_to_channel(Client *client, Channel channel)

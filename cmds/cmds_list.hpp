@@ -37,6 +37,7 @@ void cmd_notice(Server &server, RawTextLine &line, Client &client);
  * JOIN <channel> → join (or create) a channel.
  * PART <channel> [<message>] → leave a channel.
  * LIST [<channel>] → list channels (and their topics).
+ * INVITE <nickname> <channel> → invites a user to a channel.
  * TOPIC <channel> [<topic>] → view or set a channel’s topic.
  * NAMES [<channel>] → shows who is currently in the channel.
  * */

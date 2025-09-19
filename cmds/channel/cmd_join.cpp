@@ -4,6 +4,19 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client);
 int		check_join_params(RawTextLine &line, Client &client, std::string server_name);
 void	broadcast_join(const Channel *chan, const Client &client, std::string server_name);
 
+void	print_ops(Channel *channel, std::string channel_name)
+{
+	const std::vector<Client> &ops = channel->getOperators();
+	std::string ops_list;
+	for (size_t i = 0; i < ops.size(); ++i)
+	{
+		if (i > 0)
+			ops_list += ", ";
+		ops_list += ops[i].get_nickname();
+	}
+	std::cout << "Channel: '" << channel_name << "' created/joined. Operators: [" << ops_list << "]" << std::endl;
+}
+
 void	cmd_join(Server &server, RawTextLine &line, Client &client)
 {
 	char server_name[256];
@@ -25,8 +38,14 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 			channel_name[0] != '+' && channel_name[0] != '!')
 			channel_name = "#" + channel_name;
 		server.add_channel(channel_name);
-		Channel *channel = server.get_channel(channel_name);
+		Channel *channel = server.get_channel(channel_name);		
 		channel->add_user(client);
+		if (!channel->is_operator(client))
+		{
+			const std::vector<Client> &ops_check = channel->getOperators();
+			if (ops_check.empty()) // if there's no operator, add the first user
+				channel->add_operator(client);
+		}
 		std::string joinMsg = ":" + client.get_nickname() +  //works with hexchat
 							" JOIN " + channel_name + "\r\n";
 		// std::string joinMsg = ":" + client.get_prefix() +  //doesnt work with hexchat
@@ -34,8 +53,10 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);
 		broadcast_join(channel, client, server_name);
 		start = end + 1;
+		print_ops(channel, channel_name);
 	}
 }
+
 
 int	check_join_params(RawTextLine &line, Client &client, std::string server_name)
 {
