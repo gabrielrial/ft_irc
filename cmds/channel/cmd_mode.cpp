@@ -1,13 +1,11 @@
 #include "../../lib_irc.hpp"
 
-// In cmds/channel/cmd_mode.cpp
 void cmd_mode(Server &server, RawTextLine &line, Client &client);
 int check_mode_params(RawTextLine &line, Client &client, std::string server_name);
 int check_mode_channel(Client &client, Channel *channel, std::string server_name);
 
 void change_mode(Server &server, Client &client, Channel *channel, 
-				const std::string &modes, const std::vector<std::string> &mode_params,
-				std::string server_name);
+				const std::vector<std::string> &params, std::string server_name);
 
 void cmd_mode(Server &server, RawTextLine &line, Client &client)
 {
@@ -30,16 +28,12 @@ void cmd_mode(Server &server, RawTextLine &line, Client &client)
 		send(client.get_FD(), rpl_channelmodeis.c_str(), rpl_channelmodeis.length(), 0);
 		return;
 	}
-	//GPT generated, rethink!!!!!
-	change_mode(server, client, server.get_channel(channel_name),
-				params[1], 
-				std::vector<std::string>(params.begin() + 2, params.end()),
-				server_name);
+	change_mode(server, client, channel, params, server_name);
 }
 
 int check_mode_params(RawTextLine &line, Client &client, std::string server_name)
 {
-		if (line.get_params().empty())
+	if (line.get_params().empty())
 	{
 		std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
 				client.get_nickname() + " MODE :Not enough parameters\r\n";
@@ -76,47 +70,112 @@ int check_mode_channel(Client &client, Channel *channel, std::string server_name
 	return 0;
 }
 //GPT generated, rethink!!!!!
+//handle unknown mode error (472 ERR_UNKNOWNMODE)
 void change_mode(Server &server, Client &client, Channel *channel,
-				const std::string &modes, const std::vector<std::string> &mode_params,
-				std::string server_name)
+				const std::vector<std::string> &params, std::string server_name)
 {
-	bool adding = true;  // + or - mode
-	size_t param_index = 0;
-
-	for (char mode : modes) {
-		switch (mode) {
+	bool adding = true;
+	for (size_t i = 0; i < params[1].size(); ++i)
+	{
+		char mode = params[1][i];
+		switch (mode)
+		{
 			case '+':
 				adding = true;
 				break;
 			case '-':
 				adding = false;
 				break;
-			case 'o': // operator status
-				if (param_index < mode_params.size()) {
-					// Handle op/deop
-					std::string target_nick = mode_params[param_index++];
-					// Find target client and add/remove operator status
+			case 'i':
+				channel->set_mode_i(adding);
+				break;
+			case 't':
+				channel->set_mode_t(adding);
+				break;
+			case 'k':
+				if (adding)
+				{
+					if (!params[2].empty())
+						channel->set_mode_k(params[2]);
+					else
+					{
+						std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
+														client.get_nickname() + " MODE :Not enough parameters\r\n";
+						send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
+						return;
+					}
+				}
+				else
+					channel->set_mode_k("");
+				break;
+			case 'l':
+				if (adding)
+				{
+					if (params[2].empty())
+					{
+						std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
+														client.get_nickname() + " MODE :Not enough parameters\r\n";
+						send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
+						return;
+					}
+					else
+					{
+						//int limit = std::stoi(params[2]);
+						int limit = atoi(params[2].c_str());
+						if (limit > 0)
+							channel->set_mode_l(limit);
+						else
+							channel->set_mode_l(0);
+					}
+				}
+				else
+					channel->set_mode_l(0);
+				break;
+			case 'o':
+				{
+				if (params[2].empty())
+				{
+					std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
+													client.get_nickname() + " MODE :Not enough parameters\r\n";
+					send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
+					return;
+				}
+				if (server.get_client(params[2]) == NULL)
+				{
+					std::string err_nosuchnick = ":" + std::string(server_name) + " 401 " + 
+												client.get_nickname() + " " + params[2] + " MODE :No such nick\r\n";
+					send(client.get_FD(), err_nosuchnick.c_str(), err_nosuchnick.length(), 0);
+					return;
+				}
+				Client* nickname = server.get_client(params[2]);
+				if (adding)
+				{
+					channel->add_operator(*nickname);
+					std::string announce = ":" + client.get_prefix() + " MODE " + 
+											channel->get_name() + " +o " + params[2] + "\r\n";
+					const std::vector<Client>& users = channel->get_users();
+					for (size_t i = 0; i < users.size(); ++i)
+						send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
+				}
+				else
+				{
+					channel->rem_operator(*nickname);
+					std::string announce = ":" + client.get_prefix() + " MODE " + 
+											channel->get_name() + " -o " + params[2] + "\r\n";
+					const std::vector<Client>& users = channel->get_users();
+					for (size_t i = 0; i < users.size(); ++i)
+						send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
 				}
 				break;
-			// Add other mode cases
+				}
+			default:
+				if (mode != ' ' && mode != '\t' && mode != '\n' && mode != '\r')
+				{
+					std::string err_unknownmode = ":" + server_name + " 472 " + 
+												client.get_nickname() + " " + mode + " :is unknown mode char to me\r\n";
+					send(client.get_FD(), err_unknownmode.c_str(), err_unknownmode.length(), 0);
+				}
+				break;
 		}
 	}
-	
-	// Broadcast mode changes to channel
-	std::string mode_msg = ":" + client.get_prefix() + " MODE " + channel->get_name() + " " + modes;
-	// Add parameters and broadcast
 }
-
-/*
-Success responses:
-RPL_CHANNELMODEIS (324)  // Current channel modes
-RPL_BANLIST (367)        // If implementing ban lists
-RPL_ENDOFBANLIST (368)   // End of ban list
-
-Error responses:
-ERR_NEEDMOREPARAMS (461)    // Not enough parameters
-ERR_CHANOPRIVSNEEDED (482)  // Not channel operator
-ERR_NOSUCHCHANNEL (403)     // Channel doesn't exist
-ERR_NOTONCHANNEL (442)      // User not on channel
-ERR_UNKNOWNMODE (472)       // Unknown mode character
-*/

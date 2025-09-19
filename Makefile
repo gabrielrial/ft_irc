@@ -10,11 +10,11 @@ SRC = main.cpp \
  		client/Client.cpp \
 		channel/Channel.cpp \
 		cmds/run_cmds.cpp \
-	\
 		cmds/channel/cmd_list.cpp \
 		cmds/channel/cmd_part.cpp \
 		cmds/channel/cmd_join.cpp \
 		cmds/channel/cmd_topic.cpp \
+		cmds/channel/cmd_mode.cpp \
 		cmds/connection/cmd_nick.cpp \
 		cmds/connection/cmd_pass.cpp \
 		cmds/connection/cmd_user.cpp \
