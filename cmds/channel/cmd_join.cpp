@@ -40,12 +40,6 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		server.add_channel(channel_name);
 		Channel *channel = server.get_channel(channel_name);		
 		channel->add_user(client);
-		if (!channel->is_operator(client))
-		{
-			const std::vector<Client> &ops_check = channel->getOperators();
-			if (ops_check.empty()) // if there's no operator, add the first user
-				channel->add_operator(client);
-		}
 		std::string joinMsg = ":" + client.get_nickname() +  //works with hexchat
 							" JOIN " + channel_name + "\r\n";
 		// std::string joinMsg = ":" + client.get_prefix() +  //doesnt work with hexchat
@@ -53,7 +47,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);
 		broadcast_join(channel, client, server_name);
 		start = end + 1;
-		print_ops(channel, channel_name);
+	//	print_ops(channel, channel_name);
 	}
 }
 
