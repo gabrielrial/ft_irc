@@ -30,9 +30,10 @@ int	check_topic_params(RawTextLine &line, Client &client, std::string server_nam
 {
 	if (line.get_params().empty())
 	{
-		std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
-				client.get_nickname() + " TOPIC :Not enough parameters\r\n";
-		send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
+		// std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
+		// 		client.get_nickname() + " TOPIC :Not enough parameters\r\n";
+		// send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
+		err_needmoreparams(server_name, client, "TOPIC");
 		return 1;
 	}
 	return 0;
@@ -44,16 +45,18 @@ int	check_topic_channel(Server &server, Client &client,
 	Channel *channel = server.get_channel(channel_name);
 	if (!channel)
 	{
-		std::string err_nosuchchannel = ":" + std::string(server_name) + " 403 " + 
-				client.get_nickname() + " " + channel_name + " :No such channel\r\n";
-		send(client.get_FD(), err_nosuchchannel.c_str(), err_nosuchchannel.size(), 0);
+		// std::string err_nosuchchannel = ":" + std::string(server_name) + " 403 " + 
+		// 		client.get_nickname() + " " + channel_name + " :No such channel\r\n";
+		// send(client.get_FD(), err_nosuchchannel.c_str(), err_nosuchchannel.size(), 0);
+		err_nosuchchannel(server_name, client, channel);
 		return 1;
 	}
 	else if (!channel->has_user(client))
 	{
-		std::string err_notonchannel = ":" + std::string(server_name) + " 442 " + 
-				client.get_nickname() + " " + channel_name + " :You're not on that channel\r\n";
-		send(client.get_FD(), err_notonchannel.c_str(), err_notonchannel.size(), 0);
+		// std::string err_notonchannel = ":" + std::string(server_name) + " 442 " + 
+		// 		client.get_nickname() + " " + channel_name + " :You're not on that channel\r\n";
+		// send(client.get_FD(), err_notonchannel.c_str(), err_notonchannel.size(), 0);
+		err_notonchannel(server_name, client, channel);
 		return 1;
 	}
 	return 0;
