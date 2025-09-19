@@ -2,12 +2,14 @@
 
 Channel::Channel() : 
 	_name(""),
-	_topic("")
+	_topic(""),
+	_mode_i(false)
 {}
 
 Channel::Channel(const std::string &name) : 
 	_name(name),
-	_topic("")
+	_topic(""),
+	_mode_i(false)
 {}
 
 Channel::~Channel()
@@ -98,9 +100,14 @@ const std::vector<Client>& Channel::get_users() const
 	return _users;
 }
 
-const std::vector<Client>& Channel::getOperators() const
+const std::vector<Client>& Channel::get_Operators() const
 {
 	return _operators;
+}
+
+bool	Channel::get_mode_i()
+{
+	return _mode_i;
 }
 
 void	Channel::set_topic(const std::string &topic)

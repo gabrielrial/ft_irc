@@ -42,18 +42,18 @@ public:
 	void check_client(RawTextLine &line, std::vector<Client *> &client_list);
 	bool check_channel(RawTextLine &line);
 	void welcome(Client client);
-		bool	check_nick_uniqueness(const std::string new_nick);
+	bool	check_nick_uniqueness(const std::string new_nick);
 
 	void add_channel(const std::string &ch_name);
 	Channel *get_channel(const std::string &ch_name);
 	Client *get_client(const std::string &cl_name);
-		int			get_client_amt();
+	int				get_client_amt();
 
 	const std::vector<Channel> &get_vector_channels() const;
 	const std::vector<Client> &get_vector_clients() const;
 
 	std::string get_password() const;
-		void		set_client_amt();
+	void set_client_amt();
 	void remove_closed_clients(std::string lineBuffer[]);
 	void debug_print_chan() const;
 	void debug_print_chan_users(const Channel &chan) const;

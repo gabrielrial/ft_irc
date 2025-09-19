@@ -6,7 +6,7 @@ void	broadcast_join(const Channel *chan, const Client &client, std::string serve
 
 void	print_ops(Channel *channel, std::string channel_name)
 {
-	const std::vector<Client> &ops = channel->getOperators();
+	const std::vector<Client> &ops = channel->get_Operators();
 	std::string ops_list;
 	for (size_t i = 0; i < ops.size(); ++i)
 	{

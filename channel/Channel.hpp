@@ -15,6 +15,7 @@ private:
 	std::string			_topic;
 	std::vector<Client>	_users;
 	std::vector<Client>	_operators;
+	bool				_mode_i;
 
 public:
 	Channel();
@@ -37,8 +38,9 @@ public:
 	const std::string			&get_name() const;
 	const std::string			&get_topic() const;
 	const std::vector<Client>	&get_users() const;
-	const std::vector<Client>	&getOperators() const;
+	const std::vector<Client>	&get_Operators() const;
 	unsigned int			 	get_UserCount() const;
+	bool						get_mode_i();
 
 	// Setters
 	void	set_topic(const std::string& topic);
