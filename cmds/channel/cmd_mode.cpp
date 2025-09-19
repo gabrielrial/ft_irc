@@ -3,7 +3,7 @@
 // In cmds/channel/cmd_mode.cpp
 void cmd_mode(Server &server, RawTextLine &line, Client &client);
 int check_mode_params(RawTextLine &line, Client &client, std::string server_name);
-int check_mode_channel(Server &server, Client &client, std::string channel_name, std::string server_name);
+int check_mode_channel(Client &client, Channel *channel, std::string server_name);
 
 void change_mode(Server &server, Client &client, Channel *channel, 
 				const std::string &modes, const std::vector<std::string> &mode_params,
@@ -18,19 +18,19 @@ void cmd_mode(Server &server, RawTextLine &line, Client &client)
 		return;
 	const std::vector<std::string> &params = line.get_params();
 	std::string channel_name = params[0];
-	if (check_mode_channel(server, client, channel_name, server_name) == 1)
+	Channel *channel = server.get_channel(channel_name);
+	if (check_mode_channel(client, channel, server_name) == 1)
 		return;
 	if (params.size() == 1)
 	{
-		Channel *channel = server.get_channel(channel_name); //inefficient, recall 2x
 		std::string modestring = channel->get_allmode();
 		std::string rpl_channelmodeis = ":" + std::string(server_name) + " 324 " + 
-							client.get_nickname() + " " + 
-							channel_name + " " + 
+							client.get_nickname() + " " + channel_name + " " + 
 							modestring + "\r\n";
 		send(client.get_FD(), rpl_channelmodeis.c_str(), rpl_channelmodeis.length(), 0);
 		return;
 	}
+	//GPT generated, rethink!!!!!
 	change_mode(server, client, server.get_channel(channel_name),
 				params[1], 
 				std::vector<std::string>(params.begin() + 2, params.end()),
@@ -49,31 +49,29 @@ int check_mode_params(RawTextLine &line, Client &client, std::string server_name
 	return 0;
 }
 
-int check_mode_channel(Server &server, Client &client, 
-						std::string channel_name, std::string server_name)
+int check_mode_channel(Client &client, Channel *channel, std::string server_name)
 {
-	Channel *channel = server.get_channel(channel_name);
 	if (!channel)
 	{
 		std::string err_nosuchchannel = ":" + std::string(server_name) + " 403 " + 
-				client.get_nickname() + " " + channel_name + " :No such channel\r\n";
+				client.get_nickname() + " " + channel->get_name() + " :No such channel\r\n";
 		send(client.get_FD(), err_nosuchchannel.c_str(), err_nosuchchannel.size(), 0);
 		return 1;
 	}
 	else if (!channel->has_user(client))
 	{
 		std::string err_notonchannel = ":" + std::string(server_name) + " 442 " + 
-				client.get_nickname() + " " + channel_name + " :You're not on that channel\r\n";
+				client.get_nickname() + " " + channel->get_name() + " :You're not on that channel\r\n";
 		send(client.get_FD(), err_notonchannel.c_str(), err_notonchannel.size(), 0);
 		return 1;
 	}
 	else if (!channel->is_operator(client))
 	{
 		std::string err_chanoprivsneeded = ":" + server_name + " 482 " + 
-							client.get_nickname() + " " + channel_name + 
+							client.get_nickname() + " " + channel->get_name() + 
 							" :You're not channel operator\r\n";
 		send(client.get_FD(), err_chanoprivsneeded.c_str(), err_chanoprivsneeded.length(), 0);
-		return;
+		return 1;
 	}
 	return 0;
 }

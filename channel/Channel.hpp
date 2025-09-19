@@ -45,10 +45,10 @@ public:
 	const std::vector<Client>	&get_users() const;
 	const std::vector<Client>	&get_operators() const;
 	unsigned int			 	get_UserCount() const;
-	bool						&get_mode_i() const;
-	bool						&get_mode_t() const;
-	std::string					&get_mode_k() const;
-	size_t						&get_mode_l() const;
+	bool						get_mode_i() const;
+	bool						get_mode_t() const;
+	std::string					get_mode_k() const;
+	size_t						get_mode_l() const;
 	std::string					get_allmode() const;
 
 	// Setters

@@ -103,6 +103,26 @@ const std::vector<Client>& Channel::get_operators() const
 	return _operators;
 }
 
+bool Channel::get_mode_i() const
+{
+	return _mode_i;
+}
+
+bool Channel::get_mode_t() const
+{
+	return _mode_t;
+}
+
+std::string Channel::get_mode_k() const
+{
+	return _mode_key;
+}
+
+size_t Channel::get_mode_l() const
+{
+	return _mode_l;
+}
+
 std::string Channel::get_allmode() const
 {
 	std::string modes = "+";
@@ -120,6 +140,26 @@ std::string Channel::get_allmode() const
 void	Channel::set_topic(const std::string &topic)
 {
 	_topic = topic;
+}
+
+void	Channel::set_mode_i(bool value)
+{
+	_mode_i = value;
+}
+
+void	Channel::set_mode_t(bool value)
+{
+	_mode_t = value;
+}
+
+void	Channel::set_mode_k(std::string key)
+{
+	_mode_key = key;
+}
+
+void	Channel::set_mode_l(size_t limit)
+{
+	_mode_l = limit;
 }
 
 //void Channel::broadcast(const std::string& message, int sender_fd)
