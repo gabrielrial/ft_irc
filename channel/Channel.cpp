@@ -3,7 +3,10 @@
 Channel::Channel() : 
 	_name(""),
 	_topic(""),
-	_mode_i(false)
+	_mode_i(false),
+	_mode_t(false),
+	_mode_key(""),
+	_mode_l(0)
 {}
 
 Channel::Channel(const std::string &name) : 
