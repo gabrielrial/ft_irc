@@ -4,6 +4,19 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client);
 int		check_join_params(RawTextLine &line, Client &client, std::string server_name);
 void	broadcast_join(const Channel *chan, const Client &client, std::string server_name);
 
+void	print_ops(Channel *channel, std::string channel_name)
+{
+	const std::vector<Client> &ops = channel->get_operators();
+	std::string ops_list;
+	for (size_t i = 0; i < ops.size(); ++i)
+	{
+		if (i > 0)
+			ops_list += ", ";
+		ops_list += ops[i].get_nickname();
+	}
+	std::cout << "Channel: '" << channel_name << "' created/joined. Operators: [" << ops_list << "]" << std::endl;
+}
+
 void	cmd_join(Server &server, RawTextLine &line, Client &client)
 {
 	char server_name[256];
@@ -37,8 +50,10 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);
 		broadcast_join(channel, client, server_name);
 		start = end + 1;
+	//	print_ops(channel, channel_name);
 	}
 }
+
 
 int	check_join_params(RawTextLine &line, Client &client, std::string server_name)
 {

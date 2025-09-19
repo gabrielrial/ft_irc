@@ -2,12 +2,14 @@
 
 Channel::Channel() : 
 	_name(""),
-	_topic("")
+	_topic(""),
+	_mode_i(false)
 {}
 
 Channel::Channel(const std::string &name) : 
 	_name(name),
-	_topic("")
+	_topic(""),
+	_mode_i(false)
 {}
 
 Channel::~Channel()

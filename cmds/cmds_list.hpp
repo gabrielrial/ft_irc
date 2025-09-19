@@ -6,7 +6,7 @@ class Server;
 class Client;
 class RawTextLine;
 
-#define MAX_CMDS 14
+#define MAX_CMDS 15
 
 void run_cmds(Server &server, RawTextLine &line, Client &client);
 
@@ -37,6 +37,7 @@ void cmd_notice(Server &server, RawTextLine &line, Client &client);
  * JOIN <channel> → join (or create) a channel.
  * PART <channel> [<message>] → leave a channel.
  * LIST [<channel>] → list channels (and their topics).
+ * INVITE <nickname> <channel> → invites a user to a channel.
  * TOPIC <channel> [<topic>] → view or set a channel’s topic.
  * NAMES [<channel>] → shows who is currently in the channel.
  * */
@@ -44,6 +45,7 @@ void cmd_notice(Server &server, RawTextLine &line, Client &client);
 void cmd_join(Server &server, RawTextLine &line, Client &client);
 void cmd_part(Server &server, RawTextLine &line, Client &client);
 void cmd_list(Server &server, RawTextLine &line, Client &client);
+void cmd_invite(Server &server, RawTextLine &line, Client &client);
 void cmd_topic(Server &server, RawTextLine &line, Client &client);
 void cmd_names(Server &server, RawTextLine &line, Client &client);
 

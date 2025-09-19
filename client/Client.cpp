@@ -1,8 +1,8 @@
 #include "Client.hpp"
 
-Client::Client(int fd, sockaddr_in &addr) : _client_fd(fd), _channel_amount(0),
-											_nickname("*"), _username("*"), _realname(""), _has_pass(false), _has_nick(false),
-											_has_user(false), _visible(true), channels(0)
+Client::Client(int fd, sockaddr_in &addr) : _client_fd(fd), _nickname("*"), _username("*"),
+										 _realname(""), _has_pass(false), _has_nick(false),
+											_has_user(false), _visible(true), _operator(false), channels(0)
 {
 	char ip[INET_ADDRSTRLEN];
 	inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
@@ -81,6 +81,11 @@ bool Client::get_visible() const
 	return _visible;
 }
 
+bool Client::is_operator()
+{
+	return _operator;
+}
+
 std::string Client::get_prefix() const
 {
     const std::string& n = _nickname.empty() ? "*" : _nickname;
@@ -89,10 +94,6 @@ std::string Client::get_prefix() const
 	return std::string(":") + n + "!" + u + "@" + h;
 }
 
-int Client::get_channel_amt()
-{
-	return this->_channel_amount;
-}
 
 //              setters
 void Client::set_nickname(const std::string &nick)
@@ -126,11 +127,15 @@ bool Client::is_registered()
 	return _has_pass && _has_nick && _has_user;
 }
 
+void	Client::set_operator(bool set)
+{
+	this->_operator = set;
+}
+
 // bool add_to_channel(Client *client, Channel channel)
 // {
 //     // if channel exists, and client has requirements for entering channel met
 //     // add them to channel and
-//     // channel_amount++;
 // }
 
 bool Client::operator==(const Client &other) const

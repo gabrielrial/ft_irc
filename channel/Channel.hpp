@@ -50,6 +50,7 @@ public:
 	std::string					get_mode_k() const;
 	size_t						get_mode_l() const;
 	std::string					get_allmode() const;
+	bool						get_mode_i();
 
 	// Setters
 	void	set_topic(const std::string& topic);
