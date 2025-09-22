@@ -1,8 +1,7 @@
 #include "../../lib_irc.hpp"
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client);
-int		check_join_params(RawTextLine &line, Client &client, std::string server_name);
-void	broadcast_join(const Channel *chan, const Client &client, std::string server_name);
+void	broadcast_join(Channel *chan, std::string server_name);
 
 void	print_ops(Channel *channel, std::string channel_name)
 {
@@ -19,12 +18,12 @@ void	print_ops(Channel *channel, std::string channel_name)
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client)
 {
-	// char server_name[256];
-	// if (gethostname(server_name, sizeof(server_name)) != 0)
-	// 	strcpy(server_name, "localhost");
 	std::string server_name = server.get_servername();
-	if (check_join_params(line, client, server_name) == 1)
-		return ;
+	if (line.get_params().empty())
+	{
+		err_needmoreparams(server_name, client, "JOIN");
+		return;
+	}
 	const std::vector<std::string> &params = line.get_params();
 	std::string first_param = params[0];
 	size_t start = 0;
@@ -49,27 +48,13 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		// std::string joinMsg = ":" + client.get_prefix() +  //doesnt work with hexchat
 		// 					" JOIN " + channel_name + "\r\n";
 		send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);
-		broadcast_join(channel, client, server_name);
+		broadcast_join(channel, server_name);
 		start = end + 1;
 	//	print_ops(channel, channel_name);
 	}
 }
 
-
-int	check_join_params(RawTextLine &line, Client &client, std::string server_name)
-{
-	if (line.get_params().empty())
-	{
-		// std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
-		// 		client.get_nickname() + " JOIN :Not enough parameters\r\n"; //ERR_NEEDMOREPARAMS
-		// send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
-		err_needmoreparams(server_name, client, "JOIN");
-		return 1;
-	}
-	return 0;
-}
-
-void	broadcast_join(const Channel *chan, const Client &client, std::string server_name)
+void	broadcast_join(Channel *chan, std::string server_name)
 {
 	if (!chan)
 		return;
@@ -81,15 +66,9 @@ void	broadcast_join(const Channel *chan, const Client &client, std::string serve
 			user_list += " ";
 		user_list += users[i].get_nickname();
 	}
-	std::string rpl_namreply = ":" + std::string(server_name) + " 353 " + 
-								client.get_nickname() + " = " + chan->get_name() + 
-								" :" + user_list + "\r\n"; //RPL_NAMREPLY
-	std::string rpl_endofnames = ":" + std::string(server_name) + " 366 " + 
-							client.get_nickname() + " " + chan->get_name() + 
-							" :End of /NAMES list.\r\n"; //RPL_ENDOFNAMES
 	for (size_t i = 0; i < users.size(); ++i)
 	{
-		send(users[i].get_FD(), rpl_namreply.c_str(), rpl_namreply.length(), 0);
-		send(users[i].get_FD(), rpl_endofnames.c_str(), rpl_endofnames.length(), 0);
+		rpl_namreply(server_name, users[i], chan->get_name(), user_list);
+		rpl_endofnames(server_name, users[i], chan->get_name());
 	}
 }

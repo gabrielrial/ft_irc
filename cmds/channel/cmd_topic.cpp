@@ -1,100 +1,58 @@
 #include "../../lib_irc.hpp"
 
 void	cmd_topic(Server &server, RawTextLine &line, Client &client);
-int		check_topic_params(RawTextLine &line, Client &client, std::string server_name);
-int		check_topic_channel(Server &server, Client &client, 
-							std::string channel_name, std::string server_name);
-void	topic_queryandbroadcast(Server &server, Client &client, 
-							const std::vector<std::string> &params, 
-							RawTextLine &line,
-							std::string channel_name , std::string server_name);
-void	broadcast_topic(Channel *chan, const Client &client, RawTextLine &line,
-						std::string channel_name, std::string server_name);
+void	topic_query(Channel *channel, Client &client, std::string &server_name);
+void	topic_change(Channel *channel, Client &client, std::string &server_name, const std::string &new_topic);
 
 void	cmd_topic(Server &server, RawTextLine &line, Client &client)
 {
-	char server_name[256];
-	if (gethostname(server_name, sizeof(server_name)) != 0)
-		strcpy(server_name, "localhost");
-	if (check_topic_params(line, client, server_name) == 1)
-		return;
-	const std::vector<std::string> &sep_params = line.get_sep_params();
-	std::string channel_name = sep_params[0];
-	if (check_topic_channel(server, client, channel_name, server_name) == 1)
-		return;
-	const std::vector<std::string> &params = line.get_params();
-	topic_queryandbroadcast(server, client, params, line, channel_name, server_name);
-}
-
-int	check_topic_params(RawTextLine &line, Client &client, std::string server_name)
-{
+	std::string server_name = server.get_servername();
 	if (line.get_params().empty())
 	{
 		err_needmoreparams(server_name, client, "TOPIC");
-		return 1;
+		return;
 	}
-	return 0;
-}
-
-int	check_topic_channel(Server &server, Client &client, 
-						std::string channel_name, std::string server_name)
-{
+	const std::vector<std::string> &sep_params = line.get_sep_params();
+	std::string channel_name = sep_params[0];
 	Channel *channel = server.get_channel(channel_name);
 	if (!channel)
 	{
 		err_nosuchchannel(server_name, client, channel_name);
-		return 1;
+		return;
 	}
 	else if (!channel->has_user(client))
 	{
 		err_notonchannel(server_name, client, channel);
-		return 1;
-	}
-	return 0;
-}
-
-void	topic_queryandbroadcast(Server &server, Client &client, 
-							const std::vector<std::string> &params, 
-							RawTextLine &line,
-							std::string channel_name , std::string server_name)
-{
-	Channel *channel = server.get_channel(channel_name);
-	if (params.size() == 1 && line.get_trailing().empty()) 
-	{
-		std::string topic = channel->get_topic();
-		if (topic.empty())
-		{
-			std::string rpl_notopic = ":" + std::string(server_name) + " 331 " + 
-					client.get_nickname() + " " + channel_name + " :No topic is set\r\n";
-			send(client.get_FD(), rpl_notopic.c_str(), rpl_notopic.size(), 0);
-		}
-		else
-		{
-			std::string rpl_topic = ":" + std::string(server_name) + " 332 " + 
-					client.get_nickname() + " " + channel_name + " :" + topic + "\r\n";
-			send(client.get_FD(), rpl_topic.c_str(), rpl_topic.size(), 0);
-		}
-	}
-	else
-		broadcast_topic(channel, client, line, channel_name, server_name);
-}
-
-void	broadcast_topic(Channel *chan, const Client &client, RawTextLine &line,
-						std::string channel_name, std::string server_name)
-{
-	std::string new_topic = line.get_trailing();
-	if (!chan->is_operator(client))
-	{
-		std::string err_chanoprivsneeded = ":" + server_name + " 482 " + 
-							client.get_nickname() + " " + channel_name + 
-							" :You're not channel operator\r\n";
-		send(client.get_FD(), err_chanoprivsneeded.c_str(), err_chanoprivsneeded.length(), 0);
 		return;
 	}
-	chan->set_topic(new_topic);
-	//std::string announce = client.get_nickname() + " TOPIC " + channel_name + " :" + new_topic + "\r\n";
-	std::string announce = client.get_prefix() + " TOPIC " + channel_name + " :" + new_topic + "\r\n";
-	const std::vector<Client>& users = chan->get_users();
+	if (line.get_params().size() == 1 && line.get_trailing().empty())
+		topic_query(channel, client, server_name);
+	else
+		topic_change(channel, client, server_name, line.get_trailing());
+}
+
+void	topic_query(Channel *channel, Client &client, std::string &server_name)
+{
+	std::string topic = channel->get_topic();
+	if (topic.empty())
+		rpl_notopic(server_name, client, channel->get_name());
+	else
+		rpl_topic(server_name, client, channel->get_name(), topic);
+}
+
+void	topic_change(Channel *channel, Client &client, std::string &server_name, const std::string &new_topic)
+{
+	if (!channel->is_operator(client))
+	{
+		err_chanoprivsneeded(server_name, client, channel);
+		return;
+	}
+	channel->set_topic(new_topic);
+	// std::string announce = client.get_prefix() + " TOPIC " + channel->get_name() + 
+	// 						" :" + new_topic + "\r\n";
+	std::string announce = client.get_nickname() + " TOPIC " + channel->get_name() + 
+							" :" + new_topic + "\r\n";
+	const std::vector<Client>& users = channel->get_users();
 	for (size_t i = 0; i < users.size(); ++i)
 		send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
 }

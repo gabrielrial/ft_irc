@@ -51,17 +51,4 @@ void	err_unknownmode(std::string server_name, Client &client, char mode)
 	send(client.get_FD(), err_unknownmode.c_str(), err_unknownmode.length(), 0);
 }
 
-void	rpl_notopic(std::string server_name, Client &client, std::string channel_name)
-{
-	std::string rpl_notopic = ":" + std::string(server_name) + " 331 " + 
-					client.get_nickname() + " " + channel_name + " :No topic is set\r\n";
-	send(client.get_FD(), rpl_notopic.c_str(), rpl_notopic.size(), 0);
-}
-
-void	rpl_topic(std::string server_name, Client &client, std::string channel_name, std::string topic)
-{
-	std::string rpl_topic = ":" + std::string(server_name) + " 332 " + 
-					client.get_nickname() + " " + channel_name + " :" + topic + "\r\n";
-	send(client.get_FD(), rpl_topic.c_str(), rpl_topic.size(), 0);
-}
 

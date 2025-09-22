@@ -9,7 +9,8 @@ SRC = main.cpp \
 		parser/Parser.cpp \
  		client/Client.cpp \
 		channel/Channel.cpp \
-		err_rpl/err_rpl.cpp \
+		err_rpl/err.cpp \
+		err_rpl/rpl.cpp \
 		cmds/run_cmds.cpp \
 		cmds/channel/cmd_list.cpp \
 		cmds/channel/cmd_part.cpp \

@@ -3,15 +3,12 @@
 void cmd_mode(Server &server, RawTextLine &line, Client &client);
 int check_mode_params(RawTextLine &line, Client &client, std::string server_name);
 int check_mode_channel(Client &client, Channel *channel, std::string server_name, std::string channel_name);
-
 void change_mode(Server &server, Client &client, Channel *channel, 
 				const std::vector<std::string> &params, std::string server_name);
 
 void cmd_mode(Server &server, RawTextLine &line, Client &client)
 {
-	char server_name[256];
-	if (gethostname(server_name, sizeof(server_name)) != 0)
-		strcpy(server_name, "localhost");
+	std::string server_name = server.get_servername();
 	if (check_mode_params(line, client, server_name) == 1)
 		return;
 	const std::vector<std::string> &params = line.get_params();
