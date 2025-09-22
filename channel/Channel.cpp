@@ -145,7 +145,11 @@ std::string Channel::get_allmode() const
 	if (!this->get_mode_k().empty())
 		modes += "k";
 	if (this->get_mode_l())
-		modes += "l";
+	{
+		std::stringstream ss;
+		ss << "l " << this->get_mode_l();
+		modes += ss.str();
+	}
 	return modes;
 }
 
