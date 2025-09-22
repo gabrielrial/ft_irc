@@ -35,9 +35,6 @@ int check_mode_params(RawTextLine &line, Client &client, std::string server_name
 {
 	if (line.get_params().empty())
 	{
-		// std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
-		// 		client.get_nickname() + " MODE :Not enough parameters\r\n";
-		// send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
 		err_needmoreparams(server_name, client, "MODE");
 		return 1;
 	}
@@ -48,26 +45,16 @@ int check_mode_channel(Client &client, Channel *channel, std::string server_name
 {
 	if (!channel)
 	{
-		// std::string err_nosuchchannel = ":" + std::string(server_name) + " 403 " + 
-		// 		client.get_nickname() + " " + channel->get_name() + " :No such channel\r\n";
-		// send(client.get_FD(), err_nosuchchannel.c_str(), err_nosuchchannel.size(), 0);
 		err_nosuchchannel(server_name, client, channel);
 		return 1;
 	}
 	else if (!channel->has_user(client))
 	{
-		// std::string err_notonchannel = ":" + std::string(server_name) + " 442 " + 
-		// 		client.get_nickname() + " " + channel->get_name() + " :You're not on that channel\r\n";
-		// send(client.get_FD(), err_notonchannel.c_str(), err_notonchannel.size(), 0);
 		err_notonchannel(server_name, client, channel);
 		return 1;
 	}
 	else if (!channel->is_operator(client))
 	{
-		// std::string err_chanoprivsneeded = ":" + server_name + " 482 " + 
-		// 					client.get_nickname() + " " + channel->get_name() + 
-		// 					" :You're not channel operator\r\n";
-		// send(client.get_FD(), err_chanoprivsneeded.c_str(), err_chanoprivsneeded.length(), 0);
 		err_chanoprivsneeded(server_name, client, channel);
 		return 1;
 	}
@@ -102,9 +89,6 @@ void change_mode(Server &server, Client &client, Channel *channel,
 						channel->set_mode_k(params[2]);
 					else
 					{
-						// std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
-						// 								client.get_nickname() + " MODE :Not enough parameters\r\n";
-						// send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
 						err_needmoreparams(server_name, client, "MODE");
 						return;
 					}
@@ -117,9 +101,6 @@ void change_mode(Server &server, Client &client, Channel *channel,
 				{
 					if (params[2].empty())
 					{
-						// std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
-						// 								client.get_nickname() + " MODE :Not enough parameters\r\n";
-						// send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
 						err_needmoreparams(server_name, client, "MODE");
 						return;
 					}
@@ -140,17 +121,11 @@ void change_mode(Server &server, Client &client, Channel *channel,
 				{
 				if (params[2].empty())
 				{
-					// std::string err_needmoreparams = ":" + std::string(server_name) + " 461 " + 
-					// 								client.get_nickname() + " MODE :Not enough parameters\r\n";
-					// send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
 					err_needmoreparams(server_name, client, "MODE");
 					return;
 				}
 				if (server.get_client(params[2]) == NULL)
 				{
-					// std::string err_nosuchnick = ":" + std::string(server_name) + " 401 " + 
-					// 							client.get_nickname() + " " + params[2] + " MODE :No such nick\r\n";
-					// send(client.get_FD(), err_nosuchnick.c_str(), err_nosuchnick.length(), 0);
 					err_nosuchnick(server_name, client, params[2], "MODE");
 					return;
 				}
@@ -178,9 +153,6 @@ void change_mode(Server &server, Client &client, Channel *channel,
 			default:
 				if (mode != ' ' && mode != '\t' && mode != '\n' && mode != '\r')
 				{
-					// std::string err_unknownmode = ":" + server_name + " 472 " + 
-					// 							client.get_nickname() + " " + mode + " :is unknown mode char to me\r\n";
-					// send(client.get_FD(), err_unknownmode.c_str(), err_unknownmode.length(), 0);
 					err_unknownmode(server_name, client, mode);
 				}
 				break;
