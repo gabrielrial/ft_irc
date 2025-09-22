@@ -36,9 +36,6 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
     }
 }
 
-void cmd_notice(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;};
-
-//void cmd_topic(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 void cmd_names(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 
 void cmd_whois(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
