@@ -42,10 +42,13 @@ void	topic_query(Channel *channel, Client &client, std::string &server_name)
 
 void	topic_change(Channel *channel, Client &client, std::string &server_name, const std::string &new_topic)
 {
-	if (!channel->is_operator(client))
+	if (!channel->get_mode_t())
 	{
-		err_chanoprivsneeded(server_name, client, channel);
-		return;
+		if (!channel->is_operator(client))
+		{
+			err_chanoprivsneeded(server_name, client, channel);
+			return;
+		}
 	}
 	channel->set_topic(new_topic);
 	// std::string announce = client.get_prefix() + " TOPIC " + channel->get_name() + 
