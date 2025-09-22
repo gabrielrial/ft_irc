@@ -27,3 +27,10 @@ void	rpl_endofnames(const std::string server_name, const Client &client, const s
 								client.get_nickname() + " " + channel_name + " :End of /NAMES list.\r\n";
 	send(client.get_FD(), rpl_endofnames.c_str(), rpl_endofnames.length(), 0);
 }
+
+void	rpl_channelmodeis(std::string server_name, const Client &client, std::string channel_name, std::string modestring)
+{
+	std::string rpl_channelmodeis = ":" + server_name + " 324 " + 
+								client.get_nickname() + " " + channel_name + " " + modestring + "\r\n";
+	send(client.get_FD(), rpl_channelmodeis.c_str(), rpl_channelmodeis.length(), 0);
+}

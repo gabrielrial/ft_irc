@@ -14,3 +14,4 @@ void	rpl_notopic(std::string server_name, Client &client, std::string channel_na
 void	rpl_topic(std::string server_name, Client &client, std::string channel_name, std::string topic);
 void	rpl_namreply(const std::string server_name, const Client &client, const std::string channel_name, const std::string user_list);
 void	rpl_endofnames(const std::string server_name, const Client &client, const std::string channel_name);
+void	rpl_channelmodeis(std::string server_name, const Client &client, std::string channel_name, std::string modestring);

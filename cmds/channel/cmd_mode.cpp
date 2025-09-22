@@ -1,61 +1,43 @@
 #include "../../lib_irc.hpp"
 
-void cmd_mode(Server &server, RawTextLine &line, Client &client);
-int check_mode_params(RawTextLine &line, Client &client, std::string server_name);
-int check_mode_channel(Client &client, Channel *channel, std::string server_name, std::string channel_name);
-void change_mode(Server &server, Client &client, Channel *channel, 
+void	cmd_mode(Server &server, RawTextLine &line, Client &client);
+void	change_mode(Server &server, Client &client, Channel *channel, 
 				const std::vector<std::string> &params, std::string server_name);
 
 void cmd_mode(Server &server, RawTextLine &line, Client &client)
 {
 	std::string server_name = server.get_servername();
-	if (check_mode_params(line, client, server_name) == 1)
-		return;
-	const std::vector<std::string> &params = line.get_params();
-	std::string channel_name = params[0];
-	Channel *channel = server.get_channel(channel_name);
-	if (check_mode_channel(client, channel, server_name, channel_name) == 1)
-		return;
-	if (params.size() == 1)
-	{
-		std::string modestring = channel->get_allmode();
-		std::string rpl_channelmodeis = ":" + std::string(server_name) + " 324 " + 
-							client.get_nickname() + " " + channel_name + " " + 
-							modestring + "\r\n";
-		send(client.get_FD(), rpl_channelmodeis.c_str(), rpl_channelmodeis.length(), 0);
-		return;
-	}
-	change_mode(server, client, channel, params, server_name);
-}
-
-int check_mode_params(RawTextLine &line, Client &client, std::string server_name)
-{
 	if (line.get_params().empty())
 	{
 		err_needmoreparams(server_name, client, "MODE");
-		return 1;
+		return;
 	}
-	return 0;
-}
-
-int check_mode_channel(Client &client, Channel *channel, std::string server_name,std::string channel_name)
-{
+	const std::vector<std::string> &params = line.get_params();
+	std::string channel_name = params[0];
+	Channel *channel = server.get_channel(channel_name);
 	if (!channel)
 	{
 		err_nosuchchannel(server_name, client, channel_name);
-		return 1;
+		return;
 	}
 	else if (!channel->has_user(client))
 	{
 		err_notonchannel(server_name, client, channel);
-		return 1;
+		return;
 	}
-	// else if (!channel->is_operator(client)) //this is wrong place
-	// {
-	// 	err_chanoprivsneeded(server_name, client, channel);
-	// 	return 1;
-	// }
-	return 0;
+	if (params.size() == 1)
+	{
+		std::string modestring = channel->get_allmode();
+		rpl_channelmodeis(server_name, client, channel_name, modestring);
+		return;
+	}
+	if (!channel->is_operator(client))
+	{
+		err_chanoprivsneeded(server_name, client, channel);
+		return;
+	}
+	else
+		change_mode(server, client, channel, params, server_name);
 }
 
 void change_mode(Server &server, Client &client, Channel *channel,
