@@ -19,9 +19,10 @@ void	print_ops(Channel *channel, std::string channel_name)
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client)
 {
-	char server_name[256];
-	if (gethostname(server_name, sizeof(server_name)) != 0)
-		strcpy(server_name, "localhost");
+	// char server_name[256];
+	// if (gethostname(server_name, sizeof(server_name)) != 0)
+	// 	strcpy(server_name, "localhost");
+	std::string server_name = server.get_servername();
 	if (check_join_params(line, client, server_name) == 1)
 		return ;
 	const std::vector<std::string> &params = line.get_params();

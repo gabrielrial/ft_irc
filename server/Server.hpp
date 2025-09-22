@@ -20,6 +20,7 @@ private:
 	std::vector<Client> clients;
 	std::vector<Channel> channels;
 	int	client_amt;
+	std::string		_server_name;
 
 	void init_socket();
 	void create_socket();
@@ -61,4 +62,7 @@ public:
 
 	void srv_run();
 	void schedule_close(int fd);
+
+	std::string		get_servername() const;
+	void			set_servername();
 };
