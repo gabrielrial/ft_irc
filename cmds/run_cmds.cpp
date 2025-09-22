@@ -35,8 +35,6 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
     }
 }
 
-void cmd_quit(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;}
-
 void cmd_names(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 
 void cmd_whois(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
