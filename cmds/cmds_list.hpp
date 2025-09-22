@@ -6,7 +6,7 @@ class Server;
 class Client;
 class RawTextLine;
 
-#define MAX_CMDS 15
+#define MAX_CMDS 13
 
 void run_cmds(Server &server, RawTextLine &line, Client &client);
 
@@ -57,5 +57,5 @@ void cmd_names(Server &server, RawTextLine &line, Client &client);
  * */
 
 void cmd_who(Server &server, RawTextLine &line, Client &client);
-void cmd_whois(Server &server, RawTextLine &line, Client &client);
-void cmd_whowas(Server &server, RawTextLine &line, Client &client);
+// void cmd_whois(Server &server, RawTextLine &line, Client &client);
+// void cmd_whowas(Server &server, RawTextLine &line, Client &client);

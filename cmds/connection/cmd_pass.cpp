@@ -27,6 +27,5 @@ void cmd_pass(Server &server, RawTextLine &line, Client &client)
 	{
 		const std::string err = ":localhost 464 * :Password incorrect\r\n";
 		send(client.get_FD(), err.c_str(), err.size(), 0);
-		server.schedule_close(client.get_FD()); // deletes client from list after wrong pw entered
 	}
 }
