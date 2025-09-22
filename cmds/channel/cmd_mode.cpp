@@ -2,7 +2,7 @@
 
 void cmd_mode(Server &server, RawTextLine &line, Client &client);
 int check_mode_params(RawTextLine &line, Client &client, std::string server_name);
-int check_mode_channel(Client &client, Channel *channel, std::string server_name);
+int check_mode_channel(Client &client, Channel *channel, std::string server_name, std::string channel_name);
 
 void change_mode(Server &server, Client &client, Channel *channel, 
 				const std::vector<std::string> &params, std::string server_name);
@@ -17,7 +17,7 @@ void cmd_mode(Server &server, RawTextLine &line, Client &client)
 	const std::vector<std::string> &params = line.get_params();
 	std::string channel_name = params[0];
 	Channel *channel = server.get_channel(channel_name);
-	if (check_mode_channel(client, channel, server_name) == 1)
+	if (check_mode_channel(client, channel, server_name, channel_name) == 1)
 		return;
 	if (params.size() == 1)
 	{
@@ -41,11 +41,11 @@ int check_mode_params(RawTextLine &line, Client &client, std::string server_name
 	return 0;
 }
 
-int check_mode_channel(Client &client, Channel *channel, std::string server_name)
+int check_mode_channel(Client &client, Channel *channel, std::string server_name,std::string channel_name)
 {
 	if (!channel)
 	{
-		err_nosuchchannel(server_name, client, channel);
+		err_nosuchchannel(server_name, client, channel_name);
 		return 1;
 	}
 	else if (!channel->has_user(client))
@@ -53,11 +53,11 @@ int check_mode_channel(Client &client, Channel *channel, std::string server_name
 		err_notonchannel(server_name, client, channel);
 		return 1;
 	}
-	else if (!channel->is_operator(client))
-	{
-		err_chanoprivsneeded(server_name, client, channel);
-		return 1;
-	}
+	// else if (!channel->is_operator(client)) //this is wrong place
+	// {
+	// 	err_chanoprivsneeded(server_name, client, channel);
+	// 	return 1;
+	// }
 	return 0;
 }
 

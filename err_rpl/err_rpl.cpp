@@ -16,10 +16,10 @@ void	err_needmoreparams(std::string server_name, Client &client, std::string cmd
 	send(client.get_FD(), err_needmoreparams.c_str(), err_needmoreparams.length(), 0);
 }
 
-void	err_nosuchchannel(std::string server_name, Client &client, Channel *channel)
+void	err_nosuchchannel(std::string server_name, Client &client, std::string channel_name)
 {
 	std::string err_nosuchchannel = ":" + server_name + " 403 " + 
-									client.get_nickname() + " " + channel->get_name() + " :No such channel\r\n";
+									client.get_nickname() + " " + channel_name + " :No such channel\r\n";
 	send(client.get_FD(), err_nosuchchannel.c_str(), err_nosuchchannel.size(), 0);
 }
 

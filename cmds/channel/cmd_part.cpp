@@ -16,17 +16,17 @@ void	cmd_part(Server &server, RawTextLine &line, Client &client)
 	std::string reason = "";
 	if (!line.get_trailing().empty())
 		reason = line.get_trailing();
-	size_t start = 0;
-	size_t end = 0;
+	size_t start = 0; // #not necessary?
+	size_t end = 0; // #
 	while (start < first_param.length())
 	{
-		end = first_param.find(',', start);
+		end = first_param.find(',', start); // #
 		if (end == std::string::npos)
 			end = first_param.length();
 		std::string channel_name = first_param.substr(start, end - start);
 		if (channel_name[0] != '#' && channel_name[0] != '&' && 
 			channel_name[0] != '+' && channel_name[0] != '!')
-			channel_name = "#" + channel_name;
+			channel_name = "#" + channel_name; //#
 		Channel *channel = server.get_channel(channel_name);
 		if (!channel)
 		{
@@ -34,7 +34,7 @@ void	cmd_part(Server &server, RawTextLine &line, Client &client)
 			// 				client.get_nickname() + " " + channel_name + 
 			// 				" :No such channel\r\n";
 			// send(client.get_FD(), err_nosuchchannel.c_str(), err_nosuchchannel.length(), 0);
-			err_nosuchchannel(server_name, client, channel);
+			err_nosuchchannel(server_name, client, channel_name);
 		}
 		else if (!channel->has_user(client))
 		{

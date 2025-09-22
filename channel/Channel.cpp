@@ -3,13 +3,19 @@
 Channel::Channel() : 
 	_name(""),
 	_topic(""),
-	_mode_i(false)
+	_mode_i(false),
+	_mode_t(true),
+	_mode_key(""),
+	_mode_l(20)
 {}
 
 Channel::Channel(const std::string &name) : 
 	_name(name),
 	_topic(""),
-	_mode_i(false)
+	_mode_i(false),
+	_mode_t(true),
+	_mode_key(""),
+	_mode_l(20)
 {}
 
 Channel::~Channel()
@@ -28,6 +34,10 @@ Channel& Channel::operator=(const Channel &copy)
 		_topic = copy._topic;
 		_users = copy._users;
 		_operators = copy._operators;
+		_mode_i = copy._mode_i;
+		_mode_t = copy._mode_t;
+		_mode_key = copy._mode_key;
+		_mode_l = copy._mode_l;
 	}
 	return *this;
 }
