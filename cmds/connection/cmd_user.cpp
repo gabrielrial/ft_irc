@@ -42,11 +42,12 @@ void cmd_user(Server &server, RawTextLine &line, Client &client)
 	{
 		server.welcome(client);
 		server.set_client_amt();
+
+		std::cout << "Nickname: " << client.get_nickname() << std::endl;
+		std::cout << "Username: " << client.get_username() << std::endl;
+		std::cout << "Hostname: " << client.get_hostname() << std::endl;
+		std::cout << "Servername: " << client.get_servername() << std::endl;
+		std::cout << "Realname: " << client.get_realname() << std::endl;
+		std::cout << "===============================================" << std::endl;
 	}
-    std::cout << "Nickname: " << client.get_nickname() << std::endl;
-	std::cout << "Username: " << client.get_username() << std::endl;
-	std::cout << "Hostname: " << client.get_hostname() << std::endl;
-	std::cout << "Servername: " << client.get_servername() << std::endl;
-	std::cout << "Realname: " << client.get_realname() << std::endl;
-	std::cout << "===============================================" << std::endl;
 }

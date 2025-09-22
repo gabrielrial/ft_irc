@@ -134,6 +134,7 @@ void Server::srv_run()
 
 	while (true)
 	{
+		remove_closed_clients(lineBuffer);
 		fd_set readfds;
 		int max_fd = prepare_fd_set(&readfds);
 
@@ -202,19 +203,19 @@ void Server::register_client()
 		return;
 	}
 
-	Client *c = new Client(new_fd, clientAddr);
+	Client c(new_fd, clientAddr);
 	char host[NI_MAXHOST];
 	char serv[NI_MAXSERV];
 	if (getnameinfo((struct sockaddr *)&clientAddr, sizeof(clientAddr),
 					host, sizeof(host), serv, sizeof(serv), 0) == 0)
-		c->set_hostname(host);
+		c.set_hostname(host);
 	else
-		c->set_hostname("unknown");
+		c.set_hostname("unknown");
 	char serverName[256];
 	if (gethostname(serverName, sizeof(serverName)) != 0)
 		strcpy(serverName, "localhost");
-	c->set_servername(serverName);
-	clients.push_back(*c);
+	c.set_servername(serverName);
+	clients.push_back(c);
 	std::cout << "New client connected (fd=" << new_fd << ")\n";
 }
 
@@ -271,6 +272,7 @@ void Server::remove_closed_clients(std::string lineBuffer[])
 	{
 		int deadFd = _fdsToClose[i];
 		lineBuffer[deadFd].clear();
+		close(deadFd);
 		for (size_t j = 0; j < clients.size();)
 		{
 			if (clients[j].get_FD() == deadFd)
@@ -344,7 +346,7 @@ int	Server::get_client_amt()
 
 bool	Server::check_nick_uniqueness(const std::string new_nick)
 {
-	for (int i = 0; i < get_client_amt(); i++)
+	for (size_t i = 0; i < clients.size(); ++i)
 	{
 		if (clients[i].get_nickname() == new_nick)
 			return false;
@@ -398,6 +400,5 @@ std::string Server::get_password() const
 
 void Server::schedule_close(int fd)
 {
-	close(fd);
 	_fdsToClose.push_back(fd);
 }
