@@ -178,6 +178,16 @@ void	Channel::set_mode_l(size_t limit)
 	_mode_l = limit;
 }
 
+Client *Channel::check_user(const std::string &name)
+{
+	for (std::vector<Client>::iterator it = _users.begin(); it != _users.end(); ++it)
+	{
+		if (it->get_nickname() == name)
+			return &(*it);
+	}
+	return NULL;
+}
+
 //void Channel::broadcast(const std::string& message, int sender_fd)
 //{
 //	for (std::vector<int>::const_iterator it = _users.begin(); it != _users.end(); ++it)
