@@ -15,7 +15,7 @@ class Channel
 private:
 	std::string			_name;
 	std::string			_topic;
-	std::vector<Client>	_users;
+	std::vector<Client>	_users; //maybe rename to clients
 	std::vector<Client>	_operators;
 	bool				_mode_i;
 	bool				_mode_t;
