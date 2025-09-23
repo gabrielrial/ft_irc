@@ -18,35 +18,18 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
 	{
         cmd_nick, cmd_user, cmd_pass, cmd_quit, cmd_privmsg, cmd_notice,
         cmd_join, cmd_part, cmd_invite, cmd_list, cmd_topic, cmd_names, cmd_who,
+        cmd_whois, cmd_whowas
     };
 
-	if (!client.is_registered())
-	{
-		for (size_t i = 0; i < 3; i++)
-		{
-			if (cmd == all_cmds[i])
-			{
-				funcs[i](server, line, client);
-				return;
-			}
-			if (cmd == "CAP") return ;
-		}
-		const std::string msg = ":localhost 451 * :You have not registered\r\n";
-		send(client.get_FD(), msg.c_str(), msg.size(), 0);
-		return;
-	}
-	for (int i = 0; i < MAX_CMDS; i++)
-	{
-		if (cmd == all_cmds[i])
-		{
-			funcs[i](server, line, client);
-		}
-	}
+    for (int i = 0; i < MAX_CMDS; i++)
+    {
+        if (line.get_command() == cmds[i])
+        {
+            funcs[i](server, line, client);
+        }
+    }
 }
 
-void cmd_notice(Server &server, RawTextLine &line, Client &client) {(void)server; (void)line; (void)client;};
-
-//void cmd_topic(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 void cmd_names(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
 
 // void cmd_whois(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;}; // unnecessary/extra

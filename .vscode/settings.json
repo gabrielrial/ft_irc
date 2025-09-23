@@ -68,7 +68,6 @@
         "queue": "cpp",
         "ratio": "cpp",
         "stack": "cpp",
-        "variant": "cpp",
-        "*.tcc": "cpp"
-    }
+        "variant": "cpp"
+	}
 }

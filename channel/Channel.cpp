@@ -3,13 +3,19 @@
 Channel::Channel() : 
 	_name(""),
 	_topic(""),
-	_mode_i(false)
+	_mode_i(false),
+	_mode_t(true),
+	_mode_key(""),
+	_mode_l(20)
 {}
 
 Channel::Channel(const std::string &name) : 
 	_name(name),
 	_topic(""),
-	_mode_i(false)
+	_mode_i(false),
+	_mode_t(true),
+	_mode_key(""),
+	_mode_l(20)
 {}
 
 Channel::~Channel()
@@ -28,6 +34,10 @@ Channel& Channel::operator=(const Channel &copy)
 		_topic = copy._topic;
 		_users = copy._users;
 		_operators = copy._operators;
+		_mode_i = copy._mode_i;
+		_mode_t = copy._mode_t;
+		_mode_key = copy._mode_key;
+		_mode_l = copy._mode_l;
 	}
 	return *this;
 }
@@ -100,19 +110,72 @@ const std::vector<Client>& Channel::get_users() const
 	return _users;
 }
 
-const std::vector<Client>& Channel::get_Operators() const
+const std::vector<Client>& Channel::get_operators() const
 {
 	return _operators;
 }
 
-bool	Channel::get_mode_i()
+bool Channel::get_mode_i() const
 {
 	return _mode_i;
+}
+
+bool Channel::get_mode_t() const
+{
+	return _mode_t;
+}
+
+std::string Channel::get_mode_k() const
+{
+	return _mode_key;
+}
+
+size_t Channel::get_mode_l() const
+{
+	return _mode_l;
+}
+
+std::string Channel::get_allmode() const
+{
+	std::string modes = "+";
+	if (this->get_mode_i())
+		modes += "i";
+	if (this->get_mode_t())
+		modes += "t";
+	if (!this->get_mode_k().empty())
+		modes += "k";
+	if (this->get_mode_l())
+	{
+		std::stringstream ss;
+		ss << "l " << this->get_mode_l();
+		modes += ss.str();
+	}
+	return modes;
 }
 
 void	Channel::set_topic(const std::string &topic)
 {
 	_topic = topic;
+}
+
+void	Channel::set_mode_i(bool value)
+{
+	_mode_i = value;
+}
+
+void	Channel::set_mode_t(bool value)
+{
+	_mode_t = value;
+}
+
+void	Channel::set_mode_k(std::string key)
+{
+	_mode_key = key;
+}
+
+void	Channel::set_mode_l(size_t limit)
+{
+	_mode_l = limit;
 }
 
 //void Channel::broadcast(const std::string& message, int sender_fd)

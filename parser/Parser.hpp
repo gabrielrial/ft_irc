@@ -15,7 +15,7 @@ private:
 
 public:
 	RawTextLine();
-	RawTextLine(const std::string& raw); //parse immediately
+	RawTextLine(const std::string &raw); //parse immediately
 	~RawTextLine();
 	RawTextLine(const RawTextLine &copy);
 	RawTextLine	&operator=(const RawTextLine &copy);

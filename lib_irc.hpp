@@ -15,6 +15,7 @@
 #include "server/Server.hpp"
 #include "client/Client.hpp"
 #include "cmds/cmds_list.hpp"
+#include "err_rpl/err_rpl.hpp"
 
 
 // LIBS INCLUDE

@@ -20,6 +20,7 @@ private:
 	std::vector<Client> clients;
 	std::vector<Channel> channels;
 	int	client_amt;
+	std::string		_server_name;
 
 	void init_socket();
 	void create_socket();
@@ -53,11 +54,15 @@ public:
 	const std::vector<Client> &get_vector_clients() const;
 
 	std::string get_password() const;
-	void set_client_amt();
-	void remove_closed_clients(std::string lineBuffer[]);
-	void debug_print_chan() const;
-	void debug_print_chan_users(const Channel &chan) const;
+		void		set_client_amt();
+		void 		remove_closed_clients(std::string lineBuffer[]);
+		void		debug_print_chan() const; //debug, can delete
+		void		debug_print_chan_users(const Channel& chan) const; //debug, can delete
+		void		debug_print_ops(const Channel* channel, const std::string& context); //debug, can delete
 
 	void srv_run();
 	void schedule_close(int fd);
+
+	std::string		get_servername() const;
+	void			set_servername();
 };

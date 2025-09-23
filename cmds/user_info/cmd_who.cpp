@@ -6,7 +6,7 @@
 /*   By: grial <grial@student.42berlin.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 11:13:06 by grial             #+#    #+#             */
-/*   Updated: 2025/09/17 18:22:18 by grial            ###   ########.fr       */
+/*   Updated: 2025/09/22 15:49:03 by grial            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,15 @@ void cmd_who(Server &server, RawTextLine &line, Client &client)
 {
 	if (!is_valid_who(line))
 		return; // report error
-	std::cout << "1" << std::endl;
 
 	std::vector<Client> client_list = get_list(server, line);
 
 	std::string target = "*";
 	if (line.get_sep_params().size() > 1 && line.get_sep_params()[1] != "o")
 		target = line.get_sep_params()[1];
-	std::cout << "2" << std::endl;
 	for (size_t i = 0; i < client_list.size(); i++)
 	{
 		Client &c = client_list[i];
-		std::cout << "3" << std::endl;
 		std::string reply = ":" + std::string(SERVER_NAME) + " 352 " +
 							client.get_nickname() + " " +
 							target + " " +

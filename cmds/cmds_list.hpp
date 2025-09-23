@@ -48,6 +48,7 @@ void cmd_list(Server &server, RawTextLine &line, Client &client);
 void cmd_invite(Server &server, RawTextLine &line, Client &client);
 void cmd_topic(Server &server, RawTextLine &line, Client &client);
 void cmd_names(Server &server, RawTextLine &line, Client &client);
+void cmd_mode(Server &server, RawTextLine &line, Client &client);
 
 /* USER INFO
  *

@@ -8,6 +8,7 @@
 
 Server::Server(uint16_t port, std::string password) : _port(port), _password(password), _socket(-1), client_amt(0)
 {
+	set_servername();
 	try
 	{
 		init_socket();
@@ -393,6 +394,20 @@ void Server::debug_print_chan_users(const Channel &chan) const
 	}
 }
 
+void Server::debug_print_ops(const Channel *channel, const std::string &context)
+{
+	std::cout << "=== DEBUG [" << context << "] ===" << std::endl;
+	std::cout << "Channel: " << channel->get_name() << std::endl;
+	const std::vector<Client>& operators = channel->get_operators();
+	std::cout << "Operators (" << operators.size() << "):" << std::endl;
+	for (size_t i = 0; i < operators.size(); ++i)
+	{
+		std::cout << " - " << operators[i].get_nickname() 
+				<< " (fd: " << operators[i].get_FD() << ")" << std::endl;
+	}
+	std::cout << "=========================" << std::endl;
+}
+
 std::string Server::get_password() const
 {
 	return _password;
@@ -401,4 +416,17 @@ std::string Server::get_password() const
 void Server::schedule_close(int fd)
 {
 	_fdsToClose.push_back(fd);
+}
+
+std::string		Server::get_servername() const
+{
+	return _server_name;
+}
+
+void			Server::set_servername()
+{
+	char server_name[256];
+	if (gethostname(server_name, sizeof(server_name)) != 0)
+		strcpy(server_name, "localhost");
+	_server_name = server_name;
 }
