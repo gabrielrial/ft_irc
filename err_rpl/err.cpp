@@ -51,4 +51,9 @@ void	err_unknownmode(std::string server_name, Client &client, char mode)
 	send(client.get_FD(), err_unknownmode.c_str(), err_unknownmode.length(), 0);
 }
 
-
+void	err_usernotinchannel(std::string server_name, Client &client, Channel *channel, std::string nickname)
+{
+	std::string err_usernotinchannel = ":" + server_name + " 441 " + 
+								client.get_nickname() + " " + nickname + " " + channel->get_name() + " :They aren't on that channel\r\n";
+	send(client.get_FD(), err_usernotinchannel.c_str(), err_usernotinchannel.length(), 0);
+}

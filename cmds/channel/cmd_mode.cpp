@@ -43,6 +43,8 @@ void cmd_mode(Server &server, RawTextLine &line, Client &client)
 void change_mode(Server &server, Client &client, Channel *channel,
 				const std::vector<std::string> &params, std::string server_name)
 {
+	std::string mode_changes;
+	std::vector<std::string> mode_params;
 	bool adding = true;
 	for (size_t i = 0; i < params[1].size(); ++i)
 	{
@@ -57,15 +59,22 @@ void change_mode(Server &server, Client &client, Channel *channel,
 				break;
 			case 'i':
 				channel->set_mode_i(adding);
+				mode_changes += (adding ? "+" : "-");
+				mode_changes += "i";
 				break;
 			case 't':
 				channel->set_mode_t(adding);
+				mode_changes += (adding ? "+" : "-");
+				mode_changes += "i";
 				break;
 			case 'k':
 				if (adding)
 				{
 					if (!params[2].empty())
+					{
 						channel->set_mode_k(params[2]);
+						mode_changes += "+k";
+					}
 					else
 					{
 						err_needmoreparams(server_name, client, "MODE");
@@ -73,7 +82,10 @@ void change_mode(Server &server, Client &client, Channel *channel,
 					}
 				}
 				else
+				{
 					channel->set_mode_k("");
+					mode_changes += "-k";
+				}
 				break;
 			case 'l':
 				if (adding)
@@ -91,10 +103,14 @@ void change_mode(Server &server, Client &client, Channel *channel,
 							channel->set_mode_l(limit);
 						else
 							channel->set_mode_l(0);
+						mode_changes += "+l";
 					}
 				}
 				else
+				{
 					channel->set_mode_l(0);
+					mode_changes += "-l";
+				}
 				break;
 			case 'o':
 				{
@@ -108,22 +124,27 @@ void change_mode(Server &server, Client &client, Channel *channel,
 					err_nosuchnick(server_name, client, params[2], "MODE");
 					return;
 				}
+				if (channel->check_user(params[2]) == NULL)
+				{
+					err_usernotinchannel(server_name, client, channel, params[2]);
+					return;
+				}
 				Client* nickname = server.get_client(params[2]);
 				if (adding)
 				{
 					channel->add_operator(*nickname);
-					std::string announce = ":" + client.get_prefix() + " MODE " + 
+					std::string announce = ":" + client.get_nickname() + " MODE " + 
 											channel->get_name() + " +o " + params[2] + "\r\n";
-					const std::vector<Client>& users = channel->get_users();
+					const std::vector<Client> &users = channel->get_users();
 					for (size_t i = 0; i < users.size(); ++i)
 						send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
 				}
 				else
 				{
 					channel->rem_operator(*nickname);
-					std::string announce = ":" + client.get_prefix() + " MODE " + 
+					std::string announce = ":" + client.get_nickname() + " MODE " + 
 											channel->get_name() + " -o " + params[2] + "\r\n";
-					const std::vector<Client>& users = channel->get_users();
+					const std::vector<Client> &users = channel->get_users();
 					for (size_t i = 0; i < users.size(); ++i)
 						send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
 				}
@@ -136,5 +157,15 @@ void change_mode(Server &server, Client &client, Channel *channel,
 				}
 				break;
 		}
+	}
+	if (!mode_changes.empty())
+	{
+		std::string announce = ":" + client.get_nickname() + " MODE " + channel->get_name() + " " + mode_changes;
+		for (size_t i = 0; i < mode_params.size(); ++i)
+			announce += " " + mode_params[i];
+		announce += "\r\n";
+		const std::vector<Client> &users = channel->get_users();
+		for (size_t i = 0; i < users.size(); ++i)
+			send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
 	}
 }

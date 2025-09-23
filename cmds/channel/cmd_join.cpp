@@ -13,7 +13,7 @@ void	print_ops(Channel *channel, std::string channel_name)
 			ops_list += ", ";
 		ops_list += ops[i].get_nickname();
 	}
-	std::cout << "Channel: '" << channel_name << "' created/joined. Operators: [" << ops_list << "]" << std::endl;
+	std::cout << "Channel: '" << channel_name << "'. Operators: [" << ops_list << "]" << std::endl;
 }
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client)
@@ -50,7 +50,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);
 		broadcast_join(channel, server_name);
 		start = end + 1;
-	//	print_ops(channel, channel_name);
+		print_ops(channel, channel_name);
 	}
 }
 
