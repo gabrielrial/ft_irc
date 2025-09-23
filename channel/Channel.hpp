@@ -21,6 +21,7 @@ private:
 	bool				_mode_t;
 	std::string			_mode_key;
 	size_t				_mode_l;
+	std::vector<Client>	_invitees;
 
 public:
 	Channel();
