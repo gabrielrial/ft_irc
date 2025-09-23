@@ -2,17 +2,25 @@
 
 void cmd_name(Server &server, RawTextLine &line, Client &client)
 {
+	if (!is_valid_name(server, line, client))
+		return;
+
 	if (line.get_params().empty())
-		return; // no channel
+	{
+		std::cout << "!@# run cmd_name() without parameters" << std::endl;
+	}
 
 	Channel *channel = server.get_channel(line.get_params()[0]);
 	if (!channel)
 	{
-		// channel does not exist -> send RPL_ENDOFNAMES
-		std::string endmsg = ":" + server.get_servername() + " 366 " +
-							 client.get_nickname() + " " + line.get_params()[0] +
-							 " :End of NAMES list" + CRLF;
-		send(client.get_FD(), endmsg.c_str(), endmsg.size(), 0);
+		err_nosuchchannel(server.get_servername(), client, line.get_params()[0]);
+		return;
+	}
+
+	if (channel->get_mode_i() || (!channel->get_mode_k().empty() && !channel->check_user(client.get_nickname())))
+	{
+		std::cout << "!@# check if I'm invited" << std::endl;
+		std::cout << "!@# run cmd_name() without parameters" << std::endl;
 		return;
 	}
 
@@ -54,4 +62,19 @@ void cmd_name(Server &server, RawTextLine &line, Client &client)
 		std::string msg = rpl_namreply + names_list + CRLF;
 		send(client.get_FD(), msg.c_str(), msg.size(), 0);
 	}
+}
+
+bool is_valid_name(Server &server, RawTextLine &line, Client &client)
+{
+	if (line.get_params().size() > 1)
+	{
+		std::cout << "rerror" << std::endl;
+		return false;
+	}
+	else if (!line.get_trailing().empty())
+	{
+		std::cout << "rerror" << std::endl;
+		return false;
+	}
+	return true;
 }
