@@ -115,6 +115,11 @@ const std::vector<Client>& Channel::get_operators() const
 	return _operators;
 }
 
+const std::vector<Client>& Channel::get_invitees() const
+{
+	return _invitees;
+}
+
 bool Channel::get_mode_i() const
 {
 	return _mode_i;

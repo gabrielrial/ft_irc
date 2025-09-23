@@ -45,6 +45,7 @@ public:
 	const std::string			&get_topic() const;
 	const std::vector<Client>	&get_users() const;
 	const std::vector<Client>	&get_operators() const;
+	const std::vector<Client>	&get_invitees() const;
 	unsigned int			 	get_UserCount() const;
 	bool						get_mode_i() const;
 	bool						get_mode_t() const;

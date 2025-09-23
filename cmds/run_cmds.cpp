@@ -28,6 +28,3 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
 }
 
 void cmd_names(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
-
-// void cmd_whois(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;}; // unnecessary/extra
-// void cmd_whowas(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};// unnecessary/extra
