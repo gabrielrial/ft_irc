@@ -178,6 +178,11 @@ void	Channel::set_mode_l(size_t limit)
 	_mode_l = limit;
 }
 
+void	Channel::add_to_invitees(Client *client)
+{
+	_invitees.push_back(*client);
+}
+
 //void Channel::broadcast(const std::string& message, int sender_fd)
 //{
 //	for (std::vector<int>::const_iterator it = _users.begin(); it != _users.end(); ++it)

@@ -4,11 +4,9 @@
 
 void run_cmds(Server &server, RawTextLine &line, Client &client)
 {
-	const std::string &cmd = line.get_command();
-
 	typedef void (*CmdFunc)(Server &, RawTextLine &, Client &);
 
-    static const std::string all_cmds[] =
+    static const std::string cmds[] =
 	{
         "NICK","USER","PASS","QUIT","PRIVMSG","NOTICE",
         "JOIN","PART", "INVITE", "LIST","TOPIC","NAMES","WHO"
@@ -18,7 +16,6 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
 	{
         cmd_nick, cmd_user, cmd_pass, cmd_quit, cmd_privmsg, cmd_notice,
         cmd_join, cmd_part, cmd_invite, cmd_list, cmd_topic, cmd_names, cmd_who,
-        cmd_whois, cmd_whowas
     };
 
     for (int i = 0; i < MAX_CMDS; i++)

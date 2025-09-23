@@ -57,17 +57,18 @@ void cmd_invite(Server &server, RawTextLine &line, Client &client)
     }
 
     // 6) If already on channel → error
-    if (chan->has_user(*target))
-    {
-        std::string err = ":" + std::string(server_name) + " 443 " + client.get_nickname() + " " + target_cli + " " + channel_name + " :is already on channel\r\n";
-        send(client.get_FD(), err.c_str(), err.length(), 0);
-        return;
-    }
+	if (chan->has_user(*target))
+	{
+		std::string err = ":" + std::string(server_name) + " 443 " + client.get_nickname() + " " + target_cli + " " + channel_name + " :is already on channel\r\n";
+		send(client.get_FD(), err.c_str(), err.length(), 0);
+		return;
+	}
 
     // send target client the invite message
-    std::string user_invite = ":" + client.get_prefix() + " INVITE " + target_cli + " :" + channel_name + CRLF;
+	std::string user_invite = ":" + client.get_prefix() + " INVITE " + target_cli + " :" + channel_name + CRLF;
 	send(target->get_FD(), user_invite.c_str(), user_invite.length(), 0);
 
 	std::string rpl_inviting = ":" + std::string(server_name) + " 341 " + client.get_nickname() + " " + target_cli + " " + channel_name + CRLF;
 	send(client.get_FD(), rpl_inviting.c_str(), rpl_inviting.length(), 0);
+	chan->add_to_invitees(&client);
 }

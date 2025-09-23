@@ -58,6 +58,7 @@ public:
 	void	set_mode_t(bool value);
 	void	set_mode_k(std::string key);
 	void	set_mode_l(size_t limit);
+	void	add_to_invitees(Client *client);
 
 	// Broadcast message to all users in channel
 	//void	broadcast(const std::string& message, int sender_fd = -1);
