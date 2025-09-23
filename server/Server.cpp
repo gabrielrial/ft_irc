@@ -311,9 +311,13 @@ bool Server::check_channel(RawTextLine &line)
 // like check_channel but returns the channel
 Channel *Server::get_channel(const std::string &name)
 {
+	std::string chanel_name = name;
+	if (name[0] != '#')
+		chanel_name = "#" + name;
+
 	for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
 	{
-		if (it->get_name() == name)
+		if (it->get_name() == chanel_name)
 			return &(*it);
 	}
 	return NULL;

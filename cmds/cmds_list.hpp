@@ -60,3 +60,4 @@ void cmd_mode(Server &server, RawTextLine &line, Client &client);
 void cmd_who(Server &server, RawTextLine &line, Client &client);
 void cmd_whois(Server &server, RawTextLine &line, Client &client);
 void cmd_whowas(Server &server, RawTextLine &line, Client &client);
+void cmd_name(Server &server, RawTextLine &line, Client &client);

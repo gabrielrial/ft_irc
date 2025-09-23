@@ -26,6 +26,7 @@ SRC = main.cpp \
 		cmds/messaging/cmd_notice.cpp \
 		cmds/messaging/messaging_utils.cpp \
 		cmds/user_info/cmd_who.cpp \
+		cmds/user_info/cmd_name.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 
