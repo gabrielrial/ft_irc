@@ -21,7 +21,7 @@ private:
 	bool				_mode_t;
 	std::string			_mode_key;
 	size_t				_mode_l;
-	std::vector<Client>	_invitees;
+	std::vector<Client*> _invitees;
 
 public:
 	Channel();
@@ -44,8 +44,8 @@ public:
 	const std::string			&get_name() const;
 	const std::string			&get_topic() const;
 	const std::vector<Client>	&get_users() const;
-	const std::vector<Client>	&get_invitiees() const;
 	const std::vector<Client>	&get_operators() const;
+	const std::vector<Client*>	&get_invitees() const;
 	unsigned int			 	get_UserCount() const;
 	bool						get_mode_i() const;
 	bool						get_mode_t() const;
@@ -59,6 +59,7 @@ public:
 	void	set_mode_t(bool value);
 	void	set_mode_k(std::string key);
 	void	set_mode_l(size_t limit);
+	void	add_to_invitees(Client *client);
 
 	Client *check_user(const std::string &cl_name);
 	bool   is_operator(const std::string &op_name);

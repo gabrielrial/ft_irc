@@ -116,6 +116,11 @@ const std::vector<Client> &Channel::get_operators() const
 	return _operators;
 }
 
+const std::vector<Client *> &Channel::get_invitees() const
+{
+	return _invitees;
+}
+
 bool Channel::get_mode_i() const
 {
 	return _mode_i;
@@ -139,17 +144,27 @@ size_t Channel::get_mode_l() const
 std::string Channel::get_allmode() const
 {
 	std::string modes = "+";
+	std::vector<std::string> params;
 	if (this->get_mode_i())
 		modes += "i";
 	if (this->get_mode_t())
 		modes += "t";
 	if (!this->get_mode_k().empty())
+	{
 		modes += "k";
+		params.push_back(this->get_mode_k());
+	}
 	if (this->get_mode_l())
 	{
+		modes += "l";
 		std::stringstream ss;
-		ss << "l " << this->get_mode_l();
-		modes += ss.str();
+		ss << this->get_mode_l();
+		params.push_back(ss.str());
+	}
+	for (size_t i = 0; i < params.size(); ++i)
+	{
+		modes += " ";
+		modes += params[i];
 	}
 	return modes;
 }
@@ -189,17 +204,20 @@ Client *Channel::check_user(const std::string &name)
 	return NULL;
 }
 
-const std::vector<Client> &Channel::get_invitiees() const
+void Channel::add_to_invitees(Client *client)
 {
-	return _invitees;
+	_invitees.push_back(client);
 }
 
 bool Channel::is_operator(const std::string &op_name)
 {
+	std::cout << "hola " << op_name << std::endl; 
 	for (std::vector<Client>::iterator it = _operators.begin(); it != _operators.end(); ++it)
 	{
 		if (it->get_nickname() == op_name)
+		{
 			return true;
+		}
 	}
 	return false;
 }

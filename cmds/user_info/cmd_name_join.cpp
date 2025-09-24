@@ -3,6 +3,7 @@
 void cmd_name_join(Server &server, std::string &channel_name)
 {
 	Channel *channel = server.get_channel(channel_name);
+		std::cout << "hola " << channel->get_name() << std::endl; 
 	std::vector<Client> client_list = channel->get_users();
 
 	for (size_t c = 0; c < client_list.size(); c++)

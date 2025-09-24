@@ -65,6 +65,13 @@ void Server::create_socket()
 	int yes = 1;
 	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1)
 		throw std::runtime_error("setsockopt failed");
+
+	// make server socket non-blocking
+	int flags = fcntl(_socket, F_GETFL, 0);
+	if (flags == -1)
+		flags = 0;
+	if (fcntl(_socket, F_SETFL, flags | O_NONBLOCK) == -1)
+		throw std::runtime_error("fcntl failed");
 }
 
 /**
@@ -139,10 +146,16 @@ void Server::srv_run()
 		fd_set readfds;
 		int max_fd = prepare_fd_set(&readfds);
 
+        struct timeval tv;
+        tv.tv_sec = 0;
+        tv.tv_usec = 100000; // 100ms timeout (prevents CPU spin)
+
 		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
 		if (activity < 0)
 		{
-			std::cout << "srv_run() 1" << std::endl;
+			if (errno == EINTR) continue; // just retry if interrupted
+			perror("select");
+			break;
 		}
 		// New Clients
 		if (FD_ISSET(_socket, &readfds))
@@ -155,12 +168,26 @@ void Server::srv_run()
 			if (FD_ISSET(fd, &readfds))
 			{
 				ssize_t bytes_read = recv(fd, buffer, BUFFER_SIZE - 1, 0);
-				if (bytes_read < 0)
+				if (bytes_read == 0)
 				{
 					std::cout << "Client (fd=" << fd << ") disconnected.\n";
+					close(fd);
 					clients.erase(clients.begin() + i);
 					continue;
 				}
+				if (bytes_read < 0)
+				{
+					if (errno == EAGAIN || errno == EWOULDBLOCK)
+					{
+						++i;
+						continue;
+					}
+					std::cout << "Client (fd=" << fd << ") disconnected.\n";
+					close(fd);
+					clients.erase(clients.begin() + i);
+					continue;
+				}
+				buffer[bytes_read] = '\0';
 				handle_client_data(fd, buffer, bytes_read, lineBuffer[fd]);
 			}
 			++i;
@@ -203,7 +230,14 @@ void Server::register_client()
 		perror("accept");
 		return;
 	}
-
+	int flags = fcntl(new_fd, F_GETFL, 0);
+	if (flags == -1)
+		flags = 0;
+	if (fcntl(new_fd, F_SETFL, flags | O_NONBLOCK) == -1)
+	{
+		close(new_fd);
+		return;
+	}
 	Client c(new_fd, clientAddr);
 	char host[NI_MAXHOST];
 	char serv[NI_MAXSERV];

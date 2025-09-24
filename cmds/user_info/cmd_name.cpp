@@ -106,7 +106,7 @@ bool valid_param(RawTextLine &line)
 bool user_in_channel(Channel *channel, Client &client)
 {
 	std::vector<Client> user_list = channel->get_users();
-	std::vector<Client> invitiees_list = channel->get_invitiees();
+	std::vector<Client*> invitiees_list = channel->get_invitees();
 
 	size_t count = user_list.size();
 	size_t count_i = invitiees_list.size();
@@ -115,7 +115,7 @@ bool user_in_channel(Channel *channel, Client &client)
 	{
 		if (client.get_nickname() == user_list[i].get_nickname())
 			return true;
-		if (i < count_i && client.get_nickname() == invitiees_list[i].get_nickname())
+		if (i < count_i && client.get_nickname() == invitiees_list[i]->get_nickname())
 			return true;
 	}
 
