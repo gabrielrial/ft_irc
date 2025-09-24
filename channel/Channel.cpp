@@ -115,7 +115,7 @@ const std::vector<Client>& Channel::get_operators() const
 	return _operators;
 }
 
-const std::vector<Client>& Channel::get_invitees() const
+const std::vector<Client*>& Channel::get_invitees() const
 {
 	return _invitees;
 }
@@ -195,7 +195,7 @@ Client *Channel::check_user(const std::string &name)
 
 void	Channel::add_to_invitees(Client *client)
 {
-	_invitees.push_back(*client);
+	_invitees.push_back(client);
 }
 
 //void Channel::broadcast(const std::string& message, int sender_fd)

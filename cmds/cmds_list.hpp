@@ -6,7 +6,7 @@ class Server;
 class Client;
 class RawTextLine;
 
-#define MAX_CMDS 13
+#define MAX_CMDS 14
 
 void run_cmds(Server &server, RawTextLine &line, Client &client);
 

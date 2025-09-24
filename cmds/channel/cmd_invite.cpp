@@ -70,5 +70,5 @@ void cmd_invite(Server &server, RawTextLine &line, Client &client)
 
 	std::string rpl_inviting = ":" + std::string(server_name) + " 341 " + client.get_nickname() + " " + target_cli + " " + channel_name + CRLF;
 	send(client.get_FD(), rpl_inviting.c_str(), rpl_inviting.length(), 0);
-	chan->add_to_invitees(&client);
+	chan->add_to_invitees(target);
 }

@@ -16,7 +16,7 @@ void	print_ops(Channel *channel, std::string channel_name)
 	std::cout << "Channel: '" << channel_name << "'. Operators: [" << ops_list << "]" << std::endl;
 }
 
-void	add_client_channel(Client client, Channel channel, bool empty_channel, std::string chan_name)
+void	add_client_channel(Client &client, Channel &channel, bool empty_channel, std::string chan_name)
 {
 	channel.add_user(client);
 	if (empty_channel)
@@ -53,17 +53,34 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		Channel *channel = server.get_channel(channel_name);
 		bool empty_channel = (channel->get_UserCount() == 0);
 		if (channel->get_mode_i() == false)
-			add_client_channel(client, *channel, empty_channel, channel_name);
-		else // invite only
 		{
-			const std::vector<Client> invitees = channel->get_invitees();
-			for (size_t i = 0; i < invitees.size(); i++)
+			add_client_channel(client, *channel, empty_channel, channel_name);
+			broadcast_join(channel, server_name);
+		}
+		else // invite-only
+		{
+			const std::vector<Client*> &invitees = channel->get_invitees(); // return vector<Client*> or references
+			bool allowed = false;
+			for (size_t i = 0; i < invitees.size(); ++i)
 			{
-				if (client.get_nickname() == invitees[i].get_nickname())
-					add_client_channel(client, *channel, empty_channel, channel_name);
+				if (client.get_nickname() == invitees[i]->get_nickname())
+				{
+					allowed = true;
+					break;
+				}
+			}
+			if (allowed == true)
+			{
+				add_client_channel(client, *channel, empty_channel, channel_name);
+				broadcast_join(channel, server_name);
+			}
+			else
+			{
+				std::string err = ":" + server_name + " 473 " + client.get_nickname() +
+								  " " + channel_name + " :Cannot join channel (+i)\r\n";
+				send(client.get_FD(), err.c_str(), err.length(), 0);
 			}
 		}
-		broadcast_join(channel, server_name);
 		start = end + 1;
 		print_ops(channel, channel_name);
 	}
