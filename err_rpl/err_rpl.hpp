@@ -8,6 +8,7 @@ void	err_notonchannel(std::string server_name, Client &client, Channel *channel)
 void	err_chanoprivsneeded(std::string server_name, Client &client, Channel *channel);
 void	err_nosuchnick(std::string server_name, Client &client, std::string nickname, std::string cmd);
 void	err_unknownmode(std::string server_name, Client &client, char mode);
+void	err_usernotinchannel(std::string server_name, Client &client, Channel *channel, std::string nickname);
 
 //rpl.cpp
 void	rpl_notopic(std::string server_name, Client &client, std::string channel_name);

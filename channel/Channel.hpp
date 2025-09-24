@@ -61,6 +61,7 @@ public:
 	void	set_mode_l(size_t limit);
 	void	add_to_invitees(Client *client);
 
+	Client *check_user(const std::string &cl_name);
 	// Broadcast message to all users in channel
 	//void	broadcast(const std::string& message, int sender_fd = -1);
 };
