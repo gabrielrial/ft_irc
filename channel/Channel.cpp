@@ -138,17 +138,27 @@ size_t Channel::get_mode_l() const
 std::string Channel::get_allmode() const
 {
 	std::string modes = "+";
+	std::vector<std::string> params;
 	if (this->get_mode_i())
 		modes += "i";
 	if (this->get_mode_t())
 		modes += "t";
 	if (!this->get_mode_k().empty())
+	{
 		modes += "k";
+		params.push_back(this->get_mode_k());
+	}
 	if (this->get_mode_l())
 	{
+		modes += "l";
 		std::stringstream ss;
-		ss << "l " << this->get_mode_l();
-		modes += ss.str();
+		ss << this->get_mode_l();
+		params.push_back(ss.str());
+	}
+	for (size_t i = 0; i < params.size(); ++i)
+	{
+		modes += " ";
+		modes += params[i];
 	}
 	return modes;
 }
