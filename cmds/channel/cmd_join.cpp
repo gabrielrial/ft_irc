@@ -1,6 +1,5 @@
 #include "../../lib_irc.hpp"
 
-void	cmd_join(Server &server, RawTextLine &line, Client &client);
 void	broadcast_join(Channel *chan, std::string server_name);
 
 void	print_ops(Channel *channel, std::string channel_name)
@@ -48,7 +47,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		// std::string joinMsg = ":" + client.get_prefix() +  //doesnt work with hexchat
 		// 					" JOIN " + channel_name + "\r\n";
 		send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);
-		cmd_name(server, line, client);
+		cmd_name_join(server, channel_name);
 		start = end + 1;
 		print_ops(channel, channel_name);
 	}
