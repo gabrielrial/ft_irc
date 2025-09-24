@@ -57,3 +57,10 @@ void	err_usernotinchannel(std::string server_name, Client &client, Channel *chan
 								client.get_nickname() + " " + nickname + " " + channel->get_name() + " :They aren't on that channel\r\n";
 	send(client.get_FD(), err_usernotinchannel.c_str(), err_usernotinchannel.length(), 0);
 }
+
+void	err_badchannelkey(std::string server_name, Client &client, Channel *channel)
+{
+	std::string err_badchannelkey = ":" + server_name + " 475 " + 
+								client.get_nickname() + " " + channel->get_name() + " :Cannot join channel (+k)\r\n";
+	send(client.get_FD(), err_badchannelkey.c_str(), err_badchannelkey.length(), 0);
+}

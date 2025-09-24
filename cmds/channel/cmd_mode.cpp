@@ -97,7 +97,6 @@ void change_mode(Server &server, Client &client, Channel *channel,
 					}
 					else
 					{
-						//int limit = std::stoi(params[2]);
 						int limit = atoi(params[2].c_str());
 						if (limit > 0)
 							channel->set_mode_l(limit);
