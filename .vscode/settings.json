@@ -70,5 +70,6 @@
         "stack": "cpp",
         "variant": "cpp",
         "*.tcc": "cpp"
-    }
+    },
+	"makefile.configureOnOpen": false
 }

@@ -37,7 +37,10 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		return;
 	}
 	const std::vector<std::string> &params = line.get_params();
-	std::string first_param = params[0];
+	std::string first_param = params[0]; //channels
+	std::string key; // keyword
+	if (params.size() > 1)
+		key = params[1];
 	size_t start = 0;
 	size_t end = 0;
 	while (start < first_param.length())
@@ -52,6 +55,18 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		server.add_channel(channel_name);
 		Channel *channel = server.get_channel(channel_name);
 		bool empty_channel = (channel->get_UserCount() == 0);
+		if (!channel->get_mode_k().empty() && (key != channel->get_mode_k())) //check key
+		{
+			err_badchannelkey(server_name, client, channel);
+			start = end + 1;
+			continue;
+		}
+		if (channel->get_mode_l() > 0 && channel->get_UserCount() >= channel->get_mode_l()) //check limit
+		{
+			err_channelisfull(server_name, client, channel);
+			start = end + 1;
+			continue;
+		}
 		if (channel->get_mode_i() == false)
 		{
 			add_client_channel(client, *channel, empty_channel, channel_name);
