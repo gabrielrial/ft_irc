@@ -64,3 +64,10 @@ void	err_badchannelkey(std::string server_name, Client &client, Channel *channel
 								client.get_nickname() + " " + channel->get_name() + " :Cannot join channel (+k)\r\n";
 	send(client.get_FD(), err_badchannelkey.c_str(), err_badchannelkey.length(), 0);
 }
+
+void	err_channelisfull(std::string server_name, Client &client, Channel *channel)
+{
+	std::string err_channelisfull = ":" + server_name + " 471 " + 
+								client.get_nickname() + " " + channel->get_name() + " :Cannot join channel (+l)\r\n";
+	send(client.get_FD(), err_channelisfull.c_str(), err_channelisfull.length(), 0);
+}

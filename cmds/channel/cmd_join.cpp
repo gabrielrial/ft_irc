@@ -49,6 +49,12 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 			start = end + 1;
 			continue;
 		}
+		if (channel->get_mode_l() > 0 && channel->get_UserCount() >= channel->get_mode_l()) //check limit
+		{
+			err_channelisfull(server_name, client, channel);
+			start = end + 1;
+			continue;
+		}
 		channel->add_user(client);
 		if (empty_channel)
 			channel->add_operator(client);
