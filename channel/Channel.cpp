@@ -1,34 +1,35 @@
 #include "Channel.hpp"
 
-Channel::Channel() : 
-	_name(""),
-	_topic(""),
-	_mode_i(false),
-	_mode_t(true),
-	_mode_key(""),
-	_mode_l(20)
-{}
+Channel::Channel() : _name(""),
+					 _topic(""),
+					 _mode_i(false),
+					 _mode_t(true),
+					 _mode_key(""),
+					 _mode_l(20)
+{
+}
 
-Channel::Channel(const std::string &name) : 
-	_name(name),
-	_topic(""),
-	_mode_i(false),
-	_mode_t(true),
-	_mode_key(""),
-	_mode_l(20)
-{}
+Channel::Channel(const std::string &name) : _name(name),
+											_topic(""),
+											_mode_i(false),
+											_mode_t(true),
+											_mode_key(""),
+											_mode_l(20)
+{
+}
 
 Channel::~Channel()
-{}
+{
+}
 
 Channel::Channel(const Channel &copy)
 {
 	*this = copy;
 }
 
-Channel& Channel::operator=(const Channel &copy)
+Channel &Channel::operator=(const Channel &copy)
 {
-	if (this != &copy) 
+	if (this != &copy)
 	{
 		_name = copy._name;
 		_topic = copy._topic;
@@ -42,7 +43,7 @@ Channel& Channel::operator=(const Channel &copy)
 	return *this;
 }
 
-bool	Channel::add_user(Client client)
+bool Channel::add_user(Client client)
 {
 	if (has_user(client))
 		return false;
@@ -51,18 +52,18 @@ bool	Channel::add_user(Client client)
 	return true;
 }
 
-bool	Channel::remove_user(Client client)
+bool Channel::remove_user(Client client)
 {
 	std::vector<Client>::iterator it = std::find(_users.begin(), _users.end(), client);
 	if (it == _users.end())
 		return false;
 	_users.erase(it);
 	//_userModes.erase(client_fd);
-	//removeOperator(client_fd);
+	// removeOperator(client_fd);
 	return true;
 }
 //
-bool	Channel::has_user(Client client) const
+bool Channel::has_user(Client client) const
 {
 	return std::find(_users.begin(), _users.end(), client) != _users.end();
 }
@@ -80,7 +81,7 @@ bool Channel::rem_operator(Client client)
 	std::vector<Client>::iterator it = std::find(_operators.begin(), _operators.end(), client);
 	if (it == _operators.end())
 		return false;
-	
+
 	_operators.erase(it);
 	return true;
 }
@@ -90,12 +91,12 @@ bool Channel::is_operator(Client client) const
 	return std::find(_operators.begin(), _operators.end(), client) != _operators.end();
 }
 
-const	std::string &Channel::get_name() const
+const std::string &Channel::get_name() const
 {
 	return _name;
 }
 
-const	std::string &Channel::get_topic() const
+const std::string &Channel::get_topic() const
 {
 	return _topic;
 }
@@ -105,12 +106,12 @@ unsigned int Channel::get_UserCount() const
 	return _users.size();
 }
 
-const std::vector<Client>& Channel::get_users() const
+const std::vector<Client> &Channel::get_users() const
 {
 	return _users;
 }
 
-const std::vector<Client>& Channel::get_operators() const
+const std::vector<Client> &Channel::get_operators() const
 {
 	return _operators;
 }
@@ -153,27 +154,27 @@ std::string Channel::get_allmode() const
 	return modes;
 }
 
-void	Channel::set_topic(const std::string &topic)
+void Channel::set_topic(const std::string &topic)
 {
 	_topic = topic;
 }
 
-void	Channel::set_mode_i(bool value)
+void Channel::set_mode_i(bool value)
 {
 	_mode_i = value;
 }
 
-void	Channel::set_mode_t(bool value)
+void Channel::set_mode_t(bool value)
 {
 	_mode_t = value;
 }
 
-void	Channel::set_mode_k(std::string key)
+void Channel::set_mode_k(std::string key)
 {
 	_mode_key = key;
 }
 
-void	Channel::set_mode_l(size_t limit)
+void Channel::set_mode_l(size_t limit)
 {
 	_mode_l = limit;
 }
@@ -188,7 +189,22 @@ Client *Channel::check_user(const std::string &name)
 	return NULL;
 }
 
-//void Channel::broadcast(const std::string& message, int sender_fd)
+const std::vector<Client> &Channel::get_invitiees() const
+{
+	return _invitees;
+}
+
+bool Channel::is_operator(const std::string &op_name)
+{
+	for (std::vector<Client>::iterator it = _operators.begin(); it != _operators.end(); ++it)
+	{
+		if (it->get_nickname() == op_name)
+			return true;
+	}
+	return false;
+}
+
+// void Channel::broadcast(const std::string& message, int sender_fd)
 //{
 //	for (std::vector<int>::const_iterator it = _users.begin(); it != _users.end(); ++it)
 //	{
@@ -197,4 +213,4 @@ Client *Channel::check_user(const std::string &name)
 //			send(*it, message.c_str(), message.length(), 0);
 //		}
 //	}
-//}
+// }

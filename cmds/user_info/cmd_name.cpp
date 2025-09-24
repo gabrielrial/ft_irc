@@ -1,8 +1,11 @@
 #include "../../lib_irc.hpp"
 
+bool valid_param(RawTextLine &line);
+bool user_in_channel(Channel *channel, Client &client);
+
 void cmd_name(Server &server, RawTextLine &line, Client &client)
 {
-	if (!is_valid_name(server, line, client))
+	if (!valid_param(line))
 		return;
 
 	if (line.get_params().empty())
@@ -10,61 +13,76 @@ void cmd_name(Server &server, RawTextLine &line, Client &client)
 		std::cout << "!@# run cmd_name() without parameters" << std::endl;
 	}
 
-	Channel *channel = server.get_channel(line.get_params()[0]);
-	if (!channel)
+	size_t channel_size = line.get_params().size();
+
+	for (size_t c = 0; c < channel_size; c++)
 	{
-		err_nosuchchannel(server.get_servername(), client, line.get_params()[0]);
-		return;
-	}
+		Channel *channel = server.get_channel(line.get_params()[c]);
 
-	if (channel->get_mode_i() || (!channel->get_mode_k().empty() && !channel->check_user(client.get_nickname())))
-	{
-		std::cout << "!@# check if I'm invited" << std::endl;
-		std::cout << "!@# run cmd_name() without parameters" << std::endl;
-		return;
-	}
-
-	std::cout << line.get_params()[0] << std::endl;
-	std::vector<Client> client_list = channel->get_users();
-
-	std::string rpl_namreply = ":" + server.get_servername() + " 353 " +
-							   client.get_nickname() + " = " + channel->get_name() + " :";
-
-	std::string names_list;
-
-	for (size_t i = 0; i < client_list.size(); i++)
-	{
-		std::string client_name = client_list[i].get_nickname();
-
-		if ((rpl_namreply + names_list + client_name).size() < 510)
+		if (!channel)
 		{
-			if (!names_list.empty())
-				names_list += " ";
-			names_list += client_name;
+			err_nosuchchannel(server.get_servername(), client, line.get_params()[c]);
+			continue;
 		}
-		else
+
+		if (channel->get_mode_i() && !user_in_channel(channel, client))
 		{
-			std::string msg = rpl_namreply + names_list + CRLF;
-			for (size_t x = 0; i < channel->get_users().size(); x++)
+			err_notonchannel(server.get_servername(), client, channel);
+			continue;
+		}
+
+		std::vector<Client> client_list = channel->get_users();
+
+		std::string rpl_namreply = ":" + server.get_servername() + " 353 " +
+								   client.get_nickname() + " = " + channel->get_name() + " :";
+
+		std::string names_list;
+		// we send the normal users first.
+		for (size_t i = 0; i < client_list.size(); i++)
+		{
+			std::string client_name = client_list[i].get_nickname();
+
+			if (channel->is_operator(client_name))
+				client_name = "@" + client_name;
+
+			if ((rpl_namreply + names_list + client_name).size() < 510)
 			{
-				send(channel->get_users()[x].get_FD(), msg.c_str(), msg.size(), 0);
-				std::string endmsg = ":" + server.get_servername() + " 366 " +
-									 client.get_nickname() + " " + channel->get_name() +
-									 " :End of NAMES list" + CRLF;
-				send(channel->get_users()[x].get_FD(), endmsg.c_str(), endmsg.size(), 0);
+				if (!names_list.empty())
+					names_list += " ";
+				names_list += client_name;
 			}
-			names_list = client_name;
+			else
+			{
+				std::string msg = rpl_namreply + names_list + CRLF;
+				send(client.get_FD(), msg.c_str(), msg.size(), 0);
+				names_list = client_name;
+				continue;
+			}
+			if (client_list.size() - 1 == i) 
+			{
+				std::string msg = rpl_namreply + names_list + CRLF;
+				send(client.get_FD(), msg.c_str(), msg.size(), 0);
+				names_list = client_name;
+			}
 		}
+
+		std::string endmsg = ":" + server.get_servername() + " 366 " +
+							 client.get_nickname() + " " + channel->get_name() +
+							 " :End of NAMES list" + CRLF;
+		send(client.get_FD(), endmsg.c_str(), endmsg.size(), 0);
 	}
 
-	if (!names_list.empty())
-	{
-		std::string msg = rpl_namreply + names_list + CRLF;
-		send(client.get_FD(), msg.c_str(), msg.size(), 0);
-	}
 }
 
-bool is_valid_name(Server &server, RawTextLine &line, Client &client)
+/* valid_param()
+ *
+ * Check for valid parameters.
+ * It will only works in this case.
+ *
+ * /NAME [<#channel><,#channel>]
+ * */
+
+bool valid_param(RawTextLine &line)
 {
 	if (line.get_params().size() > 1)
 	{
@@ -77,4 +95,29 @@ bool is_valid_name(Server &server, RawTextLine &line, Client &client)
 		return false;
 	}
 	return true;
+}
+
+/* valid_param()
+ *
+ * Checks if we belong to the channel or if we were invited to.
+ * We should be on the channel user list or in invitiees list.
+ * */
+
+bool user_in_channel(Channel *channel, Client &client)
+{
+	std::vector<Client> user_list = channel->get_users();
+	std::vector<Client> invitiees_list = channel->get_invitiees();
+
+	size_t count = user_list.size();
+	size_t count_i = invitiees_list.size();
+
+	for (size_t i = 0; i < count; i++)
+	{
+		if (client.get_nickname() == user_list[i].get_nickname())
+			return true;
+		if (i < count_i && client.get_nickname() == invitiees_list[i].get_nickname())
+			return true;
+	}
+
+	return false;
 }

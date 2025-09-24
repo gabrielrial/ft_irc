@@ -44,6 +44,7 @@ public:
 	const std::string			&get_name() const;
 	const std::string			&get_topic() const;
 	const std::vector<Client>	&get_users() const;
+	const std::vector<Client>	&get_invitiees() const;
 	const std::vector<Client>	&get_operators() const;
 	unsigned int			 	get_UserCount() const;
 	bool						get_mode_i() const;
@@ -60,6 +61,7 @@ public:
 	void	set_mode_l(size_t limit);
 
 	Client *check_user(const std::string &cl_name);
+	bool   is_operator(const std::string &op_name);
 	// Broadcast message to all users in channel
 	//void	broadcast(const std::string& message, int sender_fd = -1);
 };
