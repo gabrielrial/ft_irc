@@ -24,6 +24,7 @@ Server::Server(uint16_t port, std::string password) : _port(port), _password(pas
 
 Server::~Server()
 {
+	close (_socket);
 }
 
 /*
