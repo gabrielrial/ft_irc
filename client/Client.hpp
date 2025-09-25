@@ -17,7 +17,7 @@ class Client
         std::string _realname;
         std::string _hostname;
         std::string _servername;
-        bool        _welcomed;
+        //bool        _welcomed;
         bool        _has_pass;
         bool        _has_nick;
         bool        _has_user;
