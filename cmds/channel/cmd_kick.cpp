@@ -1,6 +1,7 @@
 #include "../../lib_irc.hpp"
 
 void	cmd_kick(Server &server, RawTextLine &line, Client &client);
+void	broadcast_kick(const Channel *chan, const Client &kicker, const Client *target, const std::string &reason);
 
 void	cmd_kick(Server &server, RawTextLine &line, Client &client)
 {
@@ -32,23 +33,47 @@ void	cmd_kick(Server &server, RawTextLine &line, Client &client)
 		{
 			err_nosuchchannel(server_name, client, channel_name);
 			return;
+			//continue;
 		}
 		if (!channel->is_operator(client))
 		{
 			err_chanoprivsneeded(server_name, client, channel);
 			return;
+			//continue;
 		}
 		std::istringstream user_stream(user_param); //splitting
 		std::string user_name;
 		while (std::getline(user_stream, user_name, ','))
 		{
+			Client *target_nick = server.get_client(user_name);
+			if (!target_nick)
+			{
+				err_nosuchnick(server_name, client, user_name, "KICK");
+				return;
+				//continue;
+			}
 			if (!channel->check_user(user_name))
 			{
 				err_usernotinchannel(server_name, client, channel, user_name);
 				return;
+				//continue;
 			}
-			broadcast_part(channel, client, reason);
-			channel->remove_user(channel->);
+			broadcast_kick(channel, client, target_nick, reason);
+			channel->remove_user(*target_nick);
 		}
 	}
+}
+
+void broadcast_kick(const Channel *chan, const Client &kicker, const Client *target, const std::string &reason)
+{
+	if (!chan)
+		return;
+	std::string kick_msg = kicker.get_prefix() + " KICK " + 
+							chan->get_name() + " " + target->get_nickname();
+	if (!reason.empty())
+		kick_msg += " :" + reason;
+	kick_msg += "\r\n";
+	const std::vector<Client>& users = chan->get_users();
+	for (size_t i = 0; i < users.size(); ++i)
+		send(users[i].get_FD(), kick_msg.c_str(), kick_msg.length(), 0);
 }

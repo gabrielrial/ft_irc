@@ -10,14 +10,14 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
 	{
         "NICK","USER","PASS","QUIT","PRIVMSG","NOTICE",
         "JOIN","PART", "INVITE", "LIST","TOPIC","NAMES","WHO","NAME",
-		"MODE"
+		"MODE", "KICK"
     };
 
      static CmdFunc funcs[] =
 	{
         cmd_nick, cmd_user, cmd_pass, cmd_quit, cmd_privmsg, cmd_notice,
         cmd_join, cmd_part, cmd_invite, cmd_list, cmd_topic, cmd_names, cmd_who,
-        cmd_name, cmd_mode
+        cmd_name, cmd_mode, cmd_kick
     };
 
     for (int i = 0; i < MAX_CMDS; i++)

@@ -6,7 +6,7 @@ class Server;
 class Client;
 class RawTextLine;
 
-#define MAX_CMDS 15
+#define MAX_CMDS 16
 
 void run_cmds(Server &server, RawTextLine &line, Client &client);
 
@@ -49,6 +49,7 @@ void cmd_invite(Server &server, RawTextLine &line, Client &client);
 void cmd_topic(Server &server, RawTextLine &line, Client &client);
 void cmd_names(Server &server, RawTextLine &line, Client &client);
 void cmd_mode(Server &server, RawTextLine &line, Client &client);
+void cmd_kick(Server &server, RawTextLine &line, Client &client);
 
 /* USER INFO
  *

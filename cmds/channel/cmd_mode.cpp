@@ -126,11 +126,11 @@ void change_mode(Server &server, Client &client, Channel *channel,
 						err_usernotinchannel(server_name, client, channel, nick);
 						return;
 					}
-					Client* nickname = server.get_client(nick);
+					Client* target_nick = server.get_client(nick);
 					if (adding)
 					{
-						channel->add_operator(*nickname);
-						// std::string announce = ":" + client.get_nickname() + " MODE " + 
+						channel->add_operator(*target_nick);
+						// std::string announce = ":" + client.get_target_nick() + " MODE " + 
 						// 						channel->get_name() + " +o " + params[2] + "\r\n";
 						// const std::vector<Client> &users = channel->get_users();
 						// for (size_t i = 0; i < users.size(); ++i)
@@ -140,8 +140,8 @@ void change_mode(Server &server, Client &client, Channel *channel,
 					}
 					else
 					{
-						channel->rem_operator(*nickname);
-						// std::string announce = ":" + client.get_nickname() + " MODE " + 
+						channel->rem_operator(*target_nick);
+						// std::string announce = ":" + client.get_target_nick() + " MODE " + 
 						// 						channel->get_name() + " -o " + params[2] + "\r\n";
 						// const std::vector<Client> &users = channel->get_users();
 						// for (size_t i = 0; i < users.size(); ++i)
