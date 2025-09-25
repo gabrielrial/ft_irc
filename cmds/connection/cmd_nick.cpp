@@ -4,7 +4,7 @@ void cmd_nick(Server &server, RawTextLine &line, Client &client)
 {
 	if (line.get_sep_params().empty())
 	{
-		const std::string msg = ":localhost 431 * :No nickname given\r\n";
+		const std::string msg = ":" + server.get_servername() + " 431 :No nickname given\r\n";
 		send(client.get_FD(), msg.c_str(), msg.size(), 0);
 		return;
 	}
@@ -30,7 +30,6 @@ void cmd_nick(Server &server, RawTextLine &line, Client &client)
 			+ " NICK :" + newNick + "\r\n";
 		const std::string msg = "You are now known as " + line.get_sep_params()[0] + "\r\n";
 		send(client.get_FD(), msg.c_str(), msg.size(), 0);
-		
 	}
 	client.set_nickname(newNick);
 	if (client.is_registered())
