@@ -211,7 +211,6 @@ void Channel::add_to_invitees(Client *client)
 
 bool Channel::is_operator(const std::string &op_name)
 {
-	std::cout << "hola " << op_name << std::endl; 
 	for (std::vector<Client>::iterator it = _operators.begin(); it != _operators.end(); ++it)
 	{
 		if (it->get_nickname() == op_name)
