@@ -20,13 +20,42 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
         cmd_name, cmd_mode, cmd_kick
     };
 
-    for (int i = 0; i < MAX_CMDS; i++)
-    {
-        if (line.get_command() == cmds[i])
-        {
-            funcs[i](server, line, client);
-        }
-    }
+	for (int i = 0; i < MAX_CMDS; i++)
+	{
+		if (!client.is_registered())
+		{
+			if ((line.get_command() == "PASS"))
+			{
+				funcs[2](server, line, client);
+				return;
+			}
+			else if (line.get_command() == "USER")
+			{
+				funcs[1](server, line, client);
+				return;
+			}
+			else if (line.get_command() == "NICK")
+			{
+				funcs[0](server, line, client);
+				return;
+			}
+			else
+			{
+				std::string welcome = server.get_servername() + ": You must registrate first. (PASS, NICK and USER are requiered)\r\n";
+				send(client.get_FD(), welcome.c_str(), welcome.size(), 0);
+				return;
+			}
+		}
+		else if (client.is_registered() && line.get_command() == cmds[i])
+		{
+			funcs[i](server, line, client);
+		}
+	}
 }
 
-void cmd_names(Server &server, RawTextLine &line, Client &client){(void)server; (void)line; (void)client;};
+void cmd_names(Server &server, RawTextLine &line, Client &client)
+{
+	(void)server;
+	(void)line;
+	(void)client;
+};

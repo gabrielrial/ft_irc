@@ -2,12 +2,12 @@
 
 void cmd_pass(Server &server, RawTextLine &line, Client &client)
 {
-	if (client.is_registered() || client.has_pass())
-	{
-		std::string msg = ":localhost 462 * :You may not reregister\r\n";
-		send(client.get_FD(), msg.c_str(), msg.size(), 0);
-		return ;
-	}
+//	if (client.is_registered() || client.has_pass())
+//	{
+//		std::string msg = ":localhost 462 * :You may not reregister\r\n";
+//		send(client.get_FD(), msg.c_str(), msg.size(), 0);
+//		return ;
+//	}
     if (line.get_sep_params().empty())
 	{
 		const std::string msg = ":localhost 461 * PASS :Not enough parameters\r\n";
