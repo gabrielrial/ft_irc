@@ -31,7 +31,7 @@ void cmd_name(Server &server, RawTextLine &line, Client &client)
 			continue;
 		}
 
-		std::vector<Client> client_list = channel->get_users();
+		std::vector<Client*> client_list = channel->get_users();
 
 		std::string rpl_namreply = ":" + server.get_servername() + " 353 " +
 								   client.get_nickname() + " = " + channel->get_name() + " :";
@@ -40,7 +40,7 @@ void cmd_name(Server &server, RawTextLine &line, Client &client)
 		// we send the normal users first.
 		for (size_t i = 0; i < client_list.size(); i++)
 		{
-			std::string client_name = client_list[i].get_nickname();
+			std::string client_name = (*client_list[i]).get_nickname();
 
 			if (channel->is_operator(client_name))
 				client_name = "@" + client_name;
@@ -105,7 +105,7 @@ bool valid_param(RawTextLine &line)
 
 bool user_in_channel(Channel *channel, Client &client)
 {
-	std::vector<Client> user_list = channel->get_users();
+	std::vector<Client*> user_list = channel->get_users();
 	std::vector<Client*> invitiees_list = channel->get_invitees();
 
 	size_t count = user_list.size();
@@ -113,7 +113,7 @@ bool user_in_channel(Channel *channel, Client &client)
 
 	for (size_t i = 0; i < count; i++)
 	{
-		if (client.get_nickname() == user_list[i].get_nickname())
+		if (client.get_nickname() == (*user_list[i]).get_nickname())
 			return true;
 		if (i < count_i && client.get_nickname() == invitiees_list[i]->get_nickname())
 			return true;

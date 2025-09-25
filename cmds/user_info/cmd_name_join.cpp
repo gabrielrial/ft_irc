@@ -3,11 +3,11 @@
 void cmd_name_join(Server &server, std::string &channel_name)
 {
 	Channel *channel = server.get_channel(channel_name);
-	std::vector<Client> client_list = channel->get_users();
+	std::vector<Client*> client_list = channel->get_users();
 
 	for (size_t c = 0; c < client_list.size(); c++)
 	{
-		Client &target = client_list[c];
+		Client &target = *client_list[c];
 		std::string names_list;
 
 		for (size_t i = 0; i < client_list.size(); i++)
@@ -15,7 +15,7 @@ void cmd_name_join(Server &server, std::string &channel_name)
 			std::string rpl_namreply = ":" + server.get_servername() + " 353 " +
 									   target.get_nickname() + " = " + channel->get_name() + " :";
 
-			std::string client_name = client_list[i].get_nickname();
+			std::string client_name = (*client_list[i]).get_nickname();
 			if (channel->is_operator(client_name))
 				client_name = "@" + client_name;
 

@@ -47,7 +47,7 @@ bool	Channel::add_user(Client* client)
 {
 	if (has_user(client))
 		return false;
-	_users.push_back(*client);
+	_users.push_back(client);
 	//_userModes[client] = false; // Initialize with no special modes
 	return true;
 }
@@ -211,9 +211,9 @@ void Channel::add_to_invitees(Client *client)
 
 bool Channel::is_operator(const std::string &op_name)
 {
-	for (std::vector<Client>::iterator it = _operators.begin(); it != _operators.end(); ++it)
+	for (std::vector<Client*>::iterator it = _operators.begin(); it != _operators.end(); ++it)
 	{
-		if (it->get_nickname() == op_name)
+		if ((*it)->get_nickname() == op_name)
 		{
 			return true;
 		}
