@@ -140,7 +140,7 @@ void Server::srv_run()
 	char buffer[BUFFER_SIZE];
 	std::string lineBuffer[FD_SETSIZE]; // one buffer per fd
 
-	while (true)
+	while (g_running)
 	{
 		remove_closed_clients(lineBuffer);
 		fd_set readfds;
