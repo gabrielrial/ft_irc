@@ -216,6 +216,7 @@ void Server::process_line(int fd, const std::string &line) // change to parse th
 
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
+	std::cout << line << std::endl;
 	run_cmds(*this, parsed, *client);
 }
 
