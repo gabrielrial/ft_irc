@@ -31,7 +31,7 @@ void cmd_invite(Server &server, RawTextLine &line, Client &client)
 	}
 
 	// 3) Inviter must be on the channel
-	if (!chan->has_user(client))
+	if (!chan->has_user(&client))
 	{
 		std::string err = ":" + std::string(server_name) + " 442 " + client.get_nickname() + " " + channel_name + " :You're not on that channel\r\n";
 		send(client.get_FD(), err.c_str(), err.length(), 0);
@@ -40,7 +40,7 @@ void cmd_invite(Server &server, RawTextLine &line, Client &client)
     // 4) if invite only, is the inviter an operator?
 	if (chan->get_mode_i() == true)
     {
-        if (!chan->is_operator(client))
+        if (!chan->is_operator(&client))
         {
             std::string err = ":" + std::string(server_name) + " 482 " + client.get_nickname() + " " + channel_name + " :You're not channel operator\r\n";
             send(client.get_FD(), err.c_str(), err.length(), 0);
@@ -57,7 +57,7 @@ void cmd_invite(Server &server, RawTextLine &line, Client &client)
     }
 
     // 6) If already on channel → error
-	if (chan->has_user(*target))
+	if (chan->has_user(target))
 	{
 		std::string err = ":" + std::string(server_name) + " 443 " + client.get_nickname() + " " + target_cli + " " + channel_name + " :is already on channel\r\n";
 		send(client.get_FD(), err.c_str(), err.length(), 0);

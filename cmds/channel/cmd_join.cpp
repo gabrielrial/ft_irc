@@ -5,22 +5,22 @@ void	broadcast_join(Channel *chan, std::string server_name);
 
 void	print_ops(Channel *channel, std::string channel_name)
 {
-	const std::vector<Client> &ops = channel->get_operators();
+	const std::vector<Client*> &ops = channel->get_operators();
 	std::string ops_list;
 	for (size_t i = 0; i < ops.size(); ++i)
 	{
 		if (i > 0)
 			ops_list += ", ";
-		ops_list += ops[i].get_nickname();
+		ops_list += (*ops[i]).get_nickname();
 	}
 	std::cout << "Channel: '" << channel_name << "'. Operators: [" << ops_list << "]" << std::endl;
 }
 
 void	add_client_channel(Client &client, Channel &channel, bool empty_channel, std::string chan_name)
 {
-	channel.add_user(client);
+	channel.add_user(&client);
 	if (empty_channel)
-		channel.add_operator(client);
+		channel.add_operator(&client);
 	std::string joinMsg = ":" + client.get_nickname() +  //works with hexchat
 								" JOIN " + chan_name + "\r\n";
 			// std::string joinMsg = ":" + client.get_prefix() +  //doesnt work with hexchat
@@ -92,17 +92,19 @@ void	broadcast_join(Channel *chan, std::string server_name)
 {
 	if (!chan)
 		return;
-	const std::vector<Client> &users = chan->get_users();
+	const std::vector<Client*> &users = chan->get_users();
 	std::string user_list;
 	for (size_t i = 0; i < users.size(); ++i)
 	{
 		if (i > 0)
 			user_list += " ";
-		user_list += users[i].get_nickname();
+		if (chan->is_operator(users[i]))
+			user_list += "@";
+		user_list += users[i]->get_nickname();
 	}
 	for (size_t i = 0; i < users.size(); ++i)
 	{
-		rpl_namreply(server_name, users[i], chan->get_name(), user_list);
-		rpl_endofnames(server_name, users[i], chan->get_name());
+		rpl_namreply(server_name, (*users[i]), chan->get_name(), user_list);
+		rpl_endofnames(server_name, (*users[i]), chan->get_name());
 	}
 }

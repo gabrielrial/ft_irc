@@ -14,15 +14,15 @@ void send_message_to_channel(Channel *channel, Client &sender,
 		return;
 	}
 
-	const std::vector<Client> &users = channel->get_users();
+	const std::vector<Client*> &users = channel->get_users();
 	for (size_t j = 0; j < users.size(); ++j)
 	{
-		if (users[j].get_FD() == sender.get_FD())
+		if ((*users[j]).get_FD() == sender.get_FD())
 			continue;
 
 		std::string msg = sender.get_prefix() + " " + command + " " + targetName + " :" + message + "\r\n";
 		std::cout << msg << std::endl;
-		send(users[j].get_FD(), msg.c_str(), msg.size(), 0);
+		send((*users[j]).get_FD(), msg.c_str(), msg.size(), 0);
 	}
 }
 

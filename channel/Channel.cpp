@@ -42,7 +42,7 @@ Channel& Channel::operator=(const Channel &copy)
 	return *this;
 }
 
-bool	Channel::add_user(Client client)
+bool	Channel::add_user(Client* client)
 {
 	if (has_user(client))
 		return false;
@@ -51,9 +51,9 @@ bool	Channel::add_user(Client client)
 	return true;
 }
 
-bool	Channel::remove_user(Client client)
+bool	Channel::remove_user(Client* client)
 {
-	std::vector<Client>::iterator it = std::find(_users.begin(), _users.end(), client);
+	std::vector<Client*>::iterator it = std::find(_users.begin(), _users.end(), client);
 	if (it == _users.end())
 		return false;
 	_users.erase(it);
@@ -62,12 +62,12 @@ bool	Channel::remove_user(Client client)
 	return true;
 }
 //
-bool	Channel::has_user(Client client) const
+bool	Channel::has_user(Client* client) const
 {
 	return std::find(_users.begin(), _users.end(), client) != _users.end();
 }
 
-bool Channel::add_operator(Client client)
+bool Channel::add_operator(Client* client)
 {
 	if (!has_user(client) || is_operator(client))
 		return false;
@@ -75,9 +75,9 @@ bool Channel::add_operator(Client client)
 	return true;
 }
 
-bool Channel::rem_operator(Client client)
+bool Channel::rem_operator(Client* client)
 {
-	std::vector<Client>::iterator it = std::find(_operators.begin(), _operators.end(), client);
+	std::vector<Client*>::iterator it = std::find(_operators.begin(), _operators.end(), client);
 	if (it == _operators.end())
 		return false;
 	
@@ -85,7 +85,7 @@ bool Channel::rem_operator(Client client)
 	return true;
 }
 
-bool Channel::is_operator(Client client) const
+bool Channel::is_operator(Client* client) const
 {
 	return std::find(_operators.begin(), _operators.end(), client) != _operators.end();
 }
@@ -105,12 +105,12 @@ unsigned int Channel::get_UserCount() const
 	return _users.size();
 }
 
-const std::vector<Client>& Channel::get_users() const
+const std::vector<Client*>& Channel::get_users() const
 {
 	return _users;
 }
 
-const std::vector<Client>& Channel::get_operators() const
+const std::vector<Client*>& Channel::get_operators() const
 {
 	return _operators;
 }
@@ -185,10 +185,10 @@ void	Channel::set_mode_l(size_t limit)
 
 Client *Channel::check_user(const std::string &name)
 {
-	for (std::vector<Client>::iterator it = _users.begin(); it != _users.end(); ++it)
+	for (std::vector<Client*>::iterator it = _users.begin(); it != _users.end(); ++it)
 	{
-		if (it->get_nickname() == name)
-			return &(*it);
+		if ((*it)->get_nickname() == name)
+			return (*it);
 	}
 	return NULL;
 }

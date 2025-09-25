@@ -419,13 +419,13 @@ const std::vector<Client> &Server::get_vector_clients() const
 void Server::debug_print_chan_users(const Channel &chan) const
 {
 	std::cout << "  Users:" << std::endl;
-	const std::vector<Client> &users = chan.get_users();
+	const std::vector<Client*> &users = chan.get_users();
 	if (users.empty())
 		std::cout << "  (no users)" << std::endl;
 	else
 	{
 		for (size_t i = 0; i < users.size(); i++)
-			std::cout << "  - " << users[i].get_nickname() << std::endl;
+			std::cout << "  - " << (*users[i]).get_nickname() << std::endl;
 	}
 }
 
@@ -433,12 +433,12 @@ void Server::debug_print_ops(const Channel *channel, const std::string &context)
 {
 	std::cout << "=== DEBUG [" << context << "] ===" << std::endl;
 	std::cout << "Channel: " << channel->get_name() << std::endl;
-	const std::vector<Client>& operators = channel->get_operators();
+	const std::vector<Client*>& operators = channel->get_operators();
 	std::cout << "Operators (" << operators.size() << "):" << std::endl;
 	for (size_t i = 0; i < operators.size(); ++i)
 	{
-		std::cout << " - " << operators[i].get_nickname() 
-				<< " (fd: " << operators[i].get_FD() << ")" << std::endl;
+		std::cout << " - " << (*operators[i]).get_nickname() 
+				<< " (fd: " << (*operators[i]).get_FD() << ")" << std::endl;
 	}
 	std::cout << "=========================" << std::endl;
 }

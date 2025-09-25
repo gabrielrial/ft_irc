@@ -20,7 +20,7 @@ void cmd_mode(Server &server, RawTextLine &line, Client &client)
 		err_nosuchchannel(server_name, client, channel_name);
 		return;
 	}
-	else if (!channel->has_user(client))
+	else if (!channel->has_user(&client))
 	{
 		err_notonchannel(server_name, client, channel);
 		return;
@@ -31,7 +31,7 @@ void cmd_mode(Server &server, RawTextLine &line, Client &client)
 		rpl_channelmodeis(server_name, client, channel_name, modestring);
 		return;
 	}
-	if (!channel->is_operator(client))
+	if (!channel->is_operator(&client))
 	{
 		err_chanoprivsneeded(server_name, client, channel);
 		return;
@@ -132,21 +132,21 @@ void change_mode(Server &server, Client &client, Channel *channel,
 				Client* nickname = server.get_client(params[2]);
 				if (adding)
 				{
-					channel->add_operator(*nickname);
+					channel->add_operator(nickname);
 					std::string announce = ":" + client.get_nickname() + " MODE " + 
 											channel->get_name() + " +o " + params[2] + "\r\n";
-					const std::vector<Client> &users = channel->get_users();
+					const std::vector<Client*> &users = channel->get_users();
 					for (size_t i = 0; i < users.size(); ++i)
-						send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
+						send((*users[i]).get_FD(), announce.c_str(), announce.length(), 0);
 				}
 				else
 				{
-					channel->rem_operator(*nickname);
+					channel->rem_operator(nickname);
 					std::string announce = ":" + client.get_nickname() + " MODE " + 
 											channel->get_name() + " -o " + params[2] + "\r\n";
-					const std::vector<Client> &users = channel->get_users();
+					const std::vector<Client*> &users = channel->get_users();
 					for (size_t i = 0; i < users.size(); ++i)
-						send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
+						send((*users[i]).get_FD(), announce.c_str(), announce.length(), 0);
 				}
 				break;
 				}
@@ -164,8 +164,8 @@ void change_mode(Server &server, Client &client, Channel *channel,
 		for (size_t i = 0; i < mode_params.size(); ++i)
 			announce += " " + mode_params[i];
 		announce += "\r\n";
-		const std::vector<Client> &users = channel->get_users();
+		const std::vector<Client*> &users = channel->get_users();
 		for (size_t i = 0; i < users.size(); ++i)
-			send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
+			send((*users[i]).get_FD(), announce.c_str(), announce.length(), 0);
 	}
 }

@@ -12,17 +12,17 @@ void cmd_quit(Server &server, RawTextLine &line, Client &client)
 		if (!chan)
 			continue;
 
-		if (!chan->has_user(client))
+		if (!chan->has_user(&client))
 			continue; // check
-		const std::vector<Client> &users = chan->get_users();
+		const std::vector<Client*> &users = chan->get_users();
 		for (size_t j = 0; j < users.size(); j++)
 		{
-			if (users[j].get_FD() == client.get_FD())
+			if ((*users[j]).get_FD() == client.get_FD())
 				continue;
 			else
-				send(users[j].get_FD(), quit_msg.c_str(), quit_msg.size(), 0); // broadcast quit_msg to other chan members
+				send((*users[j]).get_FD(), quit_msg.c_str(), quit_msg.size(), 0); // broadcast quit_msg to other chan members
 		}
-		chan->remove_user(client); // remove client from channels
+		chan->remove_user(&client); // remove client from channels
 	}
 	server.schedule_close(client.get_FD());
 }
