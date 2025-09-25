@@ -62,6 +62,7 @@ public:
 	void	add_to_invitees(Client *client);
 
 	Client *check_user(const std::string &cl_name);
+	bool   is_operator(const std::string &op_name);
 	// Broadcast message to all users in channel
 	//void	broadcast(const std::string& message, int sender_fd = -1);
 };
