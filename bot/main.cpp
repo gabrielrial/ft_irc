@@ -5,6 +5,8 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include "../lib_irc.hpp"
+#include "Bot.hpp"
 
 void sendMessage(int socket_fd, const std::string &msg)
 {
@@ -14,28 +16,12 @@ void sendMessage(int socket_fd, const std::string &msg)
 
 int main()
 {
-	std::string server = "localhost"; // ejemplo
-	int port = 6667;
-	std::string nick = "Samuel_L_Jackson";
-	std::string user = "MiBot";
+	Bot bot;
 
-	int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-	sockaddr_in servAddr{};
-	servAddr.sin_family = AF_INET;
-	servAddr.sin_port = htons(port);
-
-	hostent *host = gethostbyname(server.c_str());
-	memcpy(&servAddr.sin_addr, host->h_addr, host->h_length);
-
-	if (connect(socket_fd, (sockaddr *)&servAddr, sizeof(servAddr)) < 0)
-	{
-		perror("Error conectando");
-		return 1;
-	}
-
-	sendMessage(socket_fd, "PASS 42");
-	sendMessage(socket_fd, "NICK " + nick);
-	sendMessage(socket_fd, "USER " + user + " 0 * :" + user);
+	bot.init_connection();
+	
+	if (bot.run_bot() == -1)
+		return (-1);
 
 	char buffer[512];
 	while (true)
@@ -49,6 +35,7 @@ int main()
 		std::string line(buffer);
 		std::cout << "<< " << line << std::endl;
 		std::cout << "line" << line << std::endl;
+		handle_client_data(fd, buffer, bytes_read, lineBuffer[fd]);
 		if (line.find("!jock"))
 		{
 			std::cout << "found" << std::endl;
