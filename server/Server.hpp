@@ -9,6 +9,10 @@
 #include "../client/Client.hpp"
 #include "../channel/Channel.hpp"
 #include "../parser/Parser.hpp"
+#include "../dcc/DCCManager.hpp"
+
+// Forward declare DCCManager
+class DCCManager;
 
 class Server
 {
@@ -21,6 +25,7 @@ private:
 	std::vector<Channel> channels;
 	int	client_amt;
 	std::string		_server_name;
+	DCCManager*		_dcc_manager; // Use pointer to avoid needing complete type
 
 	void init_socket();
 	void create_socket();
@@ -65,4 +70,6 @@ public:
 
 	std::string		get_servername() const;
 	void			set_servername();
+	void			handle_dcc_error(Client &client, const std::string &error);
+	DCCManager&     get_dcc_manager();
 };

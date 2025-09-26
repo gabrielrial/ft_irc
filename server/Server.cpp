@@ -6,7 +6,8 @@
 #define BLU "\033[34m"
 #define YEL "\033[33m"
 
-Server::Server(uint16_t port, std::string password) : _port(port), _password(password), _socket(-1), client_amt(0)
+Server::Server(uint16_t port, std::string password)
+	: _port(port), _password(password), _socket(-1), client_amt(0), _dcc_manager(new DCCManager())
 {
 	set_servername();
 	try
@@ -24,6 +25,8 @@ Server::Server(uint16_t port, std::string password) : _port(port), _password(pas
 
 Server::~Server()
 {
+	delete _dcc_manager;
+	_dcc_manager = NULL;
 }
 
 /*
@@ -192,6 +195,10 @@ void Server::srv_run()
 			}
 			++i;
 		}
+		
+		// Check and process DCC transfers
+		_dcc_manager->check_transfers();
+		
 		remove_closed_clients(lineBuffer);
 	}
 }
@@ -206,7 +213,28 @@ void Server::handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::s
 	{
 		std::string line = lineBuffer.substr(0, pos);
 		lineBuffer.erase(0, pos + 2);
-		process_line(fd, line);
+		
+		// Check if this is a DCC message
+		if (line.find("DCC ") != std::string::npos)
+		{
+			Client *client = find_client(fd);
+			if (client)
+			{
+				try
+				{
+					process_line(fd, line);
+				}
+				catch (const std::exception &e)
+				{
+					std::string error = "ERROR :DCC error: " + std::string(e.what()) + "\r\n";
+					send(fd, error.c_str(), error.length(), 0);
+				}
+			}
+		}
+		else
+		{
+			process_line(fd, line);
+		}
 	}
 }
 
@@ -468,4 +496,15 @@ void			Server::set_servername()
 	if (gethostname(server_name, sizeof(server_name)) != 0)
 		strcpy(server_name, "localhost");
 	_server_name = server_name;
+}
+
+DCCManager& Server::get_dcc_manager()
+{
+	return *_dcc_manager;
+}
+
+void			Server::handle_dcc_error(Client &client, const std::string &error)
+{
+	std::string error_msg = ":" + _server_name + " ERROR :DCC: " + error + "\r\n";
+	send(client.get_FD(), error_msg.c_str(), error_msg.length(), 0);
 }
