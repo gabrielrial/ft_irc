@@ -13,7 +13,7 @@ void cmd_user(Server &server, RawTextLine &line, Client &client)
 	const std::string& trailing = line.get_trailing();
 	if ((params.size() < 3) || trailing.empty())
 	{
-		const std::string msg = ":localhost 461 * USER :Not enough parameters\r\n";
+		const std::string msg = ":localhost 461 * USER :Not enough parameters. Format required: <username> <hostname> <servername> :<realname>\r\n";
 		send(client.get_FD(), msg.c_str(), msg.size(), 0);
 		return;
 	}

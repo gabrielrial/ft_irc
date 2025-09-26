@@ -220,14 +220,3 @@ bool Channel::is_operator(const std::string &op_name)
 	}
 	return false;
 }
-
-// void Channel::broadcast(const std::string& message, int sender_fd)
-//{
-//	for (std::vector<int>::const_iterator it = _users.begin(); it != _users.end(); ++it)
-//	{
-//		if (*it != sender_fd) // Don't send back to sender if sender_fd is provided
-//		{
-//			send(*it, message.c_str(), message.length(), 0);
-//		}
-//	}
-// }

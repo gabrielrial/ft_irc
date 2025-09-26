@@ -69,7 +69,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		if (channel->get_mode_i() == false)
 		{
 			add_client_channel(client, *channel, empty_channel, channel_name);
-			cmd_name_join(server, channel_name);
+			cmd_names_join(server, channel_name);
 		}
 		else // invite-only
 		{
@@ -86,7 +86,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 			if (allowed == true)
 			{
 				add_client_channel(client, *channel, empty_channel, channel_name);
-				cmd_name_join(server, channel_name);
+				cmd_names_join(server, channel_name);
 			}
 			else
 			{
@@ -112,9 +112,7 @@ void	broadcast_join(Channel *chan, std::string server_name)
 	{
 		if (i > 0)
 			user_list += " ";
-		if (chan->is_operator(users[i]))
-			user_list += "@";
-		user_list += users[i]->get_nickname();
+		user_list += (*users[i]).get_nickname();
 	}
 	for (size_t i = 0; i < users.size(); ++i)
 	{
@@ -122,3 +120,5 @@ void	broadcast_join(Channel *chan, std::string server_name)
 		rpl_endofnames(server_name, (*users[i]), chan->get_name());
 	}
 }
+
+

@@ -3,14 +3,14 @@
 bool valid_param(RawTextLine &line);
 bool user_in_channel(Channel *channel, Client &client);
 
-void cmd_name(Server &server, RawTextLine &line, Client &client)
+void cmd_names(Server &server, RawTextLine &line, Client &client)
 {
 	if (!valid_param(line))
 		return;
 
 	if (line.get_params().empty())
 	{
-		std::cout << "!@# run cmd_name() without parameters" << std::endl;
+		std::cout << "!@# run cmd_names() without parameters" << std::endl;
 	}
 
 	size_t channel_size = line.get_params().size();
