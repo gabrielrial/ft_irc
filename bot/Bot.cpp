@@ -68,7 +68,7 @@ void Bot::bot_readline()
 		buffer[bytes_read] = '\0';
 
 		std::string line(buffer);
-		if (line.find("!jock"))
+		if (line.find("!joke") != std::string::npos)
 		{
 			std::cout << "found" << std::endl;
 			send_message(_socket, "PRIVMSG grial :Which is the scariest plant? Bamboo!!");
