@@ -16,12 +16,11 @@
 class Bot
 {
 private:
-	char *_ip;
+	const std::string _ip;
 	int 	_socket;
 	uint16_t _port;
 	sockaddr_in _hint;
-	std::string _password;
-	hostent *_host;
+	const std::string _password;
 
 	const std::string _nickname;
 	const std::string _username;
@@ -33,8 +32,10 @@ public:
 	~Bot();
 
 	void	init_connection();
-	int		run_bot();
 	void	bot_registration();
+	int		run_bot();
+	void	bot_readline();
+	void 	bot_closeconnection();
 	void	send_message(int socket_fd, const std::string &msg);
 };
 

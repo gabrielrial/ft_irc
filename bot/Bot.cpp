@@ -1,6 +1,17 @@
 #include "Bot.hpp"
 
-Bot::Bot() : _nickname("nickname_bot"), _username("username_bot"), _realname("realname_bot"), _hostname("hostname"), _password("42"), _ip("localhost")
+Bot::Bot()
+	: _ip("localhost"),
+	  _port(6667),
+	  _password("42"),
+	  _nickname("nickname_bot"),
+	  _username("username_bot"),
+	  _realname("realname_bot"),
+	  _hostname("hostname")
+{
+}
+
+Bot::~Bot()
 {
 }
 
@@ -12,7 +23,17 @@ void Bot::init_connection()
 
 	_hint.sin_family = AF_INET;
 	_hint.sin_port = htons(_port);
-	inet_pton(AF_INET, _ip, &_hint.sin_addr);
+
+	// Intentar primero como dirección IP
+	if (inet_pton(AF_INET, _ip.c_str(), &_hint.sin_addr) <= 0)
+	{
+		// Si falla, intentar resolver como hostname
+		hostent *he = gethostbyname(_ip.c_str());
+		if (he == NULL)
+			throw std::runtime_error("Unknown host: " + _ip);
+
+		std::memcpy(&_hint.sin_addr, he->h_addr, he->h_length);
+	}
 
 	if (connect(_socket, (sockaddr *)&_hint, sizeof(_hint)) < 0)
 		throw std::runtime_error("Connection failure");
@@ -21,8 +42,23 @@ void Bot::init_connection()
 int Bot::run_bot()
 {
 	bot_registration();
+	bot_readline();
+	bot_closeconnection();
+	return (0);
+}
+
+void Bot::bot_registration()
+{
+	send_message(_socket, "PASS " + _password);
+	send_message(_socket, "NICK " + _nickname);
+	send_message(_socket, "USER " + _username + " 0 * :" + _username);
+}
+
+void Bot::bot_readline()
+{
 
 	char buffer[512];
+
 	while (true)
 	{
 		memset(buffer, 0, sizeof(buffer));
@@ -32,20 +68,17 @@ int Bot::run_bot()
 		buffer[bytes_read] = '\0';
 
 		std::string line(buffer);
-		handle_client_data(fd, buffer, bytes_read, lineBuffer[fd]);
 		if (line.find("!jock"))
 		{
 			std::cout << "found" << std::endl;
-			sendMessage(socket_fd, "PRIVMSG grial :Which is the scariest plant? Bamboo!!");
+			send_message(_socket, "PRIVMSG grial :Which is the scariest plant? Bamboo!!");
 		}
 	}
 }
 
-void Bot::bot_registration()
+void Bot::bot_closeconnection()
 {
-	send_message(_socket, "PASS " + _password);
-	send_message(_socket, "NICK " + _nickname);
-	send_message(_socket, "USER " + _username + " 0 * :" + _username);
+	close(_socket);
 }
 
 void Bot::send_message(int socket_fd, const std::string &msg)
