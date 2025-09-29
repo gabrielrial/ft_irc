@@ -86,3 +86,35 @@ void Bot::send_message(int socket_fd, const std::string &msg)
 	std::string finalMsg = msg + "\r\n";
 	send(socket_fd, finalMsg.c_str(), finalMsg.size(), 0);
 }
+
+const std::string &Bot::getIp() const {
+    return _ip;
+}
+
+int Bot::get_socket() const {
+    return _socket;
+}
+
+uint16_t Bot::getPort() const {
+    return _port;
+}
+
+const std::string &Bot::getPassword() const {
+    return _password;
+}
+
+const std::string &Bot::getNickname() const {
+    return _nickname;
+}
+
+const std::string &Bot::getUsername() const {
+    return _username;
+}
+
+const std::string &Bot::getRealname() const {
+    return _realname;
+}
+
+const std::string &Bot::getHostname() const {
+    return _hostname;
+}
