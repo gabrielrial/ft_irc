@@ -12,9 +12,7 @@ DCCManager::DCCManager() {}
 DCCManager::~DCCManager()
 {
 	for (size_t i = 0; i < _transfers.size(); ++i)
-	{
 		cleanup_transfer(_transfers[i]);
-	}
 }
 
 void DCCManager::handle_dcc_send(Client &sender, const std::string &target,
@@ -22,15 +20,10 @@ void DCCManager::handle_dcc_send(Client &sender, const std::string &target,
 {
 	struct stat file_stat;
 	if (stat(filename.c_str(), &file_stat) != 0)
-	{
-		// Send error to client
 		return;
-	}
-
 	int dcc_socket = create_dcc_socket();
 	if (dcc_socket < 0)
 		return;
-
 	DCCTransfer transfer(sender.get_nickname(), target, filename, file_stat.st_size);
 	transfer.set_socket(dcc_socket);
 	transfer.set_is_sender(true);
@@ -63,20 +56,14 @@ void DCCManager::check_transfers()
 	for (std::vector<DCCTransfer>::iterator it = _transfers.begin();
 		 it != _transfers.end();)
 	{
-		// Check for timeouts
-		if (now - it->get_start_time() > TIMEOUT)
+		if (now - it->get_start_time() > TIMEOUT) // Check for timeouts
 		{
 			cleanup_transfer(*it);
 			it = _transfers.erase(it);
 			continue;
 		}
-
-		// Process active transfers
-		if (!it->is_complete())
-		{
+		if (!it->is_complete()) // Process active transfers
 			process_transfer(*it);
-		}
-
 		++it;
 	}
 }
@@ -93,9 +80,7 @@ void DCCManager::process_transfer(DCCTransfer &transfer)
 		{
 			ssize_t bytes_sent = send(transfer.get_socket(), buffer, bytes_read, 0);
 			if (bytes_sent > 0)
-			{
 				transfer.add_bytes_transferred(bytes_sent);
-			}
 		}
 	}
 	else
@@ -103,10 +88,7 @@ void DCCManager::process_transfer(DCCTransfer &transfer)
 		// Receive and write to file
 		ssize_t bytes_received = recv(transfer.get_socket(), buffer, BUFF_SIZE, 0);
 		if (bytes_received > 0)
-		{
-			// Write to file
-			transfer.add_bytes_transferred(bytes_received);
-		}
+			transfer.add_bytes_transferred(bytes_received); // Write to file
 	}
 }
 
@@ -115,32 +97,25 @@ int DCCManager::create_dcc_socket()
 	int sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock < 0)
 		return -1;
-
 	// Make socket non-blocking
 	int flags = fcntl(sock, F_GETFL, 0);
 	if (flags >= 0)
-	{
 		fcntl(sock, F_SETFL, flags | O_NONBLOCK);
-	}
-
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_port = 0; // Let system assign port
-
 	if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
 	{
 		close(sock);
 		return -1;
 	}
-
 	if (listen(sock, 1) < 0)
 	{
 		close(sock);
 		return -1;
 	}
-
 	return sock;
 }
 
@@ -167,7 +142,6 @@ void DCCManager::handle_dcc_accept(Client &receiver, const std::string &sender,
 			// Accept the transfer
 			struct sockaddr_in addr;
 			socklen_t addr_len = sizeof(addr);
-
 			int new_socket = accept(it->get_socket(), (struct sockaddr *)&addr, &addr_len);
 			if (new_socket < 0)
 			{
@@ -175,7 +149,6 @@ void DCCManager::handle_dcc_accept(Client &receiver, const std::string &sender,
 				_transfers.erase(it);
 				return;
 			}
-
 			it->set_socket(new_socket);
 			return;
 		}
@@ -185,7 +158,5 @@ void DCCManager::handle_dcc_accept(Client &receiver, const std::string &sender,
 void DCCManager::cleanup_transfer(DCCTransfer &transfer)
 {
 	if (transfer.get_socket() != -1)
-	{
 		close(transfer.get_socket());
-	}
 }
