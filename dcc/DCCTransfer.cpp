@@ -4,8 +4,8 @@
 DCCTransfer::DCCTransfer(const std::string &sender, const std::string &receiver,
 						 const std::string &filename, size_t filesize)
 	: _sender(sender), _receiver(receiver), _filename(filename),
-	_filesize(filesize), _socket(-1), _is_sender(false),
-	_start_time(time(NULL)), _bytes_transferred(0), _file_fd(-1)
+	  _filesize(filesize), _socket(-1), _is_sender(false),
+	  _start_time(time(NULL)), _bytes_transferred(0), _file_fd(-1)
 {
 }
 

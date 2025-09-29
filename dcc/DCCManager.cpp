@@ -42,8 +42,8 @@ void DCCManager::handle_dcc_send(Client &sender, const std::string &target,
 	std::stringstream ss;
 	ss << port;
 	std::string port_str = ss.str();
-	
-	ss.str("");  // Clear the stringstream
+
+	ss.str(""); // Clear the stringstream
 	ss << file_stat.st_size;
 	std::string size_str = ss.str();
 
@@ -148,34 +148,34 @@ int DCCManager::get_socket_port(int sock)
 {
 	struct sockaddr_in addr;
 	socklen_t len = sizeof(addr);
-	if (getsockname(sock, (struct sockaddr*)&addr, &len) < 0)
+	if (getsockname(sock, (struct sockaddr *)&addr, &len) < 0)
 		return -1;
 	return ntohs(addr.sin_port);
 }
 
 void DCCManager::handle_dcc_accept(Client &receiver, const std::string &sender,
-						const std::string &filename)
+								   const std::string &filename)
 {
 	// Find the pending transfer
 	for (std::vector<DCCTransfer>::iterator it = _transfers.begin();
 		 it != _transfers.end(); ++it)
 	{
-		if (it->get_sender() == sender && 
+		if (it->get_sender() == sender &&
 			it->get_receiver() == receiver.get_nickname() &&
 			it->get_filename() == filename)
 		{
 			// Accept the transfer
 			struct sockaddr_in addr;
 			socklen_t addr_len = sizeof(addr);
-			
-			int new_socket = accept(it->get_socket(), (struct sockaddr*)&addr, &addr_len);
+
+			int new_socket = accept(it->get_socket(), (struct sockaddr *)&addr, &addr_len);
 			if (new_socket < 0)
 			{
 				cleanup_transfer(*it);
 				_transfers.erase(it);
 				return;
 			}
-			
+
 			it->set_socket(new_socket);
 			return;
 		}
