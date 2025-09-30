@@ -10,7 +10,37 @@ void cmd_name(Server &server, RawTextLine &line, Client &client)
 
 	if (line.get_params().empty())
 	{
-		std::cout << "!@# run cmd_name() without parameters" << std::endl;
+		std::string names_list;
+		std::vector<Client> client_list = server.get_vector_clients();
+		std::string rpl_namreply = ":" + server.get_servername() + " 353 " +
+								   client.get_nickname() + " = " + " :";
+		for (size_t i = 0; i < client_list.size(); i++)
+		{
+			std::string client_name = client_list[i].get_nickname();
+			if ((rpl_namreply + names_list + client_name).size() < 510)
+			{
+				if (!names_list.empty())
+					names_list += " ";
+				names_list += client_name;
+			}
+			else
+			{
+				std::string msg = rpl_namreply + names_list + CRLF;
+				send(client.get_FD(), msg.c_str(), msg.size(), 0);
+				names_list = client_name;
+				continue;
+			}
+			if (client_list.size() - 1 == i) 
+			{
+				std::string msg = rpl_namreply + names_list + CRLF;
+				send(client.get_FD(), msg.c_str(), msg.size(), 0);
+				names_list = client_name;
+			}
+		}
+		std::string endmsg = ":" + server.get_servername() + " 366 " +
+							 client.get_nickname() + " " + 
+							 " :End of NAMES list!!" + CRLF;
+		send(client.get_FD(), endmsg.c_str(), endmsg.size(), 0);
 	}
 
 	size_t channel_size = line.get_params().size();
