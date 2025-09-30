@@ -10,6 +10,7 @@ SRC = main.cpp \
 		bot_cmds/cmds/cmd_invite.cpp \
 		bot_cmds/cmds/cmd_time.cpp \
 		bot_cmds/cmds/cmd_joke.cpp \
+		bot_cmds/cmds/cmd_privmsg.cpp \
 		parser/Parser.cpp
 
 OBJ = $(SRC:.cpp=.o)
