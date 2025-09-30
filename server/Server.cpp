@@ -193,7 +193,7 @@ void Server::srv_run()
 					//clients.erase(clients.begin() + i);
 					continue;
 				} */
-				if (bytes_read <= 0)  // Both EOF and errors (except EAGAIN/EWOULDBLOCK)
+				if (bytes_read <= 0)
 				{
 					if (bytes_read < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
 					{

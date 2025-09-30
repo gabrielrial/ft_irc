@@ -38,7 +38,8 @@ void cmd_names(Server &server, RawTextLine &line, Client &client)
 			continue;
 		}
 
-		if (channel->get_mode_i() && !user_in_channel(channel, client))
+		//if (channel->get_mode_i() && !user_in_channel(channel, client))
+		if (!user_in_channel(channel, client)) //no check for invite anymore
 		{
 			err_notonchannel(server.get_servername(), client, channel);
 			continue;
