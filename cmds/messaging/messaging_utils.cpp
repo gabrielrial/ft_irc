@@ -72,7 +72,7 @@ void send_message(Server &server, Client &sender,
 
 	for (size_t i = 0; i < targets.size(); ++i)
 	{
-		if (targets[i][0] == '#')
+		if (targets[i][0] == '#' || targets[i][0] == '$' || targets[i][0] == '!' || targets[i][0] == '&')
 			send_message_to_channel(server.get_channel(targets[i]), sender, targets[i], message, command, sendErrors);
 		else
 			send_message_to_user(server, sender, targets[i], message, command, sendErrors);

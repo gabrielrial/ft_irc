@@ -16,6 +16,7 @@ SRC = main.cpp \
 		cmds/channel/cmd_part.cpp \
 		cmds/channel/cmd_join.cpp \
 		cmds/channel/cmd_invite.cpp \
+		cmds/channel/cmd_kick.cpp \
 		cmds/connection/cmd_quit.cpp \
 		cmds/channel/cmd_topic.cpp \
 		cmds/channel/cmd_mode.cpp \
