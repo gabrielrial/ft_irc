@@ -21,8 +21,9 @@ private:
 	int _socket;
 	uint16_t _port;
 	sockaddr_in _hint;
-	const std::string _password;
+	bool _filter_mode;
 
+	const std::string _password;
 	const std::string _nickname;
 	const std::string _username;
 	const std::string _realname;
@@ -39,11 +40,15 @@ public:
 	void bot_closeconnection();
 	void send_message(int socket_fd, const std::string &msg);
 
+	const std::string &get_client_nickname(RawTextLine &line);
+
 	const std::string &getIp() const;
 	int get_socket() const;
 	uint16_t getPort() const;
-	const std::string &getPassword() const;
-	const std::string &getNickname() const;
+	void set_filter();
+	bool get_filter();
+	const std::string &get_password() const;
+	const std::string &get_nickname() const;
 	const std::string &getUsername() const;
 	const std::string &getRealname() const;
 	const std::string &getHostname() const;

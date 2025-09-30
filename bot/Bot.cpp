@@ -3,6 +3,7 @@
 Bot::Bot()
 	: _ip("localhost"),
 	  _port(6667),
+	  _filter_mode(false),
 	  _password("42"),
 	  _nickname("nickname_bot"),
 	  _username("username_bot"),
@@ -73,7 +74,7 @@ void Bot::bot_readline()
 		{
 			std::string line = lineBuffer.substr(0, pos);
 			lineBuffer.erase(0, pos + 2);
-			std::cout << "Recived line from server:\n >> "<< line << std::endl;
+			std::cout << "Recived line from server:\n >> " << line << std::endl;
 			RawTextLine parsed(line);
 			bot_run_cmds(parsed, *this);
 		}
@@ -106,12 +107,25 @@ uint16_t Bot::getPort() const
 	return _port;
 }
 
-const std::string &Bot::getPassword() const
+void Bot::set_filter()
+{
+	if (!_filter_mode)
+		_filter_mode = true;
+	else
+		_filter_mode = false;
+}
+
+bool Bot::get_filter()
+{
+	return _filter_mode;
+}
+
+const std::string &Bot::get_password() const
 {
 	return _password;
 }
 
-const std::string &Bot::getNickname() const
+const std::string &Bot::get_nickname() const
 {
 	return _nickname;
 }
@@ -129,4 +143,18 @@ const std::string &Bot::getRealname() const
 const std::string &Bot::getHostname() const
 {
 	return _hostname;
+}
+
+const std::string &Bot::get_client_nickname(RawTextLine &line)
+{
+	for (size_t i = 0; i < line.get_params().size(); i++)
+	{
+		if (line.get_params()[i] == get_nickname())
+		{
+			size_t end = line.get_prefix().find('!', 0);
+			if (end != std::string::npos)
+				 return (line.get_prefix().substr(0, end));
+		}
+	}
+	return NULL;
 }

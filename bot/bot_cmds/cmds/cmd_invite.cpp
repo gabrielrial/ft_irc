@@ -3,5 +3,5 @@
 
 void cmd_invite(RawTextLine &line, Bot &bot)
 {
-    bot.send_message(bot.get_socket(), "JOIN " + line.get_trailing());
+	bot.send_message(bot.get_socket(), "JOIN " + line.get_trailing());
 }
