@@ -145,16 +145,40 @@ const std::string &Bot::getHostname() const
 	return _hostname;
 }
 
-const std::string &Bot::get_client_nickname(RawTextLine &line)
+std::string Bot::get_client_nickname(RawTextLine &line)
 {
-	for (size_t i = 0; i < line.get_params().size(); i++)
-	{
-		if (line.get_params()[i] == get_nickname())
-		{
-			size_t end = line.get_prefix().find('!', 0);
-			if (end != std::string::npos)
-				 return (line.get_prefix().substr(0, end));
-		}
-	}
-	return NULL;
+    for (size_t i = 0; i < line.get_params().size(); i++)
+    {
+        if (line.get_params()[i] == get_nickname())
+        {
+            size_t end = line.get_prefix().find('!', 0);
+            if (end != std::string::npos)
+                return line.get_prefix().substr(0, end);
+        }
+    }
+    return "";
+}
+
+
+RawTextLine Bot::get_answer()
+{
+    char buffer[512];
+    while (true) {
+        memset(buffer, 0, sizeof(buffer));
+        int bytes_read = recv(_socket, buffer, sizeof(buffer) - 1, 0);
+        if (bytes_read <= 0)
+            break;
+        buffer[bytes_read] = '\0';
+
+        std::string lineBuffer(buffer);
+        size_t pos;
+        while ((pos = lineBuffer.find("\r\n")) != std::string::npos) {
+            std::string line = lineBuffer.substr(0, pos);
+            lineBuffer.erase(0, pos + 2);
+            std::cout << "Received line from server:\n >> " << line << std::endl;
+            RawTextLine parsed(line);
+            return parsed;
+        }
+    }
+    return RawTextLine("");
 }

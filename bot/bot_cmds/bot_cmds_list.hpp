@@ -12,4 +12,6 @@ void cmd_invite(RawTextLine &line, Bot &bot);
 
 void cmd_time(RawTextLine &line, Bot &bot);
 
+void bot_filter(RawTextLine &line, Bot &bot);
+
 void bot_privmsg(RawTextLine &line, Bot &bot);
