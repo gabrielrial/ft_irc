@@ -1,7 +1,11 @@
 #include "../../lib_irc.hpp"
 
+void cmd_name(Server &server, RawTextLine &line, Client &client);
 bool valid_param(RawTextLine &line);
-bool user_in_channel(Channel *channel, Client &client);
+bool user_in_channel(const Channel *channel, Client &client);
+void	send_user_inchan(Server &server, const Channel &channel, Client &client);
+void	send_user_notinchan(Server &server, Client &client);
+bool	check_user_in_allchannel(const Client &client, const std::vector<Channel> &channels);
 
 void cmd_name(Server &server, RawTextLine &line, Client &client)
 {
@@ -10,37 +14,16 @@ void cmd_name(Server &server, RawTextLine &line, Client &client)
 
 	if (line.get_params().empty())
 	{
-		std::string names_list;
-		std::vector<Client> client_list = server.get_vector_clients();
-		std::string rpl_namreply = ":" + server.get_servername() + " 353 " +
-								   client.get_nickname() + " = " + " :";
-		for (size_t i = 0; i < client_list.size(); i++)
+		const std::vector<Channel> &channels = server.get_vector_channels();
+		for (size_t i = 0; i < channels.size(); i++)
 		{
-			std::string client_name = client_list[i].get_nickname();
-			if ((rpl_namreply + names_list + client_name).size() < 510)
-			{
-				if (!names_list.empty())
-					names_list += " ";
-				names_list += client_name;
-			}
-			else
-			{
-				std::string msg = rpl_namreply + names_list + CRLF;
-				send(client.get_FD(), msg.c_str(), msg.size(), 0);
-				names_list = client_name;
-				continue;
-			}
-			if (client_list.size() - 1 == i) 
-			{
-				std::string msg = rpl_namreply + names_list + CRLF;
-				send(client.get_FD(), msg.c_str(), msg.size(), 0);
-				names_list = client_name;
-			}
+			const Channel &channel = channels[i];
+			//if (!channel.get_mode_i() || user_in_channel(&channel, client)) //check for invite mode??
+			if (user_in_channel(&channel, client))
+				send_user_inchan(server, channel, client);
 		}
-		std::string endmsg = ":" + server.get_servername() + " 366 " +
-							 client.get_nickname() + " " + 
-							 " :End of NAMES list!!" + CRLF;
-		send(client.get_FD(), endmsg.c_str(), endmsg.size(), 0);
+		send_user_notinchan(server, client);
+		return;
 	}
 
 	size_t channel_size = line.get_params().size();
@@ -88,7 +71,7 @@ void cmd_name(Server &server, RawTextLine &line, Client &client)
 				names_list = client_name;
 				continue;
 			}
-			if (client_list.size() - 1 == i) 
+			if (client_list.size() - 1 == i)
 			{
 				std::string msg = rpl_namreply + names_list + CRLF;
 				send(client.get_FD(), msg.c_str(), msg.size(), 0);
@@ -101,7 +84,6 @@ void cmd_name(Server &server, RawTextLine &line, Client &client)
 							 " :End of NAMES list" + CRLF;
 		send(client.get_FD(), endmsg.c_str(), endmsg.size(), 0);
 	}
-
 }
 
 /* valid_param()
@@ -133,10 +115,10 @@ bool valid_param(RawTextLine &line)
  * We should be on the channel user list or in invitiees list.
  * */
 
-bool user_in_channel(Channel *channel, Client &client)
+bool user_in_channel(const Channel *channel, Client &client)
 {
 	std::vector<Client> user_list = channel->get_users();
-	std::vector<Client*> invitiees_list = channel->get_invitees();
+	std::vector<Client *> invitiees_list = channel->get_invitees();
 
 	size_t count = user_list.size();
 	size_t count_i = invitiees_list.size();
@@ -149,5 +131,60 @@ bool user_in_channel(Channel *channel, Client &client)
 			return true;
 	}
 
+	return false;
+}
+
+void	send_user_inchan(Server &server, const Channel &channel, Client &client)
+{
+	std::string names_list;
+	const std::vector<Client> &users = channel.get_users();
+	for (size_t i = 0; i < users.size(); i++)
+	{
+		std::string user_name = users[i].get_nickname();
+		if (channel.is_operator(users[i]))
+			user_name = "@" + user_name;
+		if (!names_list.empty())
+			names_list += " ";
+		names_list += user_name;
+	}
+	if (!names_list.empty())
+	{
+		rpl_namreply(server.get_servername(), client, channel.get_name(), names_list);
+		rpl_endofnames(server.get_servername(), client, channel.get_name());
+	}
+}
+
+void	send_user_notinchan(Server &server, Client &client)
+{
+	std::string names_list;
+	const std::vector<Client> &all_clients = server.get_vector_clients();
+	const std::vector<Channel> &channels = server.get_vector_channels();
+	for (size_t i = 0; i < all_clients.size(); i++)
+	{
+		if (!check_user_in_allchannel(all_clients[i], channels))
+		{
+			if (!names_list.empty())
+				names_list += " ";
+			names_list += all_clients[i].get_nickname();
+		}
+	}
+	if (!names_list.empty())
+	{
+		rpl_namreply(server.get_servername(), client, "*", names_list);
+		rpl_endofnames(server.get_servername(), client, "*");
+	}
+}
+
+bool	check_user_in_allchannel(const Client &client, const std::vector<Channel> &channels)
+{
+	for (size_t i = 0; i < channels.size(); i++)
+	{
+		const std::vector<Client> &users = channels[i].get_users();
+		for (size_t j = 0; j < users.size(); j++)
+		{
+			if (users[j].get_nickname() == client.get_nickname())
+				return true;
+		}
+	}
 	return false;
 }
