@@ -1,13 +1,13 @@
 #include "../../lib_irc.hpp"
 
-void cmd_name(Server &server, RawTextLine &line, Client &client);
+void cmd_names(Server &server, RawTextLine &line, Client &client);
 bool valid_param(RawTextLine &line);
 bool user_in_channel(const Channel *channel, Client &client);
 void	send_user_inchan(Server &server, const Channel &channel, Client &client);
 void	send_user_notinchan(Server &server, Client &client);
 bool	check_user_in_allchannel(const Client &client, const std::vector<Channel> &channels);
 
-void cmd_name(Server &server, RawTextLine &line, Client &client)
+void cmd_names(Server &server, RawTextLine &line, Client &client)
 {
 	if (!valid_param(line))
 		return;
