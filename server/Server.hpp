@@ -71,4 +71,6 @@ public:
 	void			set_servername();
 	void			handle_dcc_error(Client &client, const std::string &error); //dcc
 	DCCManager&     get_dcc_manager(); //dcc
+
+	void	handle_disconnection(int fd, const std::string &reason);
 };

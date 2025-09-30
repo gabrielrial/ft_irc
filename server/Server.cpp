@@ -149,14 +149,15 @@ void Server::srv_run()
 		fd_set readfds;
 		int max_fd = prepare_fd_set(&readfds);
 
-        struct timeval tv;
-        tv.tv_sec = 0;
-        tv.tv_usec = 100000; // 100ms timeout (prevents CPU spin)
+		struct timeval tv;
+		tv.tv_sec = 0;
+		tv.tv_usec = 100000; // 100ms timeout (prevents CPU spin)
 
 		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
 		if (activity < 0)
 		{
-			if (errno == EINTR) continue; // just retry if interrupted
+			if (errno == EINTR)
+				continue; // just retry if interrupted
 			perror("select");
 			break;
 		}
@@ -171,11 +172,12 @@ void Server::srv_run()
 			if (FD_ISSET(fd, &readfds))
 			{
 				ssize_t bytes_read = recv(fd, buffer, BUFFER_SIZE - 1, 0);
-				if (bytes_read == 0)
+				/* if (bytes_read == 0)
 				{
-					std::cout << "Client (fd=" << fd << ") disconnected.\n";
-					close(fd);
-					clients.erase(clients.begin() + i);
+					// std::cout << "Client (fd=" << fd << ") disconnected.\n";
+					//handle_disconnection(fd, bytes_read == 0 ? "Connection closed" : strerror(errno));
+					//close(fd);
+					//clients.erase(clients.begin() + i);
 					continue;
 				}
 				if (bytes_read < 0)
@@ -185,9 +187,20 @@ void Server::srv_run()
 						++i;
 						continue;
 					}
-					std::cout << "Client (fd=" << fd << ") disconnected.\n";
-					close(fd);
-					clients.erase(clients.begin() + i);
+					//std::cout << "Client (fd=" << fd << ") disconnected.\n";
+					//handle_disconnection(fd, bytes_read == 0 ? "Connection closed" : strerror(errno));
+					//close(fd);
+					//clients.erase(clients.begin() + i);
+					continue;
+				} */
+				if (bytes_read <= 0)  // Both EOF and errors (except EAGAIN/EWOULDBLOCK)
+				{
+					if (bytes_read < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
+					{
+						++i;
+						continue;
+					}
+					handle_disconnection(fd, bytes_read == 0 ? "Connection closed" : strerror(errno));
 					continue;
 				}
 				buffer[bytes_read] = '\0';
@@ -195,10 +208,10 @@ void Server::srv_run()
 			}
 			++i;
 		}
-		
+
 		// Check and process DCC transfers
 		_dcc_manager->check_transfers();
-		
+
 		remove_closed_clients(lineBuffer);
 	}
 }
@@ -213,9 +226,7 @@ void Server::handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::s
 	{
 		std::string line = lineBuffer.substr(0, pos);
 		lineBuffer.erase(0, pos + 2);
-		
-		// Check if this is a DCC message
-		if (line.find("DCC ") != std::string::npos)
+		if (line.find("DCC ") != std::string::npos) // Check if this is a DCC message
 		{
 			Client *client = find_client(fd);
 			if (client)
@@ -232,9 +243,7 @@ void Server::handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::s
 			}
 		}
 		else
-		{
 			process_line(fd, line);
-		}
 	}
 }
 
@@ -244,7 +253,7 @@ void Server::process_line(int fd, const std::string &line) // change to parse th
 
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
-	//std::cout << line << std::endl;
+	// std::cout << line << std::endl;
 	run_cmds(*this, parsed, *client);
 }
 
@@ -325,7 +334,7 @@ int Server::prepare_fd_set(fd_set *readfds)
 	return max_fd;
 }
 
-void	Server::set_client_amt()
+void Server::set_client_amt()
 {
 	this->client_amt++;
 }
@@ -407,12 +416,12 @@ void Server::add_channel(const std::string &name)
 	channels.push_back(newChannel);
 }
 
-int	Server::get_client_amt()
+int Server::get_client_amt()
 {
 	return this->client_amt;
 }
 
-bool	Server::check_nick_uniqueness(const std::string new_nick)
+bool Server::check_nick_uniqueness(const std::string new_nick)
 {
 	for (size_t i = 0; i < clients.size(); ++i)
 	{
@@ -465,12 +474,12 @@ void Server::debug_print_ops(const Channel *channel, const std::string &context)
 {
 	std::cout << "=== DEBUG [" << context << "] ===" << std::endl;
 	std::cout << "Channel: " << channel->get_name() << std::endl;
-	const std::vector<Client>& operators = channel->get_operators();
+	const std::vector<Client> &operators = channel->get_operators();
 	std::cout << "Operators (" << operators.size() << "):" << std::endl;
 	for (size_t i = 0; i < operators.size(); ++i)
 	{
-		std::cout << " - " << operators[i].get_nickname() 
-				<< " (fd: " << operators[i].get_FD() << ")" << std::endl;
+		std::cout << " - " << operators[i].get_nickname()
+				  << " (fd: " << operators[i].get_FD() << ")" << std::endl;
 	}
 	std::cout << "=========================" << std::endl;
 }
@@ -485,12 +494,12 @@ void Server::schedule_close(int fd)
 	_fdsToClose.push_back(fd);
 }
 
-std::string		Server::get_servername() const
+std::string Server::get_servername() const
 {
 	return _server_name;
 }
 
-void			Server::set_servername()
+void Server::set_servername()
 {
 	char server_name[256];
 	if (gethostname(server_name, sizeof(server_name)) != 0)
@@ -498,13 +507,56 @@ void			Server::set_servername()
 	_server_name = server_name;
 }
 
-DCCManager& Server::get_dcc_manager()
+DCCManager &Server::get_dcc_manager()
 {
 	return *_dcc_manager;
 }
 
-void			Server::handle_dcc_error(Client &client, const std::string &error)
+void Server::handle_dcc_error(Client &client, const std::string &error)
 {
 	std::string error_msg = ":" + _server_name + " ERROR :DCC: " + error + "\r\n";
 	send(client.get_FD(), error_msg.c_str(), error_msg.length(), 0);
+}
+
+//void Server::handle_disconnection(int fd, const std::string &reason = "Client disconnected")
+void Server::handle_disconnection(int fd, const std::string &reason)
+{
+	std::cout << "goes here" << std::endl;
+	Client *client = find_client(fd);
+	std::cout << "goes here1" << std::endl;
+	if (!client)
+	{
+		std::cout << "no client" << std::endl;
+		return;
+	}
+	std::cout << "goes here2" << std::endl;
+	std::vector<Channel> channels = get_vector_channels(); //notify channels about disconnect
+	std::cout << "goes here3" << std::endl;
+	for (size_t i = 0; i < channels.size(); i++)
+	{
+		Channel *chan = get_channel(channels[i].get_name());
+		std::cout << "goes to loop" << std::endl;
+		if (chan && chan->has_user(*client))
+		{
+			std::cout << "goes to loop2" << std::endl;
+			std::string quit_msg = ":" + client->get_nickname() + " QUIT :" + reason + "\r\n";
+			const std::vector<Client> &users = chan->get_users();
+			for (size_t j = 0; j < users.size(); j++)
+			{
+				std::cout << "goes to loop loop" << std::endl;
+				if (users[j].get_FD() != fd)
+					send(users[j].get_FD(), quit_msg.c_str(), quit_msg.size(), 0);
+			}
+			chan->remove_user(*client);
+		}
+	}
+	close(fd);
+	for (size_t i = 0; i < clients.size(); i++)
+	{
+		if (clients[i].get_FD() == fd)
+		{
+			clients.erase(clients.begin() + i);
+			break;
+		}
+	}
 }
