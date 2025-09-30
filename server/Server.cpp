@@ -521,29 +521,19 @@ void Server::handle_dcc_error(Client &client, const std::string &error)
 //void Server::handle_disconnection(int fd, const std::string &reason = "Client disconnected")
 void Server::handle_disconnection(int fd, const std::string &reason)
 {
-	std::cout << "goes here" << std::endl;
 	Client *client = find_client(fd);
-	std::cout << "goes here1" << std::endl;
 	if (!client)
-	{
-		std::cout << "no client" << std::endl;
 		return;
-	}
-	std::cout << "goes here2" << std::endl;
 	std::vector<Channel> channels = get_vector_channels(); //notify channels about disconnect
-	std::cout << "goes here3" << std::endl;
 	for (size_t i = 0; i < channels.size(); i++)
 	{
 		Channel *chan = get_channel(channels[i].get_name());
-		std::cout << "goes to loop" << std::endl;
 		if (chan && chan->has_user(*client))
 		{
-			std::cout << "goes to loop2" << std::endl;
 			std::string quit_msg = ":" + client->get_nickname() + " QUIT :" + reason + "\r\n";
 			const std::vector<Client> &users = chan->get_users();
 			for (size_t j = 0; j < users.size(); j++)
 			{
-				std::cout << "goes to loop loop" << std::endl;
 				if (users[j].get_FD() != fd)
 					send(users[j].get_FD(), quit_msg.c_str(), quit_msg.size(), 0);
 			}
