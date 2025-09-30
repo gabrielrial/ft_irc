@@ -12,6 +12,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "../lib_irc.hpp"
+#include "bot_cmds/bot_cmds_list.hpp"
 
 class Bot
 {

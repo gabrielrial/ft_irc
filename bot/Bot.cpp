@@ -67,11 +67,15 @@ void Bot::bot_readline()
 			break;
 		buffer[bytes_read] = '\0';
 
-		std::string line(buffer);
-		if (line.find("!joke") != std::string::npos)
+		std::string lineBuffer(buffer);
+		size_t pos;
+		while ((pos = lineBuffer.find("\r\n")) != std::string::npos)
 		{
-			std::cout << "found" << std::endl;
-			send_message(_socket, "PRIVMSG grial :Which is the scariest plant? Bamboo!!");
+			std::string line = lineBuffer.substr(0, pos);
+			lineBuffer.erase(0, pos + 2);
+			std::cout << "Recived line from server:\n >> "<< line << std::endl;
+			RawTextLine parsed(line);
+			bot_run_cmds(parsed, *this);
 		}
 	}
 }
@@ -87,34 +91,42 @@ void Bot::send_message(int socket_fd, const std::string &msg)
 	send(socket_fd, finalMsg.c_str(), finalMsg.size(), 0);
 }
 
-const std::string &Bot::getIp() const {
-    return _ip;
+const std::string &Bot::getIp() const
+{
+	return _ip;
 }
 
-int Bot::get_socket() const {
-    return _socket;
+int Bot::get_socket() const
+{
+	return _socket;
 }
 
-uint16_t Bot::getPort() const {
-    return _port;
+uint16_t Bot::getPort() const
+{
+	return _port;
 }
 
-const std::string &Bot::getPassword() const {
-    return _password;
+const std::string &Bot::getPassword() const
+{
+	return _password;
 }
 
-const std::string &Bot::getNickname() const {
-    return _nickname;
+const std::string &Bot::getNickname() const
+{
+	return _nickname;
 }
 
-const std::string &Bot::getUsername() const {
-    return _username;
+const std::string &Bot::getUsername() const
+{
+	return _username;
 }
 
-const std::string &Bot::getRealname() const {
-    return _realname;
+const std::string &Bot::getRealname() const
+{
+	return _realname;
 }
 
-const std::string &Bot::getHostname() const {
-    return _hostname;
+const std::string &Bot::getHostname() const
+{
+	return _hostname;
 }
