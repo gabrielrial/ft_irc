@@ -7,7 +7,7 @@
 #define YEL "\033[33m"
 
 Server::Server(uint16_t port, std::string password)
-	: _port(port), _password(password), _socket(-1), client_amt(0), _dcc_manager(new DCCManager())
+	: _port(port), _password(password), _socket(-1), client_amt(0)
 {
 	set_servername();
 	try
@@ -24,10 +24,7 @@ Server::Server(uint16_t port, std::string password)
 }
 
 Server::~Server()
-{
-	// delete _dcc_manager;
-	// _dcc_manager = NULL;
-}
+{}
 
 /*
 	Creates a TCP/IPv4 socket, binds it to the server's IP and port,
@@ -208,44 +205,9 @@ void Server::srv_run()
 			}
 			++i;
 		}
-
-		// Check and process DCC transfers
-		//_dcc_manager->check_transfers();
-
 		remove_closed_clients(lineBuffer);
 	}
 }
-
-// void Server::handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer)
-// {
-// 	buffer[bytes_read] = '\0';
-// 	lineBuffer.append(buffer);
-
-// 	size_t pos;
-// 	while ((pos = lineBuffer.find("\r\n")) != std::string::npos)
-// 	{
-// 		std::string line = lineBuffer.substr(0, pos);
-// 		lineBuffer.erase(0, pos + 2);
-// 		if (line.find("DCC ") != std::string::npos) // Check if this is a DCC message
-// 		{
-// 			Client *client = find_client(fd);
-// 			if (client)
-// 			{
-// 				try
-// 				{
-// 					process_line(fd, line);
-// 				}
-// 				catch (const std::exception &e)
-// 				{
-// 					std::string error = "ERROR :DCC error: " + std::string(e.what()) + "\r\n";
-// 					send(fd, error.c_str(), error.length(), 0);
-// 				}
-// 			}
-// 		}
-// 		else
-// 			process_line(fd, line);
-// 	}
-// }
 
 void Server::handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer)
 {
@@ -519,17 +481,6 @@ void Server::set_servername()
 	if (gethostname(server_name, sizeof(server_name)) != 0)
 		strcpy(server_name, "localhost");
 	_server_name = server_name;
-}
-
-DCCManager &Server::get_dcc_manager()
-{
-	return *_dcc_manager;
-}
-
-void Server::handle_dcc_error(Client &client, const std::string &error)
-{
-	std::string error_msg = ":" + _server_name + " ERROR :DCC: " + error + "\r\n";
-	send(client.get_FD(), error_msg.c_str(), error_msg.length(), 0);
 }
 
 //void Server::handle_disconnection(int fd, const std::string &reason = "Client disconnected")
