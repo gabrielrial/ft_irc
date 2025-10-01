@@ -11,6 +11,7 @@ void	err_unknownmode(std::string server_name, Client &client, char mode);
 void	err_usernotinchannel(std::string server_name, Client &client, Channel *channel, std::string nickname);
 void	err_badchannelkey(std::string server_name, Client &client, Channel *channel);
 void	err_channelisfull(std::string server_name, Client &client, Channel *channel);
+void	err_badchanmask(std::string server_name, Client &client, std::string channel_name);
 
 //rpl.cpp
 void	rpl_notopic(std::string server_name, Client &client, std::string channel_name);

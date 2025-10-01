@@ -2,19 +2,6 @@
 
 void	broadcast_join(Channel *chan, std::string server_name);
 
-void	print_ops(Channel *channel, std::string channel_name)
-{
-	const std::vector<Client> &ops = channel->get_operators();
-	std::string ops_list;
-	for (size_t i = 0; i < ops.size(); ++i)
-	{
-		if (i > 0)
-			ops_list += ", ";
-		ops_list += ops[i].get_nickname();
-	}
-	std::cout << "Channel: '" << channel_name << "'. Operators: [" << ops_list << "]" << std::endl;
-}
-
 void	add_client_channel(Client &client, Channel &channel, bool empty_channel, std::string chan_name)
 {
 	channel.add_user(client);
@@ -24,7 +11,7 @@ void	add_client_channel(Client &client, Channel &channel, bool empty_channel, st
 								" JOIN " + chan_name + "\r\n";
 			// std::string joinMsg = ":" + client.get_prefix() +  //doesnt work with hexchat
 			// 					" JOIN " + channel_name + "\r\n";
-			send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);
+	send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);
 }
 
 void	cmd_join(Server &server, RawTextLine &line, Client &client)
@@ -50,7 +37,12 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		std::string channel_name = first_param.substr(start, end - start);
 		if (channel_name[0] != '#' && channel_name[0] != '&' &&
 			channel_name[0] != '+' && channel_name[0] != '!')
-			channel_name = "#" + channel_name; //must be ERR_BADCHANMASK???
+			//channel_name = "#" + channel_name; //must be ERR_BADCHANMASK???
+		{
+			err_badchanmask(server_name, client, channel_name);
+			start = end + 1;
+			continue;
+		}
 		server.add_channel(channel_name);
 		Channel *channel = server.get_channel(channel_name);
 		bool empty_channel = (channel->get_UserCount() == 0);
@@ -96,11 +88,8 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 			}
 		}
 		start = end + 1;
-		print_ops(channel, channel_name);
 	}
 }
-
-
 
 void	broadcast_join(Channel *chan, std::string server_name)
 {
