@@ -29,9 +29,6 @@ SRC = main.cpp \
 		cmds/user_info/cmd_who.cpp \
 		cmds/user_info/cmd_names.cpp \
 		cmds/user_info/cmd_name_join.cpp \
-		dcc/DCCManager.cpp \
-		dcc/DCCTransfer.cpp \
-		dcc/cmd_dcc.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 
