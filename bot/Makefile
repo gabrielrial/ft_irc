@@ -9,7 +9,7 @@ SRC = main.cpp \
 		bot_cmds/bot_cmds.cpp \
 		bot_cmds/cmds/bot_filter.cpp \
 		bot_cmds/cmds/cmd_invite.cpp \
-		bot_cmds/cmds/cmd_time.cpp \
+		bot_cmds/cmds/cmd_spam.cpp \
 		bot_cmds/cmds/cmd_joke.cpp \
 		bot_cmds/cmds/cmd_privmsg.cpp \
 		parser/Parser.cpp

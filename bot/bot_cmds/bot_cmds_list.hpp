@@ -10,7 +10,7 @@ void cmd_joke(RawTextLine &line, Bot &bot);
 
 void cmd_invite(RawTextLine &line, Bot &bot);
 
-void cmd_time(RawTextLine &line, Bot &bot);
+void cmd_spam(RawTextLine &line, Bot &bot);
 
 void bot_filter(RawTextLine &line, Bot &bot);
 

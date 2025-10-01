@@ -184,7 +184,6 @@ RawTextLine Bot::get_answer()
 		{
 			std::string line = lineBuffer.substr(0, pos);
 			lineBuffer.erase(0, pos + 2);
-			std::cout << "Received line from server:\n >> " << line << std::endl;
 			RawTextLine parsed(line);
 			return parsed;
 		}

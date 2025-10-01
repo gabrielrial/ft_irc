@@ -15,7 +15,6 @@ void bot_run_cmds(RawTextLine &line, Bot &bot)
 
 	for (int i = 0; i < 3; i++)
 	{
-		std::cout << "cmd :" << line.get_command() << std::endl;
 		if (line.get_command() == cmds[i])
 			funcs[i](line, bot);
 	}
