@@ -9,9 +9,6 @@
 #include "../client/Client.hpp"
 #include "../channel/Channel.hpp"
 #include "../parser/Parser.hpp"
-#include "../dcc/DCCManager.hpp" //dcc
-
-class DCCManager; //dcc
 
 class Server
 {
@@ -24,7 +21,6 @@ private:
 	std::vector<Channel> channels;
 	int	client_amt;
 	std::string		_server_name;
-	DCCManager*		_dcc_manager; //dcc
 
 	void init_socket();
 	void create_socket();
@@ -69,8 +65,6 @@ public:
 
 	std::string		get_servername() const;
 	void			set_servername();
-	void			handle_dcc_error(Client &client, const std::string &error); //dcc
-	DCCManager&     get_dcc_manager(); //dcc
 
 	void	handle_disconnection(int fd, const std::string &reason);
 };
