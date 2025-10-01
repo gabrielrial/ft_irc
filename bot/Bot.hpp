@@ -40,7 +40,7 @@ public:
 	void bot_closeconnection();
 	void send_message(int socket_fd, const std::string &msg);
 
-	std::string Bot::get_client_nickname(RawTextLine &line);
+	std::string get_client_nickname(RawTextLine &line);
 	RawTextLine get_answer();
 
 	const std::string &getIp() const;
