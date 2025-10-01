@@ -17,18 +17,21 @@ SRC = main.cpp \
 		cmds/channel/cmd_join.cpp \
 		cmds/channel/cmd_invite.cpp \
 		cmds/channel/cmd_kick.cpp \
-		cmds/connection/cmd_quit.cpp \
 		cmds/channel/cmd_topic.cpp \
 		cmds/channel/cmd_mode.cpp \
 		cmds/connection/cmd_nick.cpp \
 		cmds/connection/cmd_pass.cpp \
 		cmds/connection/cmd_user.cpp \
+		cmds/connection/cmd_quit.cpp \
 		cmds/messaging/cmd_privmsg.cpp \
 		cmds/messaging/cmd_notice.cpp \
 		cmds/messaging/messaging_utils.cpp \
 		cmds/user_info/cmd_who.cpp \
-		cmds/user_info/cmd_name.cpp \
+		cmds/user_info/cmd_names.cpp \
 		cmds/user_info/cmd_name_join.cpp \
+		dcc/DCCManager.cpp \
+		dcc/DCCTransfer.cpp \
+		dcc/cmd_dcc.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 
