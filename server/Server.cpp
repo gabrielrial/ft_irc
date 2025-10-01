@@ -25,8 +25,8 @@ Server::Server(uint16_t port, std::string password)
 
 Server::~Server()
 {
-	delete _dcc_manager;
-	_dcc_manager = NULL;
+	// delete _dcc_manager;
+	// _dcc_manager = NULL;
 }
 
 /*
@@ -210,11 +210,42 @@ void Server::srv_run()
 		}
 
 		// Check and process DCC transfers
-		_dcc_manager->check_transfers();
+		//_dcc_manager->check_transfers();
 
 		remove_closed_clients(lineBuffer);
 	}
 }
+
+// void Server::handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer)
+// {
+// 	buffer[bytes_read] = '\0';
+// 	lineBuffer.append(buffer);
+
+// 	size_t pos;
+// 	while ((pos = lineBuffer.find("\r\n")) != std::string::npos)
+// 	{
+// 		std::string line = lineBuffer.substr(0, pos);
+// 		lineBuffer.erase(0, pos + 2);
+// 		if (line.find("DCC ") != std::string::npos) // Check if this is a DCC message
+// 		{
+// 			Client *client = find_client(fd);
+// 			if (client)
+// 			{
+// 				try
+// 				{
+// 					process_line(fd, line);
+// 				}
+// 				catch (const std::exception &e)
+// 				{
+// 					std::string error = "ERROR :DCC error: " + std::string(e.what()) + "\r\n";
+// 					send(fd, error.c_str(), error.length(), 0);
+// 				}
+// 			}
+// 		}
+// 		else
+// 			process_line(fd, line);
+// 	}
+// }
 
 void Server::handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer)
 {
@@ -226,24 +257,7 @@ void Server::handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::s
 	{
 		std::string line = lineBuffer.substr(0, pos);
 		lineBuffer.erase(0, pos + 2);
-		if (line.find("DCC ") != std::string::npos) // Check if this is a DCC message
-		{
-			Client *client = find_client(fd);
-			if (client)
-			{
-				try
-				{
-					process_line(fd, line);
-				}
-				catch (const std::exception &e)
-				{
-					std::string error = "ERROR :DCC error: " + std::string(e.what()) + "\r\n";
-					send(fd, error.c_str(), error.length(), 0);
-				}
-			}
-		}
-		else
-			process_line(fd, line);
+		process_line(fd, line);
 	}
 }
 
