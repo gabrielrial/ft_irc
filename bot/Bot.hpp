@@ -41,6 +41,7 @@ public:
 	void send_message(int socket_fd, const std::string &msg);
 
 	std::string get_client_nickname(RawTextLine &line);
+	std::string get_nick_form_prefix(RawTextLine &line);
 	RawTextLine get_answer();
 
 	const std::string &getIp() const;

@@ -25,8 +25,10 @@ void bot_privmsg(RawTextLine &line, Bot &bot)
 
     if (bot.get_filter())
     {
+        std::cout << "kicking1" << std::endl;
         if (line.get_trailing().find("fuck") != std::string::npos)
         {
+            std::cout << "kicking" << std::endl;
             bot.send_message(bot.get_socket(),
                 "KICK " + line.get_params()[0] + " " +
                 bot.get_client_nickname(line) + " :" +
