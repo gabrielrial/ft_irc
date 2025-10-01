@@ -48,9 +48,9 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		if (end == std::string::npos)
 			end = first_param.length();
 		std::string channel_name = first_param.substr(start, end - start);
-		// if (channel_name[0] != '#' && channel_name[0] != '&' &&
-		// 	channel_name[0] != '+' && channel_name[0] != '!')
-		// 	channel_name = "#" + channel_name;
+		if (channel_name[0] != '#' && channel_name[0] != '&' &&
+			channel_name[0] != '+' && channel_name[0] != '!')
+			channel_name = "#" + channel_name; //must be ERR_BADCHANMASK???
 		server.add_channel(channel_name);
 		Channel *channel = server.get_channel(channel_name);
 		bool empty_channel = (channel->get_UserCount() == 0);
