@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_who.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: grial <grial@student.42berlin.de>          +#+  +:+       +#+        */
+/*   By: hsetyamu <hsetyamu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 11:13:06 by grial             #+#    #+#             */
-/*   Updated: 2025/09/23 17:04:55 by grial            ###   ########.fr       */
+/*   Updated: 2025/10/01 13:22:56 by hsetyamu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ const Channel *get_channel(Server &server, RawTextLine &line)
 
 	const char *param = line.get_sep_params()[1].c_str();
 
-	if (!param || param[0] != '#')
+	if (!param || (param[0] != '#' && (param[0] != '&' && param[0] != '!' && param[0] != '+')))
 		return NULL;
 
 	const std::vector<Channel> &channels = server.get_vector_channels();

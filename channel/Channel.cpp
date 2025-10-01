@@ -58,8 +58,7 @@ bool Channel::remove_user(Client client)
 	if (it == _users.end())
 		return false;
 	_users.erase(it);
-	//_userModes.erase(client_fd);
-	// removeOperator(client_fd);
+	rem_operator(client);
 	return true;
 }
 //
@@ -81,7 +80,6 @@ bool Channel::rem_operator(Client client)
 	std::vector<Client>::iterator it = std::find(_operators.begin(), _operators.end(), client);
 	if (it == _operators.end())
 		return false;
-
 	_operators.erase(it);
 	return true;
 }

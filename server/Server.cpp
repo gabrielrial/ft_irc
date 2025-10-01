@@ -384,7 +384,7 @@ bool Server::check_channel(RawTextLine &line)
 Channel *Server::get_channel(const std::string &name)
 {
 	std::string chanel_name = name;
-	if (name[0] != '#')
+	if (name[0] != '#' && (name[0] != '&' && name[0] != '!' && name[0] != '+'))
 		chanel_name = "#" + name;
 
 	for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
@@ -538,6 +538,7 @@ void Server::handle_disconnection(int fd, const std::string &reason)
 					send(users[j].get_FD(), quit_msg.c_str(), quit_msg.size(), 0);
 			}
 			chan->remove_user(*client);
+			//make a check if operator, then remove from operators list
 		}
 	}
 	close(fd);

@@ -29,6 +29,7 @@ void	cmd_part(Server &server, RawTextLine &line, Client &client)
 		{
 			broadcast_part(channel, client, reason);
 			channel->remove_user(client);
+			//make a check if operator, then remove from operators list
 		}
 	}
 }
