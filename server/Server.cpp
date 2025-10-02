@@ -280,7 +280,8 @@ Client *Server::find_client(int fd)
 
 void Server::welcome(Client client)
 {
-		std::string welcome = ":localhost 001 " + client.get_nickname() + " :Welcome to mini_server " + client.get_nickname() + "\r\n";
+		std::string welcome = ":" + this->get_servername() + " 001 " + client.get_nickname() +
+								" :Welcome to " + SERVER_NAME + ", " + client.get_nickname() + "!" + "\r\n";
 		send(client.get_FD(), welcome.c_str(), welcome.size(), 0);
 		this->set_client_amt();
 		std::cout << "Nickname: " << client.get_nickname() << std::endl;
