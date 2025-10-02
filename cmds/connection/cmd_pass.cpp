@@ -29,5 +29,6 @@ void cmd_pass(Server &server, RawTextLine &line, Client &client)
 		send(client.get_FD(), err.c_str(), err.size(), 0);
 	}
 
-	server.welcome(client);
+	if (client.is_registered())
+		server.welcome(client);
 }

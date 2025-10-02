@@ -32,5 +32,6 @@ void cmd_user(Server &server, RawTextLine &line, Client &client)
 	if (servername != "0" && servername != "*")
 		client.set_servername(servername);
 
-	server.welcome(client);
+	if (client.is_registered())
+		server.welcome(client);
 }
