@@ -14,21 +14,19 @@ void cmd_list(Server &server, RawTextLine &line, Client &client)
 			topic = "No topic set";
 
 		std::string channel_info = ":" +
-								   std::string(SERVER_NAME) + " 322 " +
-								   client.get_nickname() + " " +
-								   channels[i].get_name() + " " +
-								   user_count_ss.str() + " :" +
-								   topic + "\r\n";
+								std::string(SERVER_NAME) + " 322 " +
+								client.get_nickname() + " " +
+								channels[i].get_name() + " " +
+								user_count_ss.str() + " :" +
+								topic + "\r\n";
 
-        send(client.get_FD(), channel_info.c_str(), channel_info.length(), 0);
-        std::cout << "Sent LIST info: " << channel_info;
-		const Channel &channel = channels[i]; //debug, can delete
-		server.debug_print_ops(&channel, "in list"); //debug, can delete
-    }
+		send(client.get_FD(), channel_info.c_str(), channel_info.length(), 0);
+		std::cout << "Sent LIST info: " << channel_info;
+	}
 
 	std::string channel_info = ":" +
-							   std::string(SERVER_NAME) + " 323 " +
-							   client.get_nickname() + " :End of /LIST\r\n";
+								std::string(SERVER_NAME) + " 323 " +
+								client.get_nickname() + " :End of /LIST\r\n";
 
 	send(client.get_FD(), channel_info.c_str(), channel_info.length(), 0);
 	std::cout << "Sent LIST info: " << channel_info;
