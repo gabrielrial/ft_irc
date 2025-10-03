@@ -3,18 +3,16 @@
 void cmd_user(Server &server, RawTextLine &line, Client &client)
 {
 	(void)server;
-	if (client.is_registered()) // Already registered → ERR_ALREADYREGISTRED
+	if (client.is_registered()) // Already registered → ERR_ALREADYREGISTRED (h -> shouldn't this be client.has_user() ?)
 	{
-		const std::string msg = ":localhost 462 * :You may not reregister\r\n";
-		send(client.get_FD(), msg.c_str(), msg.size(), 0);
+		err_alreadyregistered(server.get_servername(), client);
 		return;
 	}
 	const std::vector<std::string> &params = line.get_params();
 	const std::string &trailing = line.get_trailing();
 	if ((params.size() < 3) || trailing.empty())
 	{
-		const std::string msg = ":localhost 461 * USER :Not enough parameters\r\n";
-		send(client.get_FD(), msg.c_str(), msg.size(), 0);
+		err_needmoreparams(server.get_servername(), client, "USER");
 		return;
 	}
 	const std::string &username = params[0];
