@@ -17,6 +17,9 @@ void	err_erroneusnickname(std::string server_name, Client &client, std::string n
 void	err_nicknameinuse(std::string server_name, Client &client, std::string attempt);
 void	err_alreadyregistered(std::string server_name, Client &client);
 void	err_passwdmismatch(std::string server_name, Client &client);
+void	err_norecipient(std::string server_name, Client &client, std::string cmd);
+void	err_notexttosend(std::string server_name, Client &client);
+
 
 //rpl.cpp
 void	rpl_notopic(std::string server_name, Client &client, std::string channel_name);

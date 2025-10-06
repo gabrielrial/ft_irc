@@ -103,3 +103,17 @@ void	err_passwdmismatch(std::string server_name, Client &client)
 	std::string err_passwdmismatch = ":" + server_name + " 464 * :Password incorrect\r\n";
 	send(client.get_FD(), err_passwdmismatch.c_str(), err_passwdmismatch.size(), 0);
 }
+
+void	err_norecipient(std::string server_name, Client &client, std::string cmd)
+{
+	std::string err_norecipient = ":" + server_name + " 411 " +
+										client.get_nickname() + " :No recipient given (" + cmd + ")\r\n";
+	send(client.get_FD(), err_norecipient.c_str(), err_norecipient.length(), 0);
+}
+
+void	err_notexttosend(std::string server_name, Client &client)
+{
+	std::string err_notexttosend = ":" + server_name + " 412 " +
+										client.get_nickname() + " :No text to send\r\n";
+	send(client.get_FD(), err_notexttosend.c_str(), err_notexttosend.length(), 0);
+}

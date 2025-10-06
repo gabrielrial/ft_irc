@@ -7,10 +7,7 @@ void send_message_to_channel(Channel *channel, Client &sender,
 	if (!channel)
 	{
 		if (sendErrors)
-		{
-			std::string msg = ":" + server.get_servername() + " 403 " + sender.get_nickname() + " " + targetName + " :No such channel\r\n";
-			send(sender.get_FD(), msg.c_str(), msg.size(), 0);
-		}
+			err_nosuchchannel(server.get_servername(), sender, targetName);
 		return;
 	}
 
@@ -34,10 +31,7 @@ void send_message_to_user(Server &server, Client &sender,
 	if (!target)
 	{
 		if (sendErrors)
-		{
-			std::string msg = ":" + server.get_servername() + " 401 " + sender.get_nickname() + " " + targetName + " :No such nick\r\n";
-			send(sender.get_FD(), msg.c_str(), msg.size(), 0);
-		}
+			err_nosuchnick(server.get_servername(), sender, targetName, "PRIVMSG");
 		return;
 	}
 
@@ -53,20 +47,14 @@ void send_message(Server &server, Client &sender,
 	if (targets.empty())
 	{
 		if (sendErrors)
-		{
-			std::string msg = ":" + server.get_servername() + " 411 " + sender.get_nickname() + " :No recipient given (" + command + ")\r\n";
-			send(sender.get_FD(), msg.c_str(), msg.size(), 0);
-		}
+			err_norecipient(server.get_servername(), sender, command);
 		return;
 	}
 
 	if (message.empty())
 	{
 		if (sendErrors)
-		{
-			std::string msg = ":" + server.get_servername() + " 412 " + sender.get_nickname() + " :No text to send\r\n";
-			send(sender.get_FD(), msg.c_str(), msg.size(), 0);
-		}
+			err_notexttosend(server.get_servername(), sender);
 		return;
 	}
 
