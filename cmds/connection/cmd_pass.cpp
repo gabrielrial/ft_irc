@@ -15,7 +15,7 @@ void cmd_pass(Server &server, RawTextLine &line, Client &client)
 	if (provided == server.get_password())
 	{
 		client.pass_accepted(true);
-		std::string ok = ":localhost NOTICE * :Password accepted\r\n";
+		std::string ok = ":" + server.get_servername() + " NOTICE * :Password accepted\r\n";
 		send(client.get_FD(), ok.c_str(), ok.size(), 0);
 	}
 	else
