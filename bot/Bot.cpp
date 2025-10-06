@@ -190,3 +190,19 @@ RawTextLine Bot::get_answer()
 	}
 	return RawTextLine("");
 }
+
+int Bot::is_operator(RawTextLine &line)
+{
+	std::string channel = line.get_params()[0];
+	if (channel.empty() || (channel[0] != '#' && channel[0] != '&' && channel[0] != '+' && channel[0] != '!'))
+		return 0;
+	std::string client = get_nick_form_prefix(line);
+	if (client.empty())
+		return 0;
+	send_message(get_socket(), "NAMES " + channel);
+	RawTextLine names = get_answer();
+	if (names.get_trailing().find("@" + client) == std::string::npos)
+		return 1;
+	else 
+		return 2;
+}

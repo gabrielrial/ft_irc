@@ -4,9 +4,16 @@
 void cmd_spam(RawTextLine &line, Bot &bot)
 {
 	(void)line;
-	for (int i = 0; i < 1000; i++)
+	for (size_t i = 0; i < line.get_params().size(); i++)
 	{
-		bot.send_message(bot.get_socket(), "PRIVMSG #general :Spam.");
+		std::string target = line.get_params()[i];
+		if (line.get_params()[i] == bot.get_nickname())
+			target = bot.get_nick_form_prefix(line);
+
+		for (int i = 0; i < 1000; i++)
+		{
+			bot.send_message(bot.get_socket(), "PRIVMSG "+ target + " :Spam.");
+		}
 	}
 	return;
 }

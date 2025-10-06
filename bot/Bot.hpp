@@ -42,7 +42,9 @@ public:
 
 	std::string get_client_nickname(RawTextLine &line);
 	std::string get_nick_form_prefix(RawTextLine &line);
+	bool		not_operator(std::string nickname);
 	RawTextLine get_answer();
+	int 		is_operator(RawTextLine &line);
 
 	const std::string &getIp() const;
 	int get_socket() const;
