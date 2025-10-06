@@ -6,7 +6,7 @@
 /*   By: hsetyamu <hsetyamu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 11:13:06 by grial             #+#    #+#             */
-/*   Updated: 2025/10/01 13:22:56 by hsetyamu         ###   ########.fr       */
+/*   Updated: 2025/10/06 13:12:39 by hsetyamu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,12 @@ void cmd_who(Server &server, RawTextLine &line, Client &client)
 	for (size_t i = 0; i < client_list.size(); i++)
 	{
 		Client &c = client_list[i];
-		std::string reply = ":" + std::string(SERVER_NAME) + " 352 " +
+		std::string reply = ":" + server.get_servername() + " 352 " +
 							client.get_nickname() + " " +
 							target + " " +
 							c.get_username() + " " +
 							c.get_hostname() + " " +
-							SERVER_NAME + " " +
+							server.get_servername() + " " +
 							c.get_nickname() + " H";
 
 		reply += " :0 " + c.get_realname() + CRLF;
@@ -57,7 +57,7 @@ void cmd_who(Server &server, RawTextLine &line, Client &client)
 		send(client.get_FD(), reply.c_str(), reply.length(), 0);
 	}
 
-	std::string endmsg = ":" + std::string(SERVER_NAME) + " 315 " +
+	std::string endmsg = ":" + server.get_servername() + " 315 " +
 						 client.get_nickname() + " " + target + " :End of WHO list" + CRLF;
 
 	send(client.get_FD(), endmsg.c_str(), endmsg.length(), 0);

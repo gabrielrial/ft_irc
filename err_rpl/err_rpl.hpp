@@ -11,6 +11,12 @@ void	err_unknownmode(std::string server_name, Client &client, char mode);
 void	err_usernotinchannel(std::string server_name, Client &client, Channel *channel, std::string nickname);
 void	err_badchannelkey(std::string server_name, Client &client, Channel *channel);
 void	err_channelisfull(std::string server_name, Client &client, Channel *channel);
+void	err_badchanmask(std::string server_name, Client &client, std::string channel_name);
+void	err_nonicknamegiven(std::string server_name, Client &client);
+void	err_erroneusnickname(std::string server_name, Client &client, std::string newNick);
+void	err_nicknameinuse(std::string server_name, Client &client, std::string attempt);
+void	err_alreadyregistered(std::string server_name, Client &client);
+void	err_passwdmismatch(std::string server_name, Client &client);
 
 //rpl.cpp
 void	rpl_notopic(std::string server_name, Client &client, std::string channel_name);
