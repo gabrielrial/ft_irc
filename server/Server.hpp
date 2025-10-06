@@ -10,8 +10,6 @@
 #include "../channel/Channel.hpp"
 #include "../parser/Parser.hpp"
 
-#define SERVER_NAME "dft_irc_server"
-
 class Server
 {
 private:
