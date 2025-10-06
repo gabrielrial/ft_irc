@@ -6,14 +6,11 @@ void bot_filter(RawTextLine &line, Bot &bot)
 	std::string channel = line.get_params()[0];
 	if (channel.empty() || (channel[0] != '#' && channel[0] != '&' && channel[0] != '+' && channel[0] != '!'))
 		return;
-
 	std::string client = bot.get_nick_form_prefix(line);
 	if (client.empty())
 		return;
-	
-	bot.send_message(bot.get_socket(), "NAME " + channel);
+	bot.send_message(bot.get_socket(), "NAMES " + channel);
 	RawTextLine names = bot.get_answer();
-
 	if (names.get_trailing().find("@" + client) == std::string::npos)
 		return;
 
