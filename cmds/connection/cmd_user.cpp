@@ -3,7 +3,7 @@
 void cmd_user(Server &server, RawTextLine &line, Client &client)
 {
 	(void)server;
-	if (client.is_registered()) // Already registered → ERR_ALREADYREGISTRED (h -> shouldn't this be client.has_user() ?)
+	if (client.has_user())
 	{
 		err_alreadyregistered(server.get_servername(), client);
 		return;
