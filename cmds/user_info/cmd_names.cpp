@@ -56,7 +56,7 @@ void cmd_names(Server &server, RawTextLine &line, Client &client)
 		{
 			std::string client_name = client_list[i].get_nickname();
 
-			if (channel->is_operator(client_name))
+			if (channel->is_operator(client_list[i]))
 				client_name = "@" + client_name;
 
 			if ((rpl_namreply + names_list + client_name).size() < 510)

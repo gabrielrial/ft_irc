@@ -1,7 +1,5 @@
 #include "../../lib_irc.hpp"
 
-void	broadcast_join(Channel *chan, std::string server_name);
-
 void	add_client_channel(Client &client, Channel &channel, bool empty_channel, std::string chan_name)
 {
 	channel.add_user(client);
@@ -9,8 +7,8 @@ void	add_client_channel(Client &client, Channel &channel, bool empty_channel, st
 		channel.add_operator(client);
 	std::string joinMsg = ":" + client.get_nickname() +  //works with hexchat
 								" JOIN " + chan_name + "\r\n";
-			// std::string joinMsg = ":" + client.get_prefix() +  //doesnt work with hexchat
-			// 					" JOIN " + channel_name + "\r\n";
+	// std::string joinMsg = ":" + client.get_prefix() +  //doesnt work with hexchat
+	// 					" JOIN " + chan_name + "\r\n";
 	send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);
 }
 
@@ -91,21 +89,3 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 	}
 }
 
-void	broadcast_join(Channel *chan, std::string server_name)
-{
-	if (!chan)
-		return;
-	const std::vector<Client> &users = chan->get_users();
-	std::string user_list;
-	for (size_t i = 0; i < users.size(); ++i)
-	{
-		if (i > 0)
-			user_list += " ";
-		user_list += users[i].get_nickname();
-	}
-	for (size_t i = 0; i < users.size(); ++i)
-	{
-		rpl_namreply(server_name, users[i], chan->get_name(), user_list);
-		rpl_endofnames(server_name, users[i], chan->get_name());
-	}
-}

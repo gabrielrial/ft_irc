@@ -48,7 +48,6 @@ bool Channel::add_user(Client client)
 	if (has_user(client))
 		return false;
 	_users.push_back(client);
-	//_userModes[client] = false; // Initialize with no special modes
 	return true;
 }
 
@@ -86,7 +85,12 @@ bool Channel::rem_operator(Client client)
 
 bool Channel::is_operator(Client client) const
 {
-	return std::find(_operators.begin(), _operators.end(), client) != _operators.end();
+	for (std::vector<Client>::const_iterator it = _operators.begin(); it != _operators.end(); ++it)
+	{
+		if (it->get_nickname() == client.get_nickname())
+			return true;
+	}
+	return false;
 }
 
 const std::string &Channel::get_name() const
@@ -206,26 +210,3 @@ void Channel::add_to_invitees(Client *client)
 {
 	_invitees.push_back(client);
 }
-
-bool Channel::is_operator(const std::string &op_name)
-{
-	for (std::vector<Client>::iterator it = _operators.begin(); it != _operators.end(); ++it)
-	{
-		if (it->get_nickname() == op_name)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-// void Channel::broadcast(const std::string& message, int sender_fd)
-//{
-//	for (std::vector<int>::const_iterator it = _users.begin(); it != _users.end(); ++it)
-//	{
-//		if (*it != sender_fd) // Don't send back to sender if sender_fd is provided
-//		{
-//			send(*it, message.c_str(), message.length(), 0);
-//		}
-//	}
-// }
