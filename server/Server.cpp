@@ -48,10 +48,8 @@ void Server::create_socket()
 		throw std::runtime_error("setsockopt failed");
 
 	// make server socket non-blocking
-	int flags = fcntl(_socket, F_GETFL, 0);
-	if (flags == -1)
-		flags = 0;
-	if (fcntl(_socket, F_SETFL, flags | O_NONBLOCK) == -1)
+
+	if (fcntl(_socket, F_SETFL, O_NONBLOCK) == -1)
 		throw std::runtime_error("fcntl failed");
 }
 
@@ -173,10 +171,7 @@ void Server::register_client()
 		perror("accept");
 		return;
 	}
-	int flags = fcntl(new_fd, F_GETFL, 0);
-	if (flags == -1)
-		flags = 0;
-	if (fcntl(new_fd, F_SETFL, flags | O_NONBLOCK) == -1)
+	if (fcntl(new_fd, F_SETFL, O_NONBLOCK) == -1)
 	{
 		close(new_fd);
 		return;
