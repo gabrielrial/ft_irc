@@ -85,7 +85,6 @@ bool Channel::rem_operator(Client client)
 
 bool Channel::is_operator(Client client) const
 {
-	//return std::find(_operators.begin(), _operators.end(), client) != _operators.end();
 	for (std::vector<Client>::const_iterator it = _operators.begin(); it != _operators.end(); ++it)
 	{
 		if (it->get_nickname() == client.get_nickname())
