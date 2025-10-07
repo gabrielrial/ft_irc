@@ -106,7 +106,10 @@ void Server::srv_run()
 						++i;
 						continue;
 					}
-					handle_disconnection(fd, bytes_read == 0 ? "Connection closed" : strerror(errno));
+					if (bytes_read == 0)
+						handle_disconnection(fd, "Connection closed");
+					else
+						handle_disconnection(fd, strerror(errno));
 					continue;
 				}
 				buffer[bytes_read] = '\0';
