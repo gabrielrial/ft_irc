@@ -7,7 +7,6 @@ Server::Server(uint16_t port, std::string password)
 	try
 	{
 		init_socket();
-		//	add_socket();
 		std::cout << "Server listening on " << IP << ":" << port << std::endl;
 	}
 	catch (const std::runtime_error &e)
@@ -81,10 +80,6 @@ void Server::srv_run()
 		fd_set readfds;
 		int max_fd = prepare_fd_set(&readfds);
 
-		struct timeval tv;
-		tv.tv_sec = 0;
-		tv.tv_usec = 100000; // 100ms timeout (prevents CPU spin)
-
 		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
 		if (activity < 0)
 		{
@@ -104,27 +99,6 @@ void Server::srv_run()
 			if (FD_ISSET(fd, &readfds))
 			{
 				ssize_t bytes_read = recv(fd, buffer, BUFFER_SIZE - 1, 0);
-				/* if (bytes_read == 0)
-				{
-					// std::cout << "Client (fd=" << fd << ") disconnected.\n";
-					//handle_disconnection(fd, bytes_read == 0 ? "Connection closed" : strerror(errno));
-					//close(fd);
-					//clients.erase(clients.begin() + i);
-					continue;
-				}
-				if (bytes_read < 0)
-				{
-					if (errno == EAGAIN || errno == EWOULDBLOCK)
-					{
-						++i;
-						continue;
-					}
-					//std::cout << "Client (fd=" << fd << ") disconnected.\n";
-					//handle_disconnection(fd, bytes_read == 0 ? "Connection closed" : strerror(errno));
-					//close(fd);
-					//clients.erase(clients.begin() + i);
-					continue;
-				} */
 				if (bytes_read <= 0)
 				{
 					if (bytes_read < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
@@ -374,12 +348,6 @@ void Server::welcome(Client client)
 								" :Welcome to " + this->get_servername() + ", " + client.get_nickname() + "!" + "\r\n";
 		send(client.get_FD(), welcome.c_str(), welcome.size(), 0);
 		this->set_client_amt();
-		// std::cout << "Nickname: " << client.get_nickname() << std::endl;
-		// std::cout << "Username: " << client.get_username() << std::endl;
-		// std::cout << "Hostname: " << client.get_hostname() << std::endl;
-		// std::cout << "Servername: " << client.get_servername() << std::endl;
-		// std::cout << "Realname: " << client.get_realname() << std::endl;
-		// std::cout << "===============================================" << std::endl;
 		return;
 }
 
