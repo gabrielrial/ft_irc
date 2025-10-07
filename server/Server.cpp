@@ -392,6 +392,7 @@ void Server::send_ping(Server &server)
 		if (server.clients[i].get_pong() == false)
 		{
 			std::cout << "desconnect client()" + server.clients[i].get_nickname() << std::endl;
+			handle_disconnection(server.clients[i].get_FD(), "Inactivity");
 
 		}
 		else
