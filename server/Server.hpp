@@ -8,7 +8,7 @@
 
 #include "../client/Client.hpp"
 #include "../channel/Channel.hpp"
-#include "../parser/Parser.hpp"
+#include "../parser/RawTextLine.hpp"
 
 class Server
 {

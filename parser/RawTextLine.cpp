@@ -1,4 +1,4 @@
-#include "Parser.hpp"
+#include "RawTextLine.hpp"
 
 RawTextLine::RawTextLine() :
 	_prefix(""),
