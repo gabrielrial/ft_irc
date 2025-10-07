@@ -29,7 +29,6 @@ void	cmd_part(Server &server, RawTextLine &line, Client &client)
 		{
 			broadcast_part(channel, client, reason);
 			channel->remove_user(client);
-			//make a check if operator, then remove from operators list
 		}
 	}
 }
@@ -38,12 +37,11 @@ void broadcast_part(const Channel *chan, const Client &client, const std::string
 {
 	if (!chan)
 		return;
-	std::string part_msg = ":" + client.get_nickname() + " PART " + 
+	std::string part_msg = client.get_prefix() + " PART " + 
 						chan->get_name();
 	if (!reason.empty())
 		part_msg += " :" + reason;
 	part_msg += "\r\n";
-	//std::cout << "broadcasted: " << part_msg << std::endl;
 	const std::vector<Client>& users = chan->get_users();
 	for (size_t i = 0; i < users.size(); ++i)
 		send(users[i].get_FD(), part_msg.c_str(), part_msg.length(), 0);
