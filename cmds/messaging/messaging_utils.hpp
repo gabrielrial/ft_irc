@@ -3,7 +3,7 @@
 
 void send_message_to_channel(Channel *channel, Client &sender,
 							 const std::string &targetName, const std::string &message,
-							 const std::string &command, bool sendErrors);
+							 const std::string &command, bool sendErrors, Server &server);
 
 void send_message_to_user(Server &server, Client &sender,
 						  const std::string &targetName, const std::string &message,

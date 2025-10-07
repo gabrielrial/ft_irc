@@ -8,7 +8,7 @@
 
 #include "../client/Client.hpp"
 #include "../channel/Channel.hpp"
-#include "../parser/Parser.hpp"
+#include "../parser/RawTextLine.hpp"
 
 class Server
 {
@@ -19,52 +19,51 @@ private:
 	sockaddr_in _hint;
 	std::vector<Client> clients;
 	std::vector<Channel> channels;
-	int	client_amt;
-	std::string		_server_name;
+	int client_amt;
+	std::string _server_name;
+	std::vector<int> _fdsToClose;
+	//time_t _last_ping;
 
-	void init_socket();
+		void
+		init_socket();
 	void create_socket();
 	void bind_socket();
 	void start_listening();
-
 	int prepare_fd_set(fd_set *readfds);
-	std::vector<int> _fdsToClose;
-
 	void register_client();
-	Client *find_client(int fd);
-
+	void handle_client_data(int fd, char *buffer, ssize_t bytes_read,
+							std::string &lineBuffer);
 	void process_line(int fd, const std::string &line);
-	void handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer);
+	Client *find_client(int fd);
+	bool check_channel(RawTextLine &line);
+	void check_client(RawTextLine &line, std::vector<Client *> &client_list);
+	void set_client_amt();
+	int get_client_amt();
+	void set_servername();
+	void remove_closed_clients(std::string lineBuffer[]);
+	void handle_disconnection(int fd, const std::string &reason);
+	void send_ping(Server &server);
 
 public:
 	Server(uint16_t port, std::string password);
 	~Server();
 
-	void check_client(RawTextLine &line, std::vector<Client *> &client_list);
-	bool check_channel(RawTextLine &line);
-	void welcome(Client client);
-	bool	check_nick_uniqueness(const std::string new_nick);
+	std::string ping;
 
-	void add_channel(const std::string &ch_name);
+	// channels
 	Channel *get_channel(const std::string &ch_name);
-	Client *get_client(const std::string &cl_name);
-	int				get_client_amt();
-
+	void add_channel(const std::string &ch_name);
 	const std::vector<Channel> &get_vector_channels() const;
+
+	// clients
+	Client *get_client(const std::string &cl_name);
 	const std::vector<Client> &get_vector_clients() const;
 
-	std::string get_password() const;
-		void		set_client_amt();
-		void 		remove_closed_clients(std::string lineBuffer[]);
-		void		debug_print_chan() const; //debug, can delete
-		void		debug_print_chan_users(const Channel& chan) const; //debug, can delete
-		void		debug_print_ops(const Channel* channel, const std::string& context); //debug, can delete
-
+	// other utilities
 	void srv_run();
+	std::string get_servername() const;
+	void welcome(Client client);
+	bool check_nick_uniqueness(const std::string new_nick);
+	std::string get_password() const;
 	void schedule_close(int fd);
-
-	std::string		get_servername() const;
-	void			set_servername();
-
-	void	handle_disconnection(int fd, const std::string &reason);
 };
