@@ -117,3 +117,10 @@ void	err_notexttosend(std::string server_name, Client &client)
 										client.get_nickname() + " :No text to send\r\n";
 	send(client.get_FD(), err_notexttosend.c_str(), err_notexttosend.length(), 0);
 }
+
+void	err_useronchannel(std::string server_name, Client &client, std::string target_cli, std::string channel_name)
+{
+	std::string err_useronchannel = ":" + server_name + " 443 " +
+										client.get_nickname() + " " + target_cli + " " + channel_name +" :is already on channel\r\n";
+	send(client.get_FD(), err_useronchannel.c_str(), err_useronchannel.length(), 0);
+}

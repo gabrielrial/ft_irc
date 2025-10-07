@@ -19,7 +19,7 @@ void	err_alreadyregistered(std::string server_name, Client &client);
 void	err_passwdmismatch(std::string server_name, Client &client);
 void	err_norecipient(std::string server_name, Client &client, std::string cmd);
 void	err_notexttosend(std::string server_name, Client &client);
-
+void	err_useronchannel(std::string server_name, Client &client, std::string target_cli, std::string channel_name);
 
 //rpl.cpp
 void	rpl_notopic(std::string server_name, Client &client, std::string channel_name);
