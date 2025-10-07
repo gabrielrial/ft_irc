@@ -60,7 +60,6 @@ void	cmd_kick(Server &server, RawTextLine &line, Client &client)
 			}
 			broadcast_kick(channel, client, target_nick, reason);
 			channel->remove_user(*target_nick);
-			//make a check if operator, then remove from operators list
 		}
 	}
 }
