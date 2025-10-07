@@ -40,10 +40,13 @@ private:
 	void				set_servername();
 	void 				remove_closed_clients(std::string lineBuffer[]);
 	void				handle_disconnection(int fd, const std::string &reason);
+	void				send_ping(Server &server);
 
 public:
 	Server(uint16_t port, std::string password);
 	~Server();
+
+	std::string					ping;
 
 	//channels
 	Channel						*get_channel(const std::string &ch_name);
