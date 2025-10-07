@@ -39,6 +39,7 @@
 #include <sstream>
 #include <fcntl.h>
 #include <csignal>
+#include <ctime>
 
 // CONFIGS
 
