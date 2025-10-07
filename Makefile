@@ -22,6 +22,7 @@ SRC = main.cpp \
 		cmds/connection/cmd_nick.cpp \
 		cmds/connection/cmd_pass.cpp \
 		cmds/connection/cmd_user.cpp \
+		cmds/connection/cmd_pong.cpp \
 		cmds/connection/cmd_quit.cpp \
 		cmds/messaging/cmd_privmsg.cpp \
 		cmds/messaging/cmd_notice.cpp \

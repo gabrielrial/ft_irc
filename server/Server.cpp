@@ -77,8 +77,9 @@ void Server::srv_run()
 
 	while (g_running)
 	{
-		if (ping > 19)
+		if (ping > 20)
 		{
+			std::cout << "reached" << std::endl;
 			send_ping(*this);
 			ping = 0;
 		}
@@ -88,6 +89,7 @@ void Server::srv_run()
 
 		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
 		ping++;
+		std::cout << ping << std::endl;
 		if (activity < 0)
 		{
 			if (errno == EINTR)
@@ -380,10 +382,18 @@ void Server::schedule_close(int fd)
 void Server::send_ping(Server &server)
 {
 	std::string ping_str = "MONTEVIDEO";
+	ping = "MONTEVIDEO";
 
 	for (size_t i = 0; i < server.clients.size(); i++)
 	{
-		std::string msg = "PONG " + ping_str + "\r\n";
-		send(server.get_vector_clients()[i].get_FD(), msg.c_str(), msg.size(), 0);
+		if (server.clients[i].get_pong() == false)
+		{
+			std::cout << "desconnect client()" + server.clients[i].get_nickname() << std::endl;
+
+		}
+		else
+			server.clients[i].set_pong();
+		std::string msg = "PING :" + ping_str + "\r\n";
+		send(server.clients[i].get_FD(), msg.c_str(), msg.size(), 0);
 	}
 }
