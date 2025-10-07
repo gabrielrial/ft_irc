@@ -5,7 +5,7 @@ Channel::Channel() : _name(""),
 					 _mode_i(false),
 					 _mode_t(true),
 					 _mode_key(""),
-					 _mode_l(20)
+					 _mode_l(3)
 {
 }
 
@@ -14,7 +14,7 @@ Channel::Channel(const std::string &name) : _name(name),
 											_mode_i(false),
 											_mode_t(true),
 											_mode_key(""),
-											_mode_l(20)
+											_mode_l(3)
 {
 }
 
