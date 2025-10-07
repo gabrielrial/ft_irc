@@ -38,7 +38,7 @@ void broadcast_part(const Channel *chan, const Client &client, const std::string
 	if (!chan)
 		return;
 	std::string part_msg = ":" + client.get_nickname() + " PART " + 
-						 chan->get_name();
+						chan->get_name();
 	if (!reason.empty())
 		part_msg += " :" + reason;
 	part_msg += "\r\n";

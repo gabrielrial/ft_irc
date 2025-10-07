@@ -34,11 +34,12 @@ public:
 	bool		add_user(Client* client);
 	bool		remove_user(Client* client);
 	bool		has_user(Client* client) const;
+	Client		*check_user(const std::string &cl_name);
 	
 	// Operator management
 	bool		add_operator(Client* client);
 	bool		rem_operator(Client* client);
-	bool		is_operator(Client* client) const;
+	bool		is_operator(Client* client);
 
 	// Getters
 	const std::string			&get_name() const;
@@ -61,8 +62,4 @@ public:
 	void	set_mode_l(size_t limit);
 	void	add_to_invitees(Client *client);
 
-	Client *check_user(const std::string &cl_name);
-	bool   is_operator(const std::string &op_name);
-	// Broadcast message to all users in channel
-	//void	broadcast(const std::string& message, int sender_fd = -1);
 };

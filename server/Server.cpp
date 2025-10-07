@@ -6,7 +6,8 @@
 #define BLU "\033[34m"
 #define YEL "\033[33m"
 
-Server::Server(uint16_t port, std::string password) : _port(port), _password(password), _socket(-1), client_amt(0)
+Server::Server(uint16_t port, std::string password)
+	: _port(port), _password(password), _socket(-1), client_amt(0)
 {
 	set_servername();
 	try
@@ -147,14 +148,15 @@ void Server::srv_run()
 		fd_set readfds;
 		int max_fd = prepare_fd_set(&readfds);
 
-        struct timeval tv;
-        tv.tv_sec = 0;
-        tv.tv_usec = 100000; // 100ms timeout (prevents CPU spin)
+		struct timeval tv;
+		tv.tv_sec = 0;
+		tv.tv_usec = 100000; // 100ms timeout (prevents CPU spin)
 
 		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
 		if (activity < 0)
 		{
-			if (errno == EINTR) continue; // just retry if interrupted
+			if (errno == EINTR)
+				continue; // just retry if interrupted
 			perror("select");
 			break;
 		}
@@ -169,11 +171,12 @@ void Server::srv_run()
 			if (FD_ISSET(fd, &readfds))
 			{
 				ssize_t bytes_read = recv(fd, buffer, BUFFER_SIZE - 1, 0);
-				if (bytes_read == 0)
+				/* if (bytes_read == 0)
 				{
-					std::cout << "Client (fd=" << fd << ") disconnected.\n";
-					close(fd);
-					clients.erase(clients.begin() + i);
+					// std::cout << "Client (fd=" << fd << ") disconnected.\n";
+					//handle_disconnection(fd, bytes_read == 0 ? "Connection closed" : strerror(errno));
+					//close(fd);
+					//clients.erase(clients.begin() + i);
 					continue;
 				}
 				if (bytes_read < 0)
@@ -183,9 +186,20 @@ void Server::srv_run()
 						++i;
 						continue;
 					}
-					std::cout << "Client (fd=" << fd << ") disconnected.\n";
-					close(fd);
-					clients.erase(clients.begin() + i);
+					//std::cout << "Client (fd=" << fd << ") disconnected.\n";
+					//handle_disconnection(fd, bytes_read == 0 ? "Connection closed" : strerror(errno));
+					//close(fd);
+					//clients.erase(clients.begin() + i);
+					continue;
+				} */
+				if (bytes_read <= 0)
+				{
+					if (bytes_read < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
+					{
+						++i;
+						continue;
+					}
+					handle_disconnection(fd, bytes_read == 0 ? "Connection closed" : strerror(errno));
 					continue;
 				}
 				buffer[bytes_read] = '\0';
@@ -217,7 +231,7 @@ void Server::process_line(int fd, const std::string &line) // change to parse th
 
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
-	std::cout << line << std::endl;
+	// std::cout << line << std::endl;
 	run_cmds(*this, parsed, *client);
 }
 
@@ -268,8 +282,17 @@ Client *Server::find_client(int fd)
 
 void Server::welcome(Client client)
 {
-	std::string welcome = ":localhost 001 " + client.get_nickname() + " :Welcome to mini_server " + client.get_nickname() + "\r\n";
-	send(client.get_FD(), welcome.c_str(), welcome.size(), 0);
+		std::string welcome = ":" + this->get_servername() + " 001 " + client.get_nickname() +
+								" :Welcome to " + this->get_servername() + ", " + client.get_nickname() + "!" + "\r\n";
+		send(client.get_FD(), welcome.c_str(), welcome.size(), 0);
+		this->set_client_amt();
+		std::cout << "Nickname: " << client.get_nickname() << std::endl;
+		std::cout << "Username: " << client.get_username() << std::endl;
+		std::cout << "Hostname: " << client.get_hostname() << std::endl;
+		std::cout << "Servername: " << client.get_servername() << std::endl;
+		std::cout << "Realname: " << client.get_realname() << std::endl;
+		std::cout << "===============================================" << std::endl;
+		return;
 }
 // void Server::add_socket()
 //{
@@ -298,7 +321,7 @@ int Server::prepare_fd_set(fd_set *readfds)
 	return max_fd;
 }
 
-void	Server::set_client_amt()
+void Server::set_client_amt()
 {
 	this->client_amt++;
 }
@@ -348,7 +371,7 @@ bool Server::check_channel(RawTextLine &line)
 Channel *Server::get_channel(const std::string &name)
 {
 	std::string chanel_name = name;
-	if (name[0] != '#')
+	if (name[0] != '#' && (name[0] != '&' && name[0] != '!' && name[0] != '+'))
 		chanel_name = "#" + name;
 
 	for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
@@ -380,12 +403,12 @@ void Server::add_channel(const std::string &name)
 	channels.push_back(newChannel);
 }
 
-int	Server::get_client_amt()
+int Server::get_client_amt()
 {
 	return this->client_amt;
 }
 
-bool	Server::check_nick_uniqueness(const std::string new_nick)
+bool Server::check_nick_uniqueness(const std::string new_nick)
 {
 	for (size_t i = 0; i < clients.size(); ++i)
 	{
@@ -458,15 +481,49 @@ void Server::schedule_close(int fd)
 	_fdsToClose.push_back(fd);
 }
 
-std::string		Server::get_servername() const
+std::string Server::get_servername() const
 {
 	return _server_name;
 }
 
-void			Server::set_servername()
+void Server::set_servername()
 {
 	char server_name[256];
 	if (gethostname(server_name, sizeof(server_name)) != 0)
 		strcpy(server_name, "localhost");
 	_server_name = server_name;
+}
+
+//void Server::handle_disconnection(int fd, const std::string &reason = "Client disconnected")
+void Server::handle_disconnection(int fd, const std::string &reason)
+{
+	Client *client = find_client(fd);
+	if (!client)
+		return;
+	std::vector<Channel> channels = get_vector_channels(); //notify channels about disconnect
+	for (size_t i = 0; i < channels.size(); i++)
+	{
+		Channel *chan = get_channel(channels[i].get_name());
+		if (chan && chan->has_user(client))
+		{
+			std::string quit_msg = ":" + client->get_nickname() + " QUIT :" + reason + "\r\n";
+			const std::vector<Client*> &users = chan->get_users();
+			for (size_t j = 0; j < users.size(); j++)
+			{
+				if ((*users[j]).get_FD() != fd)
+					send((*users[j]).get_FD(), quit_msg.c_str(), quit_msg.size(), 0);
+			}
+			chan->remove_user(client);
+			//make a check if operator, then remove from operators list
+		}
+	}
+	close(fd);
+	for (size_t i = 0; i < clients.size(); i++)
+	{
+		if (clients[i].get_FD() == fd)
+		{
+			clients.erase(clients.begin() + i);
+			break;
+		}
+	}
 }

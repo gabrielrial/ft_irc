@@ -65,4 +65,6 @@ public:
 
 	std::string		get_servername() const;
 	void			set_servername();
+
+	void	handle_disconnection(int fd, const std::string &reason);
 };

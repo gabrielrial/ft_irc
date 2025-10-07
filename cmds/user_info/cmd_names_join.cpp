@@ -1,7 +1,5 @@
 #include "../../lib_irc.hpp"
 
-
-
 void cmd_names_join(Server &server, std::string &channel_name)
 {
 	Channel *channel = server.get_channel(channel_name);
@@ -18,7 +16,7 @@ void cmd_names_join(Server &server, std::string &channel_name)
 									   target.get_nickname() + " = " + channel->get_name() + " :";
 
 			std::string client_name = (*client_list[i]).get_nickname();
-			if (channel->is_operator(client_name))
+			if (channel->is_operator(client_list[i]))
 				client_name = "@" + client_name;
 
 			if ((rpl_namreply + names_list + client_name).size() < 510)

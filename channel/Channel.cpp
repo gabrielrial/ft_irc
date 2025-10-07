@@ -48,7 +48,6 @@ bool	Channel::add_user(Client* client)
 	if (has_user(client))
 		return false;
 	_users.push_back(client);
-	//_userModes[client] = false; // Initialize with no special modes
 	return true;
 }
 
@@ -58,8 +57,7 @@ bool	Channel::remove_user(Client* client)
 	if (it == _users.end())
 		return false;
 	_users.erase(it);
-	//_userModes.erase(client_fd);
-	// removeOperator(client_fd);
+	rem_operator(client);
 	return true;
 }
 //
@@ -81,14 +79,18 @@ bool Channel::rem_operator(Client* client)
 	std::vector<Client*>::iterator it = std::find(_operators.begin(), _operators.end(), client);
 	if (it == _operators.end())
 		return false;
-
 	_operators.erase(it);
 	return true;
 }
 
-bool Channel::is_operator(Client* client) const
+bool Channel::is_operator(Client* client)
 {
-	return std::find(_operators.begin(), _operators.end(), client) != _operators.end();
+	for (std::vector<Client*>::const_iterator it = _operators.begin(); it != _operators.end(); ++it)
+	{
+		if ((*it)->get_nickname() == client->get_nickname())
+			return true;
+	}
+	return false;
 }
 
 const std::string &Channel::get_name() const
@@ -207,16 +209,4 @@ Client *Channel::check_user(const std::string &name)
 void Channel::add_to_invitees(Client *client)
 {
 	_invitees.push_back(client);
-}
-
-bool Channel::is_operator(const std::string &op_name)
-{
-	for (std::vector<Client*>::iterator it = _operators.begin(); it != _operators.end(); ++it)
-	{
-		if ((*it)->get_nickname() == op_name)
-		{
-			return true;
-		}
-	}
-	return false;
 }

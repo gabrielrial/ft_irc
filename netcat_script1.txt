@@ -1,3 +1,0 @@
-PASS 42
-NICK netcat1
-USER nc1testuser 0 * :NC1 Test User
