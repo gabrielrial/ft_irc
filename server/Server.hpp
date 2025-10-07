@@ -50,7 +50,7 @@ public:
 	Client *get_client(const std::string &cl_name);
 	int				get_client_amt();
 
-	const std::vector<Channel> &get_vector_channels() const;
+	std::vector<Channel> &get_vector_channels();
 	const std::vector<Client> &get_vector_clients() const;
 
 	std::string get_password() const;

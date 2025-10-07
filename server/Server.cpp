@@ -434,7 +434,7 @@ void Server::debug_print_chan() const
 	std::cout << "=== End Channel Debug Info ===" << std::endl;
 }
 
-const std::vector<Channel> &Server::get_vector_channels() const
+std::vector<Channel> &Server::get_vector_channels()
 {
 	return channels;
 }

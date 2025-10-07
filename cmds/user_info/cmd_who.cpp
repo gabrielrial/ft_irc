@@ -26,9 +26,9 @@ bool is_valid_who(RawTextLine &line);
 bool only_operators(const std::vector<std::string> &params);
 std::string wildcard(RawTextLine &line);
 std::vector<Client> mask_user(Server &server, bool only_op, const char *mask);
-std::vector<Client> channel_users(bool only_op, const Channel *channel);
+std::vector<Client> channel_users(bool only_op, Channel *channel);
 std::vector<Client> get_users(Server &server);
-const Channel *get_channel(Server &server, RawTextLine &line);
+Channel *get_channel(Server &server, RawTextLine &line);
 std::vector<Client> get_list(Server &server, RawTextLine &line);
 
 void cmd_who(Server &server, RawTextLine &line, Client &client)
@@ -79,7 +79,7 @@ std::vector<Client> get_list(Server &server, RawTextLine &line)
 	std::vector<Client> client_list;
 
 	std::string mask = wildcard(line);
-	const Channel *channel = get_channel(server, line);
+	Channel *channel = get_channel(server, line);
 	bool only_op = only_operators(line.get_sep_params());
 
 	if (line.get_sep_params().size() == 1 || 
@@ -93,7 +93,7 @@ std::vector<Client> get_list(Server &server, RawTextLine &line)
 	return client_list;
 }
 
-const Channel *get_channel(Server &server, RawTextLine &line)
+Channel *get_channel(Server &server, RawTextLine &line)
 {
 	if (line.get_sep_params().size() < 2)
 		return NULL;
@@ -103,7 +103,7 @@ const Channel *get_channel(Server &server, RawTextLine &line)
 	if (!param || (param[0] != '#' && (param[0] != '&' && param[0] != '!' && param[0] != '+')))
 		return NULL;
 
-	const std::vector<Channel> &channels = server.get_vector_channels();
+	std::vector<Channel> &channels = server.get_vector_channels();
 	size_t size = channels.size();
 
 	for (size_t i = 0; i < size; i++)
