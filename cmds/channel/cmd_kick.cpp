@@ -35,7 +35,7 @@ void	cmd_kick(Server &server, RawTextLine &line, Client &client)
 			return;
 			//continue;
 		}
-		if (!channel->is_operator(client))
+		if (!channel->is_operator(&client))
 		{
 			err_chanoprivsneeded(server_name, client, channel);
 			return;
@@ -59,7 +59,7 @@ void	cmd_kick(Server &server, RawTextLine &line, Client &client)
 				//continue;
 			}
 			broadcast_kick(channel, client, target_nick, reason);
-			channel->remove_user(*target_nick);
+			channel->remove_user(target_nick);
 			//make a check if operator, then remove from operators list
 		}
 	}
@@ -74,7 +74,7 @@ void broadcast_kick(const Channel *chan, const Client &kicker, const Client *tar
 	if (!reason.empty())
 		kick_msg += " :" + reason;
 	kick_msg += "\r\n";
-	const std::vector<Client>& users = chan->get_users();
+	const std::vector<Client*>& users = chan->get_users();
 	for (size_t i = 0; i < users.size(); ++i)
-		send(users[i].get_FD(), kick_msg.c_str(), kick_msg.length(), 0);
+		send((*users[i]).get_FD(), kick_msg.c_str(), kick_msg.length(), 0);
 }

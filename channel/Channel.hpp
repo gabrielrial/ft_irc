@@ -13,15 +13,15 @@ class Client;
 class Channel
 {
 private:
-	std::string			_name;
-	std::string			_topic;
-	std::vector<Client>	_users; //maybe rename to clients
-	std::vector<Client>	_operators;
-	bool				_mode_i;
-	bool				_mode_t;
-	std::string			_mode_key;
-	size_t				_mode_l;
-	std::vector<Client*> _invitees;
+	std::string				_name;
+	std::string				_topic;
+	std::vector<Client*>	_users;
+	std::vector<Client*>	_operators;
+	bool					_mode_i;
+	bool					_mode_t;
+	std::string				_mode_key;
+	size_t					_mode_l;
+	std::vector<Client*>	_invitees;
 
 public:
 	Channel();
@@ -31,21 +31,22 @@ public:
 	Channel& operator=(const Channel &copy);
 
 	// Basic channel operations
-	bool		add_user(Client client);
-	bool		remove_user(Client client);
-	bool		has_user(Client client) const;
-	Client		*check_user(const std::string &cl_name);
+	bool		add_user(Client* client);
+	bool		remove_user(Client* client);
+	bool		has_user(Client* client) const;
+	Client		*check_user(const std::string &cl_name) const;
 	
 	// Operator management
-	bool		add_operator(Client client);
-	bool		rem_operator(Client client);
-	bool		is_operator(Client client) const;
+	bool		add_operator(Client* client);
+	bool		rem_operator(Client* client);
+	bool		is_operator(Client* client) const;
+	bool		is_operator(Client* client);
 
 	// Getters
 	const std::string			&get_name() const;
 	const std::string			&get_topic() const;
-	const std::vector<Client>	&get_users() const;
-	const std::vector<Client>	&get_operators() const;
+	const std::vector<Client*>	&get_users() const;
+	const std::vector<Client*>	&get_operators() const;
 	const std::vector<Client*>	&get_invitees() const;
 	unsigned int			 	get_UserCount() const;
 	bool						get_mode_i() const;

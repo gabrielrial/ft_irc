@@ -11,7 +11,7 @@
 // CLASS INCLUDE
 
 #include "channel/Channel.hpp"
-#include "parser/Parser.hpp"
+#include "parser/RawTextLine.hpp"
 #include "server/Server.hpp"
 #include "client/Client.hpp"
 #include "cmds/cmds_list.hpp"
@@ -39,10 +39,10 @@
 #include <sstream>
 #include <fcntl.h>
 #include <csignal>
+#include <ctime>
 
 // CONFIGS
 
-// #define PORT 6667
 #define IP "127.0.0.1"
 
 extern volatile sig_atomic_t g_running;

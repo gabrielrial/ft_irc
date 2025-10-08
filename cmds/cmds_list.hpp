@@ -6,7 +6,7 @@ class Server;
 class Client;
 class RawTextLine;
 
-#define MAX_CMDS 15
+#define MAX_CMDS 16
 
 void run_cmds(Server &server, RawTextLine &line, Client &client);
 
@@ -21,6 +21,7 @@ void run_cmds(Server &server, RawTextLine &line, Client &client);
 void cmd_nick(Server &server, RawTextLine &line, Client &client);
 void cmd_user(Server &server, RawTextLine &line, Client &client);
 void cmd_pass(Server &server, RawTextLine &line, Client &client);
+void cmd_pong(Server &server, RawTextLine &line, Client &client);
 void cmd_quit(Server &server, RawTextLine &line, Client &client);
 
 /* MESSAGING
@@ -61,5 +62,4 @@ void cmd_kick(Server &server, RawTextLine &line, Client &client);
 void cmd_who(Server &server, RawTextLine &line, Client &client);
 // void cmd_whois(Server &server, RawTextLine &line, Client &client);
 // void cmd_whowas(Server &server, RawTextLine &line, Client &client);
-void cmd_name(Server &server, RawTextLine &line, Client &client);
-void cmd_name_join(Server &server, std::string &channel_name);
+void cmd_names_join(Server &server, std::string &channel_name);

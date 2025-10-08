@@ -20,7 +20,7 @@ void	cmd_topic(Server &server, RawTextLine &line, Client &client)
 		err_nosuchchannel(server_name, client, channel_name);
 		return;
 	}
-	else if (!channel->has_user(client))
+	else if (!channel->has_user(&client))
 	{
 		err_notonchannel(server_name, client, channel);
 		return;
@@ -44,7 +44,7 @@ void	topic_change(Channel *channel, Client &client, std::string &server_name, co
 {
 	if (!channel->get_mode_t())
 	{
-		if (!channel->is_operator(client))
+		if (!channel->is_operator(&client))
 		{
 			err_chanoprivsneeded(server_name, client, channel);
 			return;
@@ -55,7 +55,7 @@ void	topic_change(Channel *channel, Client &client, std::string &server_name, co
 	// 						" :" + new_topic + "\r\n";
 	std::string announce = client.get_nickname() + " TOPIC " + channel->get_name() + 
 							" :" + new_topic + "\r\n";
-	const std::vector<Client>& users = channel->get_users();
+	const std::vector<Client*>& users = channel->get_users();
 	for (size_t i = 0; i < users.size(); ++i)
-		send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
+		send((*users[i]).get_FD(), announce.c_str(), announce.length(), 0);
 }

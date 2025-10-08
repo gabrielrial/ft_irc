@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(int fd, sockaddr_in &addr) : _client_fd(fd), _nickname("*"), _username("*"),
+Client::Client(int fd, sockaddr_in &addr) : _pong(true), _client_fd(fd), _nickname("*"), _username("*"),
 										 _realname(""), _has_pass(false), _has_nick(false),
 											_has_user(false), _visible(true), _operator(false), channels(0)
 {
@@ -141,4 +141,27 @@ void	Client::set_operator(bool set)
 bool Client::operator==(const Client &other) const
 {
 	return this->get_FD() == other.get_FD();
+}
+
+//time_t	Client::get_lastpong()
+//{
+//	return _last_pong;
+//}
+//
+//void	Client::set_lastpong()
+//{
+//	_last_pong = std::time(NULL);
+//}
+
+bool Client::get_pong() const
+{
+	return _pong;
+}
+
+void Client::set_pong()
+{
+	if (!_pong)
+		_pong = true;
+	else
+		_pong = false;
 }

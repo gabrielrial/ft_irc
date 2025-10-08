@@ -10,13 +10,13 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
 		{
 			"NICK", "USER", "PASS", "QUIT", "PRIVMSG", 
 			"NOTICE", "JOIN", "PART", "INVITE", "LIST",
-			"TOPIC", "NAMES", "WHO", "MODE", "KICK"};
+			"TOPIC", "NAMES", "WHO", "MODE", "KICK", "PONG"};
 
 	static CmdFunc funcs[] =
 		{
 			cmd_nick, cmd_user, cmd_pass, cmd_quit, cmd_privmsg,
 			cmd_notice, cmd_join, cmd_part, cmd_invite, cmd_list,
-			cmd_topic, cmd_names, cmd_who, cmd_mode, cmd_kick};
+			cmd_topic, cmd_names, cmd_who, cmd_mode, cmd_kick, cmd_pong};
 
 	for (int i = 0; i < MAX_CMDS; i++)
 	{
@@ -37,9 +37,13 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
 				funcs[0](server, line, client);
 				return;
 			}
+			else if (line.get_command() == "CAP")
+			{
+				return;
+			}
 			else
 			{
-				std::string welcome = server.get_servername() + ": You must registrate first. (PASS, NICK and USER are requiered)\r\n";
+				std::string welcome = server.get_servername() + ": You must register first. (PASS, NICK and USER are required)\r\n";
 				send(client.get_FD(), welcome.c_str(), welcome.size(), 0);
 				return;
 			}
