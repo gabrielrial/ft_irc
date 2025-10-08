@@ -130,22 +130,12 @@ void change_mode(Server &server, Client &client, Channel *channel,
 					if (adding)
 					{
 						channel->add_operator(target_nick);
-						// std::string announce = ":" + client.get_target_nick() + " MODE " + 
-						// 						channel->get_name() + " +o " + params[2] + "\r\n";
-						// const std::vector<Client> &users = channel->get_users();
-						// for (size_t i = 0; i < users.size(); ++i)
-						// 	send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
 						mode_changes += "+o";
 						mode_params.push_back(nick);
 					}
 					else
 					{
 						channel->rem_operator(target_nick);
-						// std::string announce = ":" + client.get_target_nick() + " MODE " + 
-						// 						channel->get_name() + " -o " + params[2] + "\r\n";
-						// const std::vector<Client> &users = channel->get_users();
-						// for (size_t i = 0; i < users.size(); ++i)
-						// 	send(users[i].get_FD(), announce.c_str(), announce.length(), 0);
 						mode_changes += "-o";
 						mode_params.push_back(nick);
 					}

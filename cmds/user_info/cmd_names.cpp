@@ -18,7 +18,6 @@ void cmd_names(Server &server, RawTextLine &line, Client &client)
 		for (size_t i = 0; i < channels.size(); i++)
 		{
 			const Channel &channel = channels[i];
-			//if (!channel.get_mode_i() || user_in_channel(&channel, client)) //check for invite mode??
 			if (user_in_channel(&channel, client))
 				send_user_inchan(server, channel, client);
 		}
@@ -31,15 +30,12 @@ void cmd_names(Server &server, RawTextLine &line, Client &client)
 	for (size_t c = 0; c < channel_size; c++)
 	{
 		Channel *channel = server.get_channel(line.get_params()[c]);
-
 		if (!channel)
 		{
 			err_nosuchchannel(server.get_servername(), client, line.get_params()[c]);
 			continue;
 		}
-
-		//if (channel->get_mode_i() && !user_in_channel(channel, client))
-		if (!user_in_channel(channel, client)) //no check for invite anymore
+		if (!user_in_channel(channel, client))
 		{
 			err_notonchannel(server.get_servername(), client, channel);
 			continue;

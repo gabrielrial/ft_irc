@@ -62,7 +62,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		}
 		else // invite-only
 		{
-			const std::vector<Client*> &invitees = channel->get_invitees(); // return vector<Client*> or references
+			const std::vector<Client*> &invitees = channel->get_invitees();
 			bool allowed = false;
 			for (size_t i = 0; i < invitees.size(); ++i)
 			{

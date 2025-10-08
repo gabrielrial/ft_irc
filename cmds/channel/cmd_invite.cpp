@@ -12,8 +12,6 @@ void cmd_invite(Server &server, RawTextLine &line, Client &client)
 	}
 	const std::string target_cli = params[0];
 	std::string channel_name = params[1];
-	// if (channel_name[0] != '#' && channel_name[0] != '&' && channel_name[0] != '+' && channel_name[0] != '!')
-	// 	channel_name = "#" + channel_name;
 
 	// 2) Find channel
 	Channel *chan = server.get_channel(channel_name);
