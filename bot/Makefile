@@ -12,6 +12,7 @@ SRC = main.cpp \
 		bot_cmds/cmds/cmd_spam.cpp \
 		bot_cmds/cmds/cmd_joke.cpp \
 		bot_cmds/cmds/cmd_privmsg.cpp \
+		bot_cmds/cmds/bot_pong.cpp \
 		parser/Parser.cpp
 
 OBJ = $(SRC:.cpp=.o)

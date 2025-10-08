@@ -4,13 +4,13 @@ void bot_run_cmds(RawTextLine &line, Bot &bot)
 {
 	typedef void (*BotFunc)(RawTextLine &, Bot &);
 
-	static const std::string cmds[2] =
+	static const std::string cmds[3] =
 		{
-			"INVITE", "PRIVMSG"};
+			"INVITE", "PRIVMSG", "PING"};
 
 	static BotFunc funcs[] =
 		{
-			cmd_invite, bot_privmsg
+			cmd_invite, bot_privmsg, bot_pong
 		};
 
 	for (int i = 0; i < 3; i++)
