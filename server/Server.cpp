@@ -3,11 +3,21 @@
 Server::Server(uint16_t port, std::string password)
 	: _port(port), _password(password), _socket(-1), client_amt(0)
 {
+	char hostname[256];
+    gethostname(hostname, sizeof(hostname));
+
+    struct hostent* host_entry = gethostbyname(hostname);
+    if (host_entry == NULL) {
+        std::cerr << "Error getting local IP.\n";
+        return ;
+    }
+
+    ip = inet_ntoa(*((struct in_addr*) host_entry->h_addr_list[0]));
 	set_servername();
 	try
 	{
 		init_socket();
-		std::cout << "Server listening on " << IP << ":" << port << std::endl;
+		std::cout << "Server listening on " << ip << ":" << port << std::endl;
 	}
 	catch (const std::runtime_error &e)
 	{
@@ -59,7 +69,7 @@ void Server::bind_socket()
 	memset(&_hint, 0, sizeof(_hint));
 	_hint.sin_family = AF_INET;				 // IPv4
 	_hint.sin_port = htons(_port);			 // convert port to network byte order
-	inet_pton(AF_INET, IP, &_hint.sin_addr); // convert IP string to binary form
+	inet_pton(AF_INET, ip, &_hint.sin_addr); // convert IP string to binary form
 
 	if (bind(_socket, (struct sockaddr *)&_hint, sizeof(_hint)) == -1)
 		throw std::runtime_error("Bind failed");
