@@ -5,10 +5,8 @@ void	add_client_channel(Client &client, Channel &channel, bool empty_channel, st
 	channel.add_user(&client);
 	if (empty_channel)
 		channel.add_operator(&client);
-	std::string joinMsg = ":" + client.get_nickname() +  //works with hexchat
+	std::string joinMsg = client.get_prefix() + 
 								" JOIN " + chan_name + "\r\n";
-	// std::string joinMsg = ":" + client.get_prefix() +  //doesnt work with hexchat
-	// 					" JOIN " + chan_name + "\r\n";
 	send(client.get_FD(), joinMsg.c_str(), joinMsg.length(), 0);
 }
 

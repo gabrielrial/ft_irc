@@ -43,6 +43,6 @@
 
 // CONFIGS
 
-#define IP "127.0.0.1"
+#define IP "10.14.3.9"
 
 extern volatile sig_atomic_t g_running;

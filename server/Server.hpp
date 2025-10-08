@@ -22,6 +22,7 @@ private:
 	int client_amt;
 	std::string _server_name;
 	std::vector<int> _fdsToClose;
+	char *ip;
 	//time_t _last_ping;
 
 		void
