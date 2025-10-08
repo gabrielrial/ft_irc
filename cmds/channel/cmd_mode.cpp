@@ -115,7 +115,7 @@ void change_mode(Server &server, Client &client, Channel *channel,
 						err_needmoreparams(server_name, client, "MODE");
 						return;
 					}
-					std::string nick = params[param_index++];
+					const std::string nick = params[param_index++];
 					if (!server.get_client(nick))
 					{
 						err_nosuchnick(server_name, client, nick, "MODE");

@@ -37,7 +37,7 @@ void broadcast_part(const Channel *chan, const Client &client, const std::string
 {
 	if (!chan)
 		return;
-	std::string part_msg = ":" + client.get_nickname() + " PART " + 
+	std::string part_msg = client.get_prefix() + " PART " + 
 						chan->get_name();
 	if (!reason.empty())
 		part_msg += " :" + reason;

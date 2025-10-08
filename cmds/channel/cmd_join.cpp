@@ -35,7 +35,6 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		std::string channel_name = first_param.substr(start, end - start);
 		if (channel_name[0] != '#' && channel_name[0] != '&' &&
 			channel_name[0] != '+' && channel_name[0] != '!')
-			//channel_name = "#" + channel_name; //must be ERR_BADCHANMASK???
 		{
 			err_badchanmask(server_name, client, channel_name);
 			start = end + 1;

@@ -83,7 +83,7 @@ bool Channel::rem_operator(Client* client)
 	return true;
 }
 
-bool Channel::is_operator(Client* client)
+bool Channel::is_operator(Client* client) const
 {
 	for (std::vector<Client*>::const_iterator it = _operators.begin(); it != _operators.end(); ++it)
 	{
@@ -91,6 +91,12 @@ bool Channel::is_operator(Client* client)
 			return true;
 	}
 	return false;
+}
+
+bool Channel::is_operator(Client* client)
+{
+    // Delegate to the const version
+    return static_cast<const Channel*>(this)->is_operator(client);
 }
 
 const std::string &Channel::get_name() const
@@ -196,14 +202,14 @@ void Channel::set_mode_l(size_t limit)
 	_mode_l = limit;
 }
 
-Client *Channel::check_user(const std::string &name)
+Client *Channel::check_user(const std::string &name) const
 {
-	for (std::vector<Client*>::iterator it = _users.begin(); it != _users.end(); ++it)
-	{
-		if ((*it)->get_nickname() == name)
-			return (*it);
-	}
-	return NULL;
+    for (std::vector<Client*>::const_iterator it = _users.begin(); it != _users.end(); ++it)
+    {
+        if ((*it)->get_nickname() == name)
+            return (*it);
+    }
+    return NULL;
 }
 
 void Channel::add_to_invitees(Client *client)

@@ -34,11 +34,12 @@ public:
 	bool		add_user(Client* client);
 	bool		remove_user(Client* client);
 	bool		has_user(Client* client) const;
-	Client		*check_user(const std::string &cl_name);
+	Client		*check_user(const std::string &cl_name) const;
 	
 	// Operator management
 	bool		add_operator(Client* client);
 	bool		rem_operator(Client* client);
+	bool		is_operator(Client* client) const;
 	bool		is_operator(Client* client);
 
 	// Getters

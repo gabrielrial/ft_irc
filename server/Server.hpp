@@ -13,58 +13,52 @@
 class Server
 {
 private:
-	uint16_t _port;
-	std::string _password;
-	int _socket;
-	sockaddr_in _hint;
-	std::vector<Client> clients;
-	std::vector<Channel> channels;
-	int	client_amt;
-	std::string		_server_name;
+	uint16_t				_port;
+	std::string				_password;
+	int						_socket;
+	sockaddr_in				_hint;
+	std::vector<Client>		clients;
+	std::vector<Channel>	channels;
+	int						client_amt;
+	std::string				_server_name;
+	std::vector<int>		_fdsToClose;
 
-	void init_socket();
-	void create_socket();
-	void bind_socket();
-	void start_listening();
-
-	int prepare_fd_set(fd_set *readfds);
-	std::vector<int> _fdsToClose;
-
-	void register_client();
-	Client *find_client(int fd);
-
-	void process_line(int fd, const std::string &line);
-	void handle_client_data(int fd, char *buffer, ssize_t bytes_read, std::string &lineBuffer);
+	void				init_socket();
+	void				create_socket();
+	void				bind_socket();
+	void				start_listening();
+	int					prepare_fd_set(fd_set *readfds);
+	void				register_client();
+	void				handle_client_data(int fd, char *buffer, ssize_t bytes_read,
+											std::string &lineBuffer);
+	void				process_line(int fd, const std::string &line);
+	Client				*find_client(int fd);
+	bool				check_channel(RawTextLine &line);
+	void				check_client(RawTextLine &line, std::vector<Client *> &client_list);
+	void				set_client_amt();
+	int					get_client_amt();
+	void				set_servername();
+	void 				remove_closed_clients(std::string lineBuffer[]);
+	void				handle_disconnection(int fd, const std::string &reason);
 
 public:
 	Server(uint16_t port, std::string password);
 	~Server();
 
-	void check_client(RawTextLine &line, std::vector<Client *> &client_list);
-	bool check_channel(RawTextLine &line);
-	void welcome(Client client);
-	bool	check_nick_uniqueness(const std::string new_nick);
+	//channels
+	Channel						*get_channel(const std::string &ch_name);
+	void						add_channel(const std::string &ch_name);
+	const std::vector<Channel>	&get_vector_channels() const;
 
-	void add_channel(const std::string &ch_name);
-	Channel *get_channel(const std::string &ch_name);
-	Client *get_client(const std::string &cl_name);
-	int				get_client_amt();
+	//clients
+	Client						*get_client(const std::string &cl_name);
+	const std::vector<Client>	&get_vector_clients() const;
 
-	std::vector<Channel> &get_vector_channels();
-	const std::vector<Client> &get_vector_clients() const;
-
-	std::string get_password() const;
-		void		set_client_amt();
-		void 		remove_closed_clients(std::string lineBuffer[]);
-		void		debug_print_chan() const; //debug, can delete
-		void		debug_print_chan_users(const Channel& chan) const; //debug, can delete
-		void		debug_print_ops(const Channel* channel, const std::string& context); //debug, can delete
-
-	void srv_run();
-	void schedule_close(int fd);
-
-	std::string		get_servername() const;
-	void			set_servername();
-
-	void	handle_disconnection(int fd, const std::string &reason);
+	//other utilities
+	void						srv_run();
+	std::string					get_servername() const;
+	void						welcome(Client client);
+	bool						check_nick_uniqueness(const std::string new_nick);
+	std::string					get_password() const;
+	void						schedule_close(int fd);
 };

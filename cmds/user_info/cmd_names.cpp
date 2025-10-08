@@ -3,7 +3,7 @@
 void cmd_names(Server &server, RawTextLine &line, Client &client);
 bool valid_param(RawTextLine &line);
 bool user_in_channel(const Channel *channel, Client &client);
-void	send_user_inchan(Server &server, Channel &channel, Client &client);
+void	send_user_inchan(Server &server, const Channel &channel, Client &client);
 void	send_user_notinchan(Server &server, Client &client);
 bool	check_user_in_allchannel(const Client &client, const std::vector<Channel> &channels);
 
@@ -14,10 +14,10 @@ void cmd_names(Server &server, RawTextLine &line, Client &client)
 
 	if (line.get_params().empty())
 	{
-		std::vector<Channel> &channels = server.get_vector_channels();
+		const std::vector<Channel> &channels = server.get_vector_channels();
 		for (size_t i = 0; i < channels.size(); i++)
 		{
-			Channel &channel = channels[i];
+			const Channel &channel = channels[i];
 			//if (!channel.get_mode_i() || user_in_channel(&channel, client)) //check for invite mode??
 			if (user_in_channel(&channel, client))
 				send_user_inchan(server, channel, client);
@@ -135,7 +135,7 @@ bool user_in_channel(const Channel *channel, Client &client)
 	return false;
 }
 
-void	send_user_inchan(Server &server, Channel &channel, Client &client)
+void	send_user_inchan(Server &server, const Channel &channel, Client &client)
 {
 	std::string names_list;
 	const std::vector<Client*> &users = channel.get_users();
