@@ -12,7 +12,7 @@ void cmd_names(Server &server, RawTextLine &line, Client &client)
 	if (!valid_param(line))
 		return;
 
-	if (line.get_params().empty())
+	if (line.get_params().empty() || line.get_params()[0] == server.get_servername())
 	{
 		const std::vector<Channel> &channels = server.get_vector_channels();
 		for (size_t i = 0; i < channels.size(); i++)
