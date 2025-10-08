@@ -5,7 +5,7 @@ void bot_pong(RawTextLine &line, Bot &bot)
 {
     std::string pass;
 
-    pass = line.get_params()[0];
+    pass = line.get_trailing();
     bot.send_message(bot.get_socket(),
-							 "PONG " + pass);
+							 "PONG :" + pass);
 }
