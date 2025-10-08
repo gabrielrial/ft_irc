@@ -42,7 +42,6 @@ void broadcast_part(const Channel *chan, const Client &client, const std::string
 	if (!reason.empty())
 		part_msg += " :" + reason;
 	part_msg += "\r\n";
-	//std::cout << "broadcasted: " << part_msg << std::endl;
 	const std::vector<Client*>& users = chan->get_users();
 	for (size_t i = 0; i < users.size(); ++i)
 		send((*users[i]).get_FD(), part_msg.c_str(), part_msg.length(), 0);

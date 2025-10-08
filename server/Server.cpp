@@ -81,7 +81,6 @@ void Server::srv_run()
 	{
 		if (ping > 20)
 		{
-			std::cout << "reached" << std::endl;
 			send_ping(*this);
 			ping = 0;
 		}
@@ -91,7 +90,6 @@ void Server::srv_run()
 
 		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
 		ping++;
-		std::cout << ping << std::endl;
 		if (activity < 0)
 		{
 			if (errno == EINTR)
@@ -392,11 +390,7 @@ void Server::send_ping(Server &server)
 	for (size_t i = 0; i < server.clients.size(); i++)
 	{
 		if (server.clients[i].get_pong() == false)
-		{
-			std::cout << "desconnect client()" + server.clients[i].get_nickname() << std::endl;
 			handle_disconnection(server.clients[i].get_FD(), "Inactivity");
-
-		}
 		else
 			server.clients[i].set_pong();
 		std::string msg = "PING :" + ping_str + "\r\n";

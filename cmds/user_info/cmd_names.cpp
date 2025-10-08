@@ -95,12 +95,12 @@ bool valid_param(RawTextLine &line)
 {
 	if (line.get_params().size() > 1)
 	{
-		std::cout << "rerror" << std::endl;
+		//std::cout << "rerror" << std::endl;
 		return false;
 	}
 	else if (!line.get_trailing().empty())
 	{
-		std::cout << "rerror" << std::endl;
+		//std::cout << "rerror" << std::endl;
 		return false;
 	}
 	return true;

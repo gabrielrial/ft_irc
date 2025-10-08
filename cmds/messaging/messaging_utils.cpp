@@ -18,7 +18,7 @@ void send_message_to_channel(Channel *channel, Client &sender,
 			continue;
 
 		std::string msg = sender.get_prefix() + " " + command + " " + targetName + " :" + message + "\r\n";
-		std::cout << msg << std::endl;
+		//std::cout << msg << std::endl;
 		send((*users[j]).get_FD(), msg.c_str(), msg.size(), 0);
 	}
 }
@@ -36,7 +36,7 @@ void send_message_to_user(Server &server, Client &sender,
 	}
 
 	std::string msg = sender.get_prefix() + " " + command + " " + target->get_nickname() + " :" + message + "\r\n";
-	std::cout << msg << std::endl;
+	//std::cout << msg << std::endl;
 	send(target->get_FD(), msg.c_str(), msg.size(), 0);
 }
 

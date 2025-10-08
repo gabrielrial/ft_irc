@@ -21,7 +21,6 @@ void cmd_list(Server &server, RawTextLine &line, Client &client)
 								topic + "\r\n";
 
 		send(client.get_FD(), channel_info.c_str(), channel_info.length(), 0);
-		std::cout << "Sent LIST info: " << channel_info;
 	}
 
 	std::string channel_info = ":" +
@@ -29,7 +28,6 @@ void cmd_list(Server &server, RawTextLine &line, Client &client)
 								client.get_nickname() + " :End of /LIST\r\n";
 
 	send(client.get_FD(), channel_info.c_str(), channel_info.length(), 0);
-	std::cout << "Sent LIST info: " << channel_info;
 
 	(void)line;
 }
