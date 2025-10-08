@@ -151,7 +151,7 @@ void change_mode(Server &server, Client &client, Channel *channel,
 	}
 	if (!mode_changes.empty())
 	{
-		std::string announce = ":" + client.get_nickname() + " MODE " + channel->get_name() + " " + mode_changes;
+		std::string announce = client.get_prefix() + " MODE " + channel->get_name() + " " + mode_changes;
 		for (size_t i = 0; i < mode_params.size(); ++i)
 			announce += " " + mode_params[i];
 		announce += "\r\n";
