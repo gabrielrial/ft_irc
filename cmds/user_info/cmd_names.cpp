@@ -25,14 +25,14 @@ void cmd_names(Server &server, RawTextLine &line, Client &client)
 		return;
 	}
 
-	size_t channel_size = line.get_params().size();
+	size_t channel_size = line.get_sep_params().size();
 
 	for (size_t c = 0; c < channel_size; c++)
 	{
-		Channel *channel = server.get_channel(line.get_params()[c]);
+		Channel *channel = server.get_channel(line.get_sep_params()[c]);
 		if (!channel)
 		{
-			err_nosuchchannel(server.get_servername(), client, line.get_params()[c]);
+			err_nosuchchannel(server.get_servername(), client, line.get_sep_params()[c]);
 			continue;
 		}
 		if (!user_in_channel(channel, client))

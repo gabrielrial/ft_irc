@@ -51,9 +51,7 @@ void	topic_change(Channel *channel, Client &client, std::string &server_name, co
 		}
 	}
 	channel->set_topic(new_topic);
-	// std::string announce = client.get_prefix() + " TOPIC " + channel->get_name() + 
-	// 						" :" + new_topic + "\r\n";
-	std::string announce = client.get_nickname() + " TOPIC " + channel->get_name() + 
+	std::string announce = client.get_prefix() + " TOPIC " + channel->get_name() + 
 							" :" + new_topic + "\r\n";
 	const std::vector<Client*>& users = channel->get_users();
 	for (size_t i = 0; i < users.size(); ++i)
