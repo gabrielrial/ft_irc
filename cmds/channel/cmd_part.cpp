@@ -23,12 +23,12 @@ void	cmd_part(Server &server, RawTextLine &line, Client &client)
 		Channel *channel = server.get_channel(channel_name);
 		if (!channel)
 			err_nosuchchannel(server_name, client, channel_name);
-		else if (!channel->has_user(client))
+		else if (!channel->has_user(&client))
 			err_notonchannel(server_name, client, channel);
 		else
 		{
 			broadcast_part(channel, client, reason);
-			channel->remove_user(client);
+			channel->remove_user(&client);
 		}
 	}
 }
@@ -42,7 +42,7 @@ void broadcast_part(const Channel *chan, const Client &client, const std::string
 	if (!reason.empty())
 		part_msg += " :" + reason;
 	part_msg += "\r\n";
-	const std::vector<Client>& users = chan->get_users();
+	const std::vector<Client*>& users = chan->get_users();
 	for (size_t i = 0; i < users.size(); ++i)
-		send(users[i].get_FD(), part_msg.c_str(), part_msg.length(), 0);
+		send((*users[i]).get_FD(), part_msg.c_str(), part_msg.length(), 0);
 }

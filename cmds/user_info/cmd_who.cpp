@@ -129,15 +129,15 @@ std::vector<Client> get_users(Server &server)
 
 std::vector<Client> channel_users(bool only_op, const Channel *channel)
 {
-	std::vector<Client> clients = channel->get_users();
+	std::vector<Client*> clients = channel->get_users();
 	std::vector<Client> result;
 
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		if (only_op && !channel->is_operator(clients[i]) && !clients[i].get_visible())
+		if (only_op && !channel->is_operator(clients[i]) && !(*clients[i]).get_visible())
 			continue ;
-		if (clients[i].get_visible() && !only_op)
-			result.push_back(clients[i]);
+		if ((*clients[i]).get_visible() && !only_op)
+			result.push_back((*clients[i]));
 	}
 	return result;
 }

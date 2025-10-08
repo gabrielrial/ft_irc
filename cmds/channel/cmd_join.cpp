@@ -2,9 +2,9 @@
 
 void	add_client_channel(Client &client, Channel &channel, bool empty_channel, std::string chan_name)
 {
-	channel.add_user(client);
+	channel.add_user(&client);
 	if (empty_channel)
-		channel.add_operator(client);
+		channel.add_operator(&client);
 	std::string joinMsg = ":" + client.get_nickname() +  //works with hexchat
 								" JOIN " + chan_name + "\r\n";
 	// std::string joinMsg = ":" + client.get_prefix() +  //doesnt work with hexchat
@@ -58,11 +58,11 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 		if (channel->get_mode_i() == false)
 		{
 			add_client_channel(client, *channel, empty_channel, channel_name);
-			cmd_name_join(server, channel_name);
+			cmd_names_join(server, channel_name);
 		}
 		else // invite-only
 		{
-			const std::vector<Client*> &invitees = channel->get_invitees(); // return vector<Client*> or references
+			const std::vector<Client*> &invitees = channel->get_invitees();
 			bool allowed = false;
 			for (size_t i = 0; i < invitees.size(); ++i)
 			{
@@ -75,7 +75,7 @@ void	cmd_join(Server &server, RawTextLine &line, Client &client)
 			if (allowed == true)
 			{
 				add_client_channel(client, *channel, empty_channel, channel_name);
-				cmd_name_join(server, channel_name);
+				cmd_names_join(server, channel_name);
 			}
 			else
 			{

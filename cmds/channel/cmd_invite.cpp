@@ -12,8 +12,6 @@ void cmd_invite(Server &server, RawTextLine &line, Client &client)
 	}
 	const std::string target_cli = params[0];
 	std::string channel_name = params[1];
-	// if (channel_name[0] != '#' && channel_name[0] != '&' && channel_name[0] != '+' && channel_name[0] != '!')
-	// 	channel_name = "#" + channel_name;
 
 	// 2) Find channel
 	Channel *chan = server.get_channel(channel_name);
@@ -24,7 +22,7 @@ void cmd_invite(Server &server, RawTextLine &line, Client &client)
 	}
 
 	// 3) Inviter must be on the channel
-	if (!chan->has_user(client))
+	if (!chan->has_user(&client))
 	{
 		err_notonchannel(server.get_servername(), client, chan);
 		return;
@@ -32,7 +30,7 @@ void cmd_invite(Server &server, RawTextLine &line, Client &client)
 	// 4) if invite only, is the inviter an operator?
 	if (chan->get_mode_i() == true)
 	{
-		if (!chan->is_operator(client))
+		if (!chan->is_operator(&client))
 		{
 			err_chanoprivsneeded(server.get_servername(), client, chan);
 			return;
@@ -47,7 +45,7 @@ void cmd_invite(Server &server, RawTextLine &line, Client &client)
 	}
 
 	// 6) If already on channel → error
-	if (chan->has_user(*target))
+	if (chan->has_user(target))
 	{
 		err_useronchannel(server.get_servername(), client, target_cli, channel_name);
 		return;

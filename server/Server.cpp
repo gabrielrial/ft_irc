@@ -17,7 +17,9 @@ Server::Server(uint16_t port, std::string password)
 }
 
 Server::~Server()
-{}
+{
+	close (_socket);
+}
 
 void Server::init_socket()
 {
@@ -79,7 +81,6 @@ void Server::srv_run()
 	{
 		if (ping > 20)
 		{
-			std::cout << "reached" << std::endl;
 			send_ping(*this);
 			ping = 0;
 		}
@@ -89,7 +90,6 @@ void Server::srv_run()
 
 		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
 		ping++;
-		std::cout << ping << std::endl;
 		if (activity < 0)
 		{
 			if (errno == EINTR)
@@ -279,16 +279,16 @@ void	Server::handle_disconnection(int fd, const std::string &reason)
 	for (size_t i = 0; i < channels.size(); i++)
 	{
 		Channel *chan = get_channel(channels[i].get_name());
-		if (chan && chan->has_user(*client))
+		if (chan && chan->has_user(client))
 		{
 			std::string quit_msg = ":" + client->get_nickname() + " QUIT :" + reason + "\r\n";
-			const std::vector<Client> &users = chan->get_users();
+			const std::vector<Client*> &users = chan->get_users();
 			for (size_t j = 0; j < users.size(); j++)
 			{
-				if (users[j].get_FD() != fd)
-					send(users[j].get_FD(), quit_msg.c_str(), quit_msg.size(), 0);
+				if ((*users[j]).get_FD() != fd)
+					send((*users[j]).get_FD(), quit_msg.c_str(), quit_msg.size(), 0);
 			}
-			chan->remove_user(*client);
+			chan->remove_user(client);
 		}
 	}
 	close(fd);
@@ -390,11 +390,7 @@ void Server::send_ping(Server &server)
 	for (size_t i = 0; i < server.clients.size(); i++)
 	{
 		if (server.clients[i].get_pong() == false)
-		{
-			std::cout << "desconnect client()" + server.clients[i].get_nickname() << std::endl;
 			handle_disconnection(server.clients[i].get_FD(), "Inactivity");
-
-		}
 		else
 			server.clients[i].set_pong();
 		std::string msg = "PING :" + ping_str + "\r\n";

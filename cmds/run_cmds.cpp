@@ -37,9 +37,13 @@ void run_cmds(Server &server, RawTextLine &line, Client &client)
 				funcs[0](server, line, client);
 				return;
 			}
+			else if (line.get_command() == "CAP")
+			{
+				return;
+			}
 			else
 			{
-				std::string welcome = server.get_servername() + ": You must registrate first. (PASS, NICK and USER are requiered)\r\n";
+				std::string welcome = server.get_servername() + ": You must register first. (PASS, NICK and USER are required)\r\n";
 				send(client.get_FD(), welcome.c_str(), welcome.size(), 0);
 				return;
 			}
