@@ -18,8 +18,8 @@ void cmd_names(Server &server, RawTextLine &line, Client &client)
 		for (size_t i = 0; i < channels.size(); i++)
 		{
 			const Channel &channel = channels[i];
-			if (user_in_channel(&channel, client))
-				send_user_inchan(server, channel, client);
+			//if (user_in_channel(&channel, client))
+			send_user_inchan(server, channel, client);
 		}
 		send_user_notinchan(server, client);
 		return;
@@ -127,7 +127,7 @@ bool user_in_channel(const Channel *channel, Client &client)
 		if (i < count_i && client.get_nickname() == invitiees_list[i]->get_nickname())
 			return true;
 	}
-
+	std::cout << "false" << std::endl;
 	return false;
 }
 
