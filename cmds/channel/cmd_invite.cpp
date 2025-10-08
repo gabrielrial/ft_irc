@@ -52,7 +52,7 @@ void cmd_invite(Server &server, RawTextLine &line, Client &client)
 	}
 
 	// send target client the invite message
-	std::string user_invite = ":" + client.get_prefix() + " INVITE " + target_cli + " :" + channel_name + CRLF;
+	std::string user_invite = client.get_prefix() + " INVITE " + target_cli + " :" + channel_name + CRLF;
 	send(target->get_FD(), user_invite.c_str(), user_invite.length(), 0);
 
 	std::string rpl_inviting = ":" + server.get_servername() + " 341 " + client.get_nickname() + " " + target_cli + " " + channel_name + CRLF;

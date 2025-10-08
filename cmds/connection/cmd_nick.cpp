@@ -25,9 +25,23 @@ void cmd_nick(Server &server, RawTextLine &line, Client &client)
 	{
 		const std::string oldNick = client.get_nickname();
 		std::string nickMsg = ":" + oldNick + "!" + client.get_username() + "@" + client.get_hostname() + " NICK :" + newNick + "\r\n";
-		const std::string msg = "You are now known as " + line.get_sep_params()[0] + "\r\n";
-		send(client.get_FD(), msg.c_str(), msg.size(), 0);
+		//const std::string msg = "You are now known as " + line.get_sep_params()[0] + "\r\n";
+		send(client.get_FD(), nickMsg.c_str(), nickMsg.size(), 0);
 		client.set_nickname(newNick);
+		const std::vector<Channel> &channels = server.get_vector_channels();
+		for (size_t i = 0; i < channels.size(); ++i)
+		{
+			const Channel &chan = channels[i];
+			if (!chan.has_user(&client))
+				continue;
+
+			const std::vector<Client*> &users = chan.get_users();
+			for (size_t u = 0; u < users.size(); ++u)
+			{
+				if (users[u]->get_FD() != client.get_FD())
+					send(users[u]->get_FD(), nickMsg.c_str(), nickMsg.size(), 0);
+			}
+		}
 		return;
 	}
 	client.set_nickname(newNick);

@@ -16,7 +16,7 @@ int main(int argc, char **argv)
         std::cerr << "./ircserv <port> <password>" << std::endl;
         return 1;
     }
-
+    
     signal(SIGINT, signal_handler);
 
     uint16_t port = static_cast<uint16_t>(std::atoi(argv[1]));

@@ -12,27 +12,27 @@ void cmd_names(Server &server, RawTextLine &line, Client &client)
 	if (!valid_param(line))
 		return;
 
-	if (line.get_params().empty())
+	if (line.get_params().empty() || line.get_params()[0] == server.get_servername())
 	{
 		const std::vector<Channel> &channels = server.get_vector_channels();
 		for (size_t i = 0; i < channels.size(); i++)
 		{
 			const Channel &channel = channels[i];
-			if (user_in_channel(&channel, client))
-				send_user_inchan(server, channel, client);
+			//if (user_in_channel(&channel, client))
+			send_user_inchan(server, channel, client);
 		}
 		send_user_notinchan(server, client);
 		return;
 	}
 
-	size_t channel_size = line.get_params().size();
+	size_t channel_size = line.get_sep_params().size();
 
 	for (size_t c = 0; c < channel_size; c++)
 	{
-		Channel *channel = server.get_channel(line.get_params()[c]);
+		Channel *channel = server.get_channel(line.get_sep_params()[c]);
 		if (!channel)
 		{
-			err_nosuchchannel(server.get_servername(), client, line.get_params()[c]);
+			err_nosuchchannel(server.get_servername(), client, line.get_sep_params()[c]);
 			continue;
 		}
 		if (!user_in_channel(channel, client))
@@ -127,7 +127,7 @@ bool user_in_channel(const Channel *channel, Client &client)
 		if (i < count_i && client.get_nickname() == invitiees_list[i]->get_nickname())
 			return true;
 	}
-
+	std::cout << "false" << std::endl;
 	return false;
 }
 

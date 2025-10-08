@@ -15,3 +15,5 @@ void cmd_spam(RawTextLine &line, Bot &bot);
 void bot_filter(RawTextLine &line, Bot &bot);
 
 void bot_privmsg(RawTextLine &line, Bot &bot);
+
+void bot_pong(RawTextLine &line, Bot &bot);

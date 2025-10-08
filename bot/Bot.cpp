@@ -1,7 +1,7 @@
 #include "Bot.hpp"
 
 Bot::Bot()
-	: _ip("localhost"),
+	: _ip("10.14.3.9"),
 	  _port(6667),
 	  _filter_mode(false),
 	  _password("42"),
