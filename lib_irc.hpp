@@ -11,7 +11,7 @@
 // CLASS INCLUDE
 
 #include "channel/Channel.hpp"
-#include "parser/Parser.hpp"
+#include "parser/RawTextLine.hpp"
 #include "server/Server.hpp"
 #include "client/Client.hpp"
 #include "cmds/cmds_list.hpp"
@@ -39,6 +39,7 @@
 #include <sstream>
 #include <fcntl.h>
 #include <csignal>
+#include <ctime>
 
 // CONFIGS
 

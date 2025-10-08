@@ -73,16 +73,25 @@ void Server::start_listening()
 
 void Server::srv_run()
 {
+	int	ping = 0;
 	char buffer[BUFFER_SIZE];
 	std::string lineBuffer[FD_SETSIZE]; // one buffer per fd
 
 	while (g_running)
 	{
+		if (ping > 20)
+		{
+			std::cout << "reached" << std::endl;
+			send_ping(*this);
+			ping = 0;
+		}
 		remove_closed_clients(lineBuffer);
 		fd_set readfds;
 		int max_fd = prepare_fd_set(&readfds);
 
 		int activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
+		ping++;
+		std::cout << ping << std::endl;
 		if (activity < 0)
 		{
 			if (errno == EINTR)
@@ -191,7 +200,6 @@ void Server::process_line(int fd, const std::string &line)
 
 	std::cout << "RAW (fd=" << fd << ") >>> " << line << std::endl;
 	RawTextLine parsed(line);
-	// std::cout << line << std::endl;
 	run_cmds(*this, parsed, *client);
 }
 
@@ -223,7 +231,7 @@ void Server::check_client(RawTextLine &line, std::vector<Client *> &client_list)
 		for (size_t a = 0; a < line.get_sep_params().size(); a++)
 		{
 			if (line.get_sep_params()[a] == clients[i].get_nickname())
-				client_list.push_back(&clients[i]); // guardamos puntero al cliente
+				client_list.push_back(&clients[i]);
 		}
 	}
 }
@@ -269,7 +277,7 @@ void	Server::handle_disconnection(int fd, const std::string &reason)
 	Client *client = find_client(fd);
 	if (!client)
 		return;
-	std::vector<Channel> channels = get_vector_channels(); //notify channels about disconnect
+	std::vector<Channel> channels = get_vector_channels();
 	for (size_t i = 0; i < channels.size(); i++)
 	{
 		Channel *chan = get_channel(channels[i].get_name());
@@ -374,4 +382,24 @@ std::string Server::get_password() const
 void Server::schedule_close(int fd)
 {
 	_fdsToClose.push_back(fd);
+}
+
+void Server::send_ping(Server &server)
+{
+	std::string ping_str = "MONTEVIDEO";
+	ping = "MONTEVIDEO";
+
+	for (size_t i = 0; i < server.clients.size(); i++)
+	{
+		if (server.clients[i].get_pong() == false)
+		{
+			std::cout << "desconnect client()" + server.clients[i].get_nickname() << std::endl;
+			handle_disconnection(server.clients[i].get_FD(), "Inactivity");
+
+		}
+		else
+			server.clients[i].set_pong();
+		std::string msg = "PING :" + ping_str + "\r\n";
+		send(server.clients[i].get_FD(), msg.c_str(), msg.size(), 0);
+	}
 }
