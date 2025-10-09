@@ -18,7 +18,6 @@ void cmd_names(Server &server, RawTextLine &line, Client &client)
 		for (size_t i = 0; i < channels.size(); i++)
 		{
 			const Channel &channel = channels[i];
-			//if (user_in_channel(&channel, client))
 			send_user_inchan(server, channel, client);
 		}
 		send_user_notinchan(server, client);
@@ -47,7 +46,6 @@ void cmd_names(Server &server, RawTextLine &line, Client &client)
 								   client.get_nickname() + " = " + channel->get_name() + " :";
 
 		std::string names_list;
-		// we send the normal users first.
 		for (size_t i = 0; i < client_list.size(); i++)
 		{
 			std::string client_name = (*client_list[i]).get_nickname();
@@ -127,7 +125,6 @@ bool user_in_channel(const Channel *channel, Client &client)
 		if (i < count_i && client.get_nickname() == invitiees_list[i]->get_nickname())
 			return true;
 	}
-	std::cout << "false" << std::endl;
 	return false;
 }
 
