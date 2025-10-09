@@ -151,15 +151,15 @@ void	send_user_inchan(Server &server, const Channel &channel, Client &client)
 void	send_user_notinchan(Server &server, Client &client)
 {
 	std::string names_list;
-	const std::vector<Client> &all_clients = server.get_vector_clients();
+	const std::vector<Client*> &all_clients = server.get_vector_clients();
 	const std::vector<Channel> &channels = server.get_vector_channels();
 	for (size_t i = 0; i < all_clients.size(); i++)
 	{
-		if (!check_user_in_allchannel(all_clients[i], channels))
+		if (!check_user_in_allchannel(*all_clients[i], channels))
 		{
 			if (!names_list.empty())
 				names_list += " ";
-			names_list += all_clients[i].get_nickname();
+			names_list += (*all_clients[i]).get_nickname();
 		}
 	}
 	if (!names_list.empty())

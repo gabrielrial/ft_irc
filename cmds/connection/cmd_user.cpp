@@ -2,7 +2,6 @@
 
 void cmd_user(Server &server, RawTextLine &line, Client &client)
 {
-	(void)server;
 	if (client.has_user())
 	{
 		err_alreadyregistered(server.get_servername(), client);
