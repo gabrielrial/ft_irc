@@ -28,6 +28,8 @@ Server::Server(uint16_t port, std::string password)
 
 Server::~Server()
 {
+	for (size_t i = 0; i < clients.size(); i++)
+		delete clients[i];
 	close (_socket);
 }
 
@@ -114,7 +116,7 @@ void Server::srv_run()
 		// Existing clients
 		for (size_t i = 0; i < clients.size();)
 		{
-			int fd = clients[i].get_FD();
+			int fd = (*clients[i]).get_FD();
 			if (FD_ISSET(fd, &readfds))
 			{
 				ssize_t bytes_read = recv(fd, buffer, BUFFER_SIZE - 1, 0);
@@ -148,7 +150,7 @@ int Server::prepare_fd_set(fd_set *readfds)
 
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		int fd = clients[i].get_FD();
+		int fd = (*clients[i]).get_FD();
 		FD_SET(fd, readfds);
 		if (fd > max_fd)
 			max_fd = fd;
@@ -172,18 +174,18 @@ void Server::register_client()
 		close(new_fd);
 		return;
 	}
-	Client c(new_fd, clientAddr);
+	Client* c = new Client(new_fd, clientAddr);
 	char host[NI_MAXHOST];
 	char serv[NI_MAXSERV];
 	if (getnameinfo((struct sockaddr *)&clientAddr, sizeof(clientAddr),
 					host, sizeof(host), serv, sizeof(serv), 0) == 0)
-		c.set_hostname(host);
+		c->set_hostname(host);
 	else
-		c.set_hostname("unknown");
+		c->set_hostname("unknown");
 	char serverName[256];
 	if (gethostname(serverName, sizeof(serverName)) != 0)
 		strcpy(serverName, "localhost");
-	c.set_servername(serverName);
+	c->set_servername(serverName);
 	clients.push_back(c);
 	std::cout << "New client connected (fd=" << new_fd << ")\n";
 }
@@ -215,8 +217,8 @@ Client *Server::find_client(int fd)
 {
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		if (fd == clients[i].get_FD())
-			return &clients[i];
+		if (fd == (*clients[i]).get_FD())
+			return clients[i];
 	}
 	return NULL;
 }
@@ -238,8 +240,8 @@ void Server::check_client(RawTextLine &line, std::vector<Client *> &client_list)
 	{
 		for (size_t a = 0; a < line.get_sep_params().size(); a++)
 		{
-			if (line.get_sep_params()[a] == clients[i].get_nickname())
-				client_list.push_back(&clients[i]);
+			if (line.get_sep_params()[a] == (*clients[i]).get_nickname())
+				client_list.push_back(clients[i]);
 		}
 	}
 }
@@ -271,10 +273,12 @@ void Server::remove_closed_clients(std::string lineBuffer[])
 		close(deadFd);
 		for (size_t j = 0; j < clients.size();)
 		{
-			if (clients[j].get_FD() == deadFd)
+			if ((*clients[j]).get_FD() == deadFd) {
+				delete clients[j]; // <--- Add this line!
 				clients.erase(clients.begin() + j);
-			else
+			} else{
 				++j;
+			}
 		}
 	}
 	_fdsToClose.clear();
@@ -304,8 +308,9 @@ void	Server::handle_disconnection(int fd, const std::string &reason)
 	close(fd);
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		if (clients[i].get_FD() == fd)
+		if ((*clients[i]).get_FD() == fd)
 		{
+			delete clients[i]; // <--- Add this line!
 			clients.erase(clients.begin() + i);
 			break;
 		}
@@ -345,15 +350,15 @@ const std::vector<Channel> &Server::get_vector_channels() const
 
 Client *Server::get_client(const std::string &name)
 {
-	for (std::vector<Client>::iterator it = clients.begin(); it != clients.end(); ++it)
+	for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
 	{
-		if (it->get_nickname() == name)
-			return &(*it);
+		if ((*it)->get_nickname() == name)
+			return (*it);
 	}
 	return NULL;
 }
 
-const std::vector<Client> &Server::get_vector_clients() const
+const std::vector<Client*> &Server::get_vector_clients() const
 {
 	return clients;
 }
@@ -376,7 +381,7 @@ bool Server::check_nick_uniqueness(const std::string new_nick)
 {
 	for (size_t i = 0; i < clients.size(); ++i)
 	{
-		if (clients[i].get_nickname() == new_nick)
+		if ((*clients[i]).get_nickname() == new_nick)
 			return false;
 	}
 	return true;
@@ -399,11 +404,11 @@ void Server::send_ping(Server &server)
 
 	for (size_t i = 0; i < server.clients.size(); i++)
 	{
-		if (server.clients[i].get_pong() == false)
-			handle_disconnection(server.clients[i].get_FD(), "Inactivity");
+		if (server.clients[i]->get_pong() == false)
+			handle_disconnection(server.clients[i]->get_FD(), "Inactivity");
 		else
-			server.clients[i].set_pong();
+			server.clients[i]->set_pong();
 		std::string msg = "PING :" + ping_str + "\r\n";
-		send(server.clients[i].get_FD(), msg.c_str(), msg.size(), 0);
+		send(server.clients[i]->get_FD(), msg.c_str(), msg.size(), 0);
 	}
 }

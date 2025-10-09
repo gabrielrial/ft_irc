@@ -17,7 +17,7 @@ private:
 	std::string _password;
 	int _socket;
 	sockaddr_in _hint;
-	std::vector<Client> clients;
+	std::vector<Client*> clients;
 	std::vector<Channel> channels;
 	int client_amt;
 	std::string _server_name;
@@ -58,7 +58,7 @@ public:
 
 	// clients
 	Client *get_client(const std::string &cl_name);
-	const std::vector<Client> &get_vector_clients() const;
+	const std::vector<Client*> &get_vector_clients() const;
 
 	// other utilities
 	void srv_run();

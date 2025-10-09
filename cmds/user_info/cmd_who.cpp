@@ -25,34 +25,34 @@
 bool is_valid_who(RawTextLine &line);
 bool only_operators(const std::vector<std::string> &params);
 std::string wildcard(RawTextLine &line);
-std::vector<Client> mask_user(Server &server, bool only_op, const char *mask);
-std::vector<Client> channel_users(bool only_op, const Channel *channel);
-std::vector<Client> get_users(Server &server);
+std::vector<Client*> mask_user(Server &server, bool only_op, const char *mask);
+std::vector<Client*> channel_users(bool only_op, const Channel *channel);
+std::vector<Client*> get_users(Server &server);
 const Channel *get_channel(Server &server, RawTextLine &line);
-std::vector<Client> get_list(Server &server, RawTextLine &line);
+std::vector<Client*> get_list(Server &server, RawTextLine &line);
 
 void cmd_who(Server &server, RawTextLine &line, Client &client)
 {
 	if (!is_valid_who(line))
 		return; // report error
 
-	std::vector<Client> client_list = get_list(server, line);
+	std::vector<Client*> client_list = get_list(server, line);
 
 	std::string target = "*";
 	if (line.get_sep_params().size() > 1 && line.get_sep_params()[1] != "o")
 		target = line.get_sep_params()[1];
 	for (size_t i = 0; i < client_list.size(); i++)
 	{
-		Client &c = client_list[i];
+		Client *c = client_list[i];
 		std::string reply = ":" + server.get_servername() + " 352 " +
 							client.get_nickname() + " " +
 							target + " " +
-							c.get_username() + " " +
-							c.get_hostname() + " " +
+							c->get_username() + " " +
+							c->get_hostname() + " " +
 							server.get_servername() + " " +
-							c.get_nickname() + " H";
+							c->get_nickname() + " H";
 
-		reply += " :0 " + c.get_realname() + CRLF;
+		reply += " :0 " + c->get_realname() + CRLF;
 
 		send(client.get_FD(), reply.c_str(), reply.length(), 0);
 	}
@@ -74,9 +74,9 @@ bool is_valid_who(RawTextLine &line)
 	return true;
 }
 
-std::vector<Client> get_list(Server &server, RawTextLine &line)
+std::vector<Client*> get_list(Server &server, RawTextLine &line)
 {
-	std::vector<Client> client_list;
+	std::vector<Client*> client_list;
 
 	std::string mask = wildcard(line);
 	const Channel *channel = get_channel(server, line);
@@ -114,48 +114,48 @@ const Channel *get_channel(Server &server, RawTextLine &line)
 	return NULL;
 }
 
-std::vector<Client> get_users(Server &server)
+std::vector<Client*> get_users(Server &server)
 {
-	std::vector<Client> clients = server.get_vector_clients();
-	std::vector<Client> result;
+	std::vector<Client*> clients = server.get_vector_clients();
+	std::vector<Client*> result;
 
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		if (clients[i].get_visible())
+		if ((*clients[i]).get_visible())
 			result.push_back(clients[i]);
 	}
 	return result;
 }
 
-std::vector<Client> channel_users(bool only_op, const Channel *channel)
+std::vector<Client*> channel_users(bool only_op, const Channel *channel)
 {
 	std::vector<Client*> clients = channel->get_users();
-	std::vector<Client> result;
+	std::vector<Client*> result;
 
 	for (size_t i = 0; i < clients.size(); i++)
 	{
 		if (only_op && !channel->is_operator(clients[i]) && !(*clients[i]).get_visible())
 			continue ;
 		if ((*clients[i]).get_visible() && !only_op)
-			result.push_back((*clients[i]));
+			result.push_back((clients[i]));
 	}
 	return result;
 }
 
-std::vector<Client> mask_user(Server &server, bool only_op, const char *mask)
+std::vector<Client*> mask_user(Server &server, bool only_op, const char *mask)
 {
-	std::vector<Client> result;
-	std::vector<Client> clients = server.get_vector_clients();
+	std::vector<Client*> result;
+	std::vector<Client*> clients = server.get_vector_clients();
 
 	for (size_t i = 0; i < clients.size(); i++)
 	{
 		bool match =
-			strcmp(clients[i].get_nickname().c_str(), mask) == 0 ||
-			strcmp(clients[i].get_username().c_str(), mask) == 0 ||
-			strcmp(clients[i].get_hostname().c_str(), mask) == 0 ||
-			strcmp(clients[i].get_realname().c_str(), mask) == 0;
+			strcmp(clients[i]->get_nickname().c_str(), mask) == 0 ||
+			strcmp(clients[i]->get_username().c_str(), mask) == 0 ||
+			strcmp(clients[i]->get_hostname().c_str(), mask) == 0 ||
+			strcmp(clients[i]->get_realname().c_str(), mask) == 0;
 
-		if (match && clients[i].get_visible() && !only_op)
+		if (match && clients[i]->get_visible() && !only_op)
 			result.push_back(clients[i]);
 	}
 	return result;
