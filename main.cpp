@@ -1,4 +1,4 @@
-#include "lib_irc.hpp"
+#include "src/lib_irc.hpp"
 
 volatile sig_atomic_t g_running = 1;
 

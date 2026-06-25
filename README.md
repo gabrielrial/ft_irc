@@ -1,47 +1,113 @@
-# ft_irc
+# IRC - Internet Relay Chat Server
 
-## DCC Transfer
-### Overview
-1. Initiation Phase
-	- The sender initiates by sending a DCC SEND request through the IRC server
-	- This message contains:
-		- The filename
-		- The sender's IP address
-		- A port number the sender will listen on
-		- The file size
-2. Connection Establishment
-	- The sender opens a TCP socket and listens for incoming connections
-	- The recipient receives the DCC SEND request via the IRC server
-	- If the recipient accepts, they connect directly to the sender's IP and port
-	- This creates a direct connection between the two clients, bypassing the IRC server
-3. Transfer Phase
-	- Once connected, the file transfer happens directly between the two clients
-	- The IRC server is not involved in the actual file transfer
+> A lightweight IRC server implementation in C++98 developed as part of the 42 curriculum.
 
-### Flow
-1. Initiation (`handle_dcc_send`):
-	- When a client wants to send a file, they call `handle_dcc_send`
-	- The DCCManager creates a new socket (`create_dcc_socket`)
-	- A new DCCTransfer object is created with sender and receiver info
-2. Setup Phase:
-	- The sender's socket is created and bound to a port
-	- The port number and file details are sent to the receiver via IRC server
-	- The sender waits for the receiver to accept
-3. Acceptance (`handle_dcc_accept`):
-	- When receiver accepts, they call `handle_dcc_accept`
-	- The receiver connects directly to the sender's socket
-	- A new DCCTransfer object tracks the transfer state
-4. Transfer Monitoring:
-	- The `check_transfers()` method (called in Server's main loop) monitors active transfers
-	- It processes ongoing transfers using `process_transfer`
-	- Handles timeouts via `handle_timeout`
-	- Tracks bytes transferred and completion status
-5. Cleanup:
-	- When transfer completes, `cleanup_transfer` is called
-	- Sockets are closed and transfer objects are removed from `_transfers`
+## Description
 
-### How to use
-1. Open hexchat, connect to server
-2. Command: `/dcc send <user> <absolute path to file>`
+### Project
 
-Note: AFAIK hexchat only has access to the Downloads folder in cluster's computers
+`ft_irc` is a network programming project from 42 School that consists of building an IRC (Internet Relay Chat) server compatible with standard IRC clients.
+
+The goal of the project is to gain experience with:
+
+* TCP/IP networking
+* Socket programming
+* Non-blocking I/O
+* Event-driven architectures
+* Client-server communication
+* IRC protocol basics (RFC 1459 / RFC 2812)
+
+### Internet Relay Chat (IRC)
+
+IRC is a real-time text communication protocol created in 1988 by Jarkko Oikarinen. It enables users to communicate through public channels and private one-to-one messages over a client-server architecture.
+
+IRC became one of the earliest and most influential online communication systems, providing a lightweight and efficient way for users to exchange messages in real time.
+
+The protocol is defined by several RFC documents, including:
+
+* RFC 1459 – Internet Relay Chat Protocol
+* RFC 2810 – Internet Relay Chat: Architecture
+* RFC 2811 – Channel Management
+* RFC 2812 – Client Protocol
+
+These specifications define how IRC clients and servers communicate, manage channels, authenticate users, and exchange messages.
+
+This project implements a simplified IRC server in C++98 that follows the requirements of the 42 School `ft_irc` subject while remaining compatible with standard IRC clients such as HexChat, irssi, and WeeChat.
+
+## Installation
+
+### Prerequisites
+
+* C++ compiler with C++98 support
+* Make
+
+### Building the Project
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/gabrielrial/ft_irc.git
+cd ft_irc
+```
+
+2. Compile the project:
+
+```bash
+make
+```
+
+This will create an executable named `ircserv`.
+
+## Usage
+
+### Commands
+
+```bash
+./ircserv <port> <password>
+```
+
+Where:
+
+* `<port>`: The port number on which the server will listen for incoming connections.
+* `<password>`: The password required for clients to authenticate with the server.
+
+Example:
+
+```bash
+./ircserv 1988 superpassword
+```
+
+## Connecting with an IRC Client
+You can connect to the server using any standard IRC client such as HexChat, irssi, or WeeChat.
+Configure the client with:
+- Server IP address
+- Port
+- Password
+- Nickname / Username
+
+Once connected, you can start interacting with channels and other users.
+For a complete list of supported commands, see:
+
+[IRC Commands](docs/commands.md)
+
+
+## 📚 References
+
+- [RFC 1459 - Internet Relay Chat Protocol](https://tools.ietf.org/html/rfc1459)
+
+- [RFC 2810 - Internet Relay Chat: Architecture](https://tools.ietf.org/html/rfc2810)
+
+- [RFC 2811 - Internet Relay Chat: Channel Management](https://tools.ietf.org/html/rfc2811)
+
+- [RFC 2812 - Internet Relay Chat: Client Protocol](https://tools.ietf.org/html/rfc2812)
+
+- [RFC 2813 - Internet Relay Chat: Server Protocol](https://tools.ietf.org/html/rfc2813)
+
+- [RFC 7194 - Default Port for Internet Relay Chat (IRC) via TLS/SSL](https://tools.ietf.org/html/rfc7194)
+
+## Authors
+
+* gabrielrial
+* grr-ace 
+* howset
+

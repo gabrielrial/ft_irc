@@ -5,31 +5,31 @@ CPP = c++
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
 SRC = main.cpp \
-		server/Server.cpp \
-		parser/RawTextLine.cpp \
- 		client/Client.cpp \
-		channel/Channel.cpp \
-		err_rpl/err.cpp \
-		err_rpl/rpl.cpp \
-		cmds/run_cmds.cpp \
-		cmds/channel/cmd_list.cpp \
-		cmds/channel/cmd_part.cpp \
-		cmds/channel/cmd_join.cpp \
-		cmds/channel/cmd_invite.cpp \
-		cmds/channel/cmd_kick.cpp \
-		cmds/channel/cmd_topic.cpp \
-		cmds/channel/cmd_mode.cpp \
-		cmds/connection/cmd_nick.cpp \
-		cmds/connection/cmd_pass.cpp \
-		cmds/connection/cmd_user.cpp \
-		cmds/connection/cmd_pong.cpp \
-		cmds/connection/cmd_quit.cpp \
-		cmds/messaging/cmd_privmsg.cpp \
-		cmds/messaging/cmd_notice.cpp \
-		cmds/messaging/messaging_utils.cpp \
-		cmds/user_info/cmd_who.cpp \
-		cmds/user_info/cmd_names.cpp \
-		cmds/user_info/cmd_names_join.cpp \
+		src/server/Server.cpp \
+		src/parser/RawTextLine.cpp \
+ 		src/client/Client.cpp \
+		src/channel/Channel.cpp \
+		src/err_rpl/err.cpp \
+		src/err_rpl/rpl.cpp \
+		src/cmds/run_cmds.cpp \
+		src/cmds/channel/cmd_list.cpp \
+		src/cmds/channel/cmd_part.cpp \
+		src/cmds/channel/cmd_join.cpp \
+		src/cmds/channel/cmd_invite.cpp \
+		src/cmds/channel/cmd_kick.cpp \
+		src/cmds/channel/cmd_topic.cpp \
+		src/cmds/channel/cmd_mode.cpp \
+		src/cmds/connection/cmd_nick.cpp \
+		src/cmds/connection/cmd_pass.cpp \
+		src/cmds/connection/cmd_user.cpp \
+		src/cmds/connection/cmd_pong.cpp \
+		src/cmds/connection/cmd_quit.cpp \
+		src/cmds/messaging/cmd_privmsg.cpp \
+		src/cmds/messaging/cmd_notice.cpp \
+		src/cmds/messaging/messaging_utils.cpp \
+		src/cmds/user_info/cmd_who.cpp \
+		src/cmds/user_info/cmd_names.cpp \
+		src/cmds/user_info/cmd_names_join.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 
