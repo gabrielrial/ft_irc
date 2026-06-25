@@ -1,7 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/c,macos,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=c,macos,linux
 
-.sh
+*.sh
 
 ### C ###
 # Prerequisites
